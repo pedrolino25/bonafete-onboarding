@@ -1,0 +1,73 @@
+{
+  "signin": {
+    "title": "Portal de Onboarding",
+    "subtitle": "Faça login da sua conta",
+    "submit": "Iniciar sessão",
+    "logout": "Sair",
+    "email": "Email",
+    "password": "Password",
+    "errors": {
+      "invalid-email-format": "Formato de email inválido",
+      "empty-email": "Por favor digite o email",
+      "empty-password": "Por favor digite a palavra-passe",
+      "invalid-email-passord": "Email ou palavra-passe errada"
+    }
+  },
+  "navigation": {
+    "processes": "Processos",
+    "ongoing-processes": "Em curso",
+    "archived-processes": "Arquivados",
+    "completed-processes": "Concluídos",
+    "applications": "Inscrições",
+    "new-applications": "Novas",
+    "accepted-applications": "Aceites",
+    "rejected-applications": "Rejeitadas",
+    "hosts": "Anfitriões",
+    "pending-hosts": "Pendentes",
+    "active-hosts": "Ativos",
+    "suspended-hosts": "Suspensos",
+    "archived-hosts": "Arquivados",
+    "spaces": "Espaços",
+    "pending-spaces": "Pendentes",
+    "active-spaces": "Ativos",
+    "archived-spaces": "Arquivados"
+  },
+  "table": {
+    "search": "Pesquisar",
+    "filters": "Filtros",
+    "select-from-list": "Selecionar da lista",
+    "clear": "Limpar",
+    "apply": "Aplicar",
+    "results": "Resultados:",
+    "loading": "A carregar...",
+    "no-results": "Sem resultados."
+  },
+  "columns": {
+    "id": "ID",
+    "name": "Nome",
+    "host_name": "Anfitrião",
+    "locality": "Localidade",
+    "type": "Tipo de espaço",
+    "business_model": "Modelo de negócio",
+    "targets": "Tipos de festa",
+    "created_at": "Criado em",
+    "account_id": "Stripe ID",
+    "email": "Email",
+    "phone": "Contacto",
+    "business_type": "Empresa"
+  },
+  "business_model": {
+    "only-space": "Aluguer",
+    "space-and-packages": "Aluguer + Pacotes",
+    "packages": "Pacotes"
+  },
+  "business_type": {
+    "individual": "Indivíduo",
+    "company": "Empresa"
+  },
+  "actions": {
+    "title": "Ações",
+    "view_space": "Ir para Espaço",
+    "view_host": "Ir para Anfitrião"
+  }
+}

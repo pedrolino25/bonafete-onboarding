@@ -1,0 +1,22 @@
+{
+  "signin": {
+    "title": "Portal de Onboarding",
+    "subtitle": "Inicia sesión en tu cuenta",
+    "submit": "Iniciar sesión",
+    "logout": "Salir",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "errors": {
+      "invalid-email-format": "Formato de correo electrónico inválido",
+      "empty-email": "Por favor ingresa el correo electrónico",
+      "empty-password": "Por favor ingresa la contraseña",
+      "invalid-email-passord": "Correo electrónico o contraseña incorrectos"
+    }
+  },
+  "navigation": {
+    "processes": "Processos",
+    "applications": "Inscrições",
+    "hosts": "Anfitriões",
+    "spaces": "Espaços"
+  }
+}
