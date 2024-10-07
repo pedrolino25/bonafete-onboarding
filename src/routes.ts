@@ -42,6 +42,14 @@ export const routes = {
       title: 'navigation.rejected-applications',
       path: '/applications/rejected',
     },
+    {
+      title: 'navigation.scheduled-applications',
+      path: '/applications/scheduled',
+    },
+    {
+      title: 'navigation.completed-applications',
+      path: '/applications/completed',
+    },
   ] as TopbarLink[],
   hosts: [
     {

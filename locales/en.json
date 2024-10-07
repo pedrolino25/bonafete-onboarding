@@ -2,8 +2,8 @@
   "signin": {
     "title": "Onboarding Portal",
     "subtitle": "Sign in to your account",
-    "submit": "Sign In",
-    "logout": "Logout",
+    "submit": "Sign in",
+    "logout": "Log out",
     "email": "Email",
     "password": "Password",
     "errors": {
@@ -14,9 +14,73 @@
     }
   },
   "navigation": {
-    "processes": "Processos",
-    "applications": "Inscrições",
-    "hosts": "Anfitriões",
-    "spaces": "Espaços"
+    "processes": "Processes",
+    "ongoing-processes": "Ongoing",
+    "archived-processes": "Archived",
+    "completed-processes": "Completed",
+    "applications": "Applications",
+    "new-applications": "New",
+    "accepted-applications": "Accepted",
+    "rejected-applications": "Rejected",
+    "scheduled-applications": "Scheduled",
+    "completed-applications": "Completed",
+    "hosts": "Hosts",
+    "pending-hosts": "Pending",
+    "active-hosts": "Active",
+    "suspended-hosts": "Suspended",
+    "archived-hosts": "Archived",
+    "spaces": "Spaces",
+    "pending-spaces": "Pending",
+    "active-spaces": "Active",
+    "archived-spaces": "Archived"
+  },
+  "table": {
+    "search": "Search",
+    "filters": "Filters",
+    "select-from-list": "Select from list",
+    "clear": "Clear",
+    "apply": "Apply",
+    "results": "Results:",
+    "loading": "Loading...",
+    "no-results": "No results."
+  },
+  "columns": {
+    "id": "ID",
+    "name": "Name",
+    "host_name": "Host",
+    "locality": "Locality",
+    "type": "Space type",
+    "business_model": "Business model",
+    "targets": "Party types",
+    "created_at": "Created on",
+    "account_id": "Stripe ID",
+    "email": "Email",
+    "phone": "Contact",
+    "business_type": "Business",
+    "max_of_persons": "Capacity",
+    "photos": "Photos",
+    "assigned_user_name": "Responsible user",
+    "schedule_date": "Date/Time"
+  },
+  "business_model": {
+    "only-space": "Rental",
+    "space-and-packages": "Rental + Packages",
+    "packages": "Packages"
+  },
+  "business_type": {
+    "individual": "Individual",
+    "company": "Company"
+  },
+  "actions": {
+    "title": "Actions",
+    "view_space": "Go to Space",
+    "view_host": "Go to Host",
+    "view_photos": "View Photos",
+    "application_accept": "Accept application",
+    "application_reject": "Reject application",
+    "reasign": "Reassign responsible user",
+    "schedule": "Schedule meeting",
+    "reschedule": "Reschedule meeting",
+    "space_register": "Start onboarding"
   }
 }

@@ -10,6 +10,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { useTranslations } from 'next-intl'
 import { cn } from '../../../../lib/utils'
 
 export interface DatePickerProps {
@@ -23,6 +24,10 @@ export interface DatePickerProps {
   value?: Date
   'data-testid'?: string
   disabled?: boolean
+  sideOffset?: number
+  align?: 'center' | 'end' | 'start'
+  side?: 'top' | 'right' | 'bottom' | 'left'
+  avoidCollisions?: boolean
 }
 
 export function DatePicker({
@@ -35,8 +40,13 @@ export function DatePicker({
   defaultValue,
   value,
   disabled,
+  sideOffset,
+  align,
+  side,
+  avoidCollisions,
   ...props
 }: DatePickerProps) {
+  const t = useTranslations()
   const [date, setDate] = React.useState<Date>((defaultValue || value) as Date)
   const [selectedDate, setSelectedDate] = React.useState<Date>(
     (defaultValue || value) as Date
@@ -80,7 +90,13 @@ export function DatePicker({
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="!rounded-md !border !bg-popover !text-popover-foreground !animate-in !shadow-dropdown-shadow w-full p-0">
+        <PopoverContent
+          avoidCollisions={avoidCollisions}
+          side={side}
+          align={align}
+          sideOffset={sideOffset}
+          className="!rounded-md !border !bg-popover !text-popover-foreground !animate-in !shadow-dropdown-shadow w-full p-0"
+        >
           <div className="w-full px-6 pt-5">
             <div className="w-full flex items-center gap-3">
               <Input
@@ -101,7 +117,7 @@ export function DatePicker({
                 color="secondary"
                 onClick={() => setSelectedDate(new Date())}
               >
-                Today
+                {t('calendar.today')}
               </Button>
             </div>
             <Calendar
@@ -117,14 +133,14 @@ export function DatePicker({
               className="w-full"
               onClick={() => setPopoverOpen(false)}
             >
-              Cancel
+              {t('button-actions.cancel')}
             </Button>
             <Button
               className="w-full"
               onClick={handleApply}
               disabled={!selectedDate}
             >
-              Apply
+              {t('button-actions.apply')}
             </Button>
           </div>
         </PopoverContent>

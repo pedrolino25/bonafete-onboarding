@@ -15,6 +15,10 @@ export interface ApplicationsListItemResponse {
   max_of_persons: string
   business_model: string
   photos: string[]
+  assigned_user_name: string
+  assigned_user_email: string
+  assigned_user_id: string
+  schedule_date: string
   createdAt: string
 }
 
@@ -22,6 +26,8 @@ export enum ApplicationStatus {
   New = 'new',
   Accepted = 'accepted',
   Rejected = 'rejected',
+  Scheduled = 'scheduled',
+  Completed = 'completed',
 }
 
 const getApplicationsListByStatus = async (
@@ -40,4 +46,85 @@ const getApplicationsListByStatus = async (
   return response.json()
 }
 
-export { getApplicationsListByStatus }
+interface AcceptApplicationProps {
+  id: string
+  userId?: string
+}
+
+const acceptApplication = async (
+  data: AcceptApplicationProps
+): Promise<ApplicationsListItemResponse> => {
+  const response = await fetch(`${ROOT}/api/onboarding/application/accept`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+    body: JSON.stringify(data),
+  })
+  return response.json()
+}
+
+interface RejectApplicationProps {
+  id: string
+}
+
+const rejectApplication = async (
+  data: RejectApplicationProps
+): Promise<ApplicationsListItemResponse> => {
+  const response = await fetch(`${ROOT}/api/onboarding/application/reject`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+    body: JSON.stringify(data),
+  })
+  return response.json()
+}
+
+interface ReasignApplicationProps {
+  id: string
+  userId: string
+}
+
+const reasignApplication = async (
+  data: ReasignApplicationProps
+): Promise<ApplicationsListItemResponse> => {
+  const response = await fetch(`${ROOT}/api/onboarding/application/reasign`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+    body: JSON.stringify(data),
+  })
+  return response.json()
+}
+
+interface ScheduleApplicationProps {
+  id: string
+  scheduleDate: Date
+}
+
+const scheduleApplication = async (
+  data: ScheduleApplicationProps
+): Promise<ApplicationsListItemResponse> => {
+  const response = await fetch(`${ROOT}/api/onboarding/application/schedule`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+    body: JSON.stringify(data),
+  })
+  return response.json()
+}
+
+export {
+  acceptApplication,
+  getApplicationsListByStatus,
+  reasignApplication,
+  rejectApplication,
+  scheduleApplication,
+}

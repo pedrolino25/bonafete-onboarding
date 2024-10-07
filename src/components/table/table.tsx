@@ -36,7 +36,12 @@ declare module '@tanstack/react-table' {
     assign?: (data: TData) => void
     viewHost?: (id: string) => void
     viewSpace?: (id: string) => void
-    viewPhotos?: (id: string) => void
+    viewPhotos?: (photos: string[]) => void
+    accept?: (id: string) => void
+    reject?: (id: string) => void
+    reasign?: (id: string) => void
+    schedule?: (id: string) => void
+    register?: (id: string) => void
   }
 }
 

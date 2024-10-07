@@ -222,7 +222,7 @@ export default function SpacesListSection({
         )
       },
       cell: ({ row }) => {
-        return format(new Date(row.getValue('created_at')), 'dd/MM/yyyy hh:mm')
+        return format(new Date(row.getValue('created_at')), 'dd/MM/yyyy HH:mm')
       },
     },
     {
@@ -258,7 +258,6 @@ export default function SpacesListSection({
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
     id: false,
     targets: false,
-    type: false,
     business_model: false,
   })
   const [search, setSearch] = useState<string>('')
@@ -294,7 +293,7 @@ export default function SpacesListSection({
     <main>
       <Navbar>
         <DataTable.HeaderContainer>
-          <div className="flex items-end h-16">
+          <div className="flex items-end h-16 max-sm:hidden">
             <DataTable.Title
               rowCount={table.getRowCount()}
               data-testid="title"
@@ -312,7 +311,7 @@ export default function SpacesListSection({
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder={t('table.search')}
                 data-testid="search-input"
-                className="w-[320px]"
+                className="w-[320px] max-sm:w-full"
               />
               <Button
                 color="secondary"
@@ -320,6 +319,7 @@ export default function SpacesListSection({
                 data-testid="filters-button"
                 onClick={() => setOpenFilters(true)}
                 disabled={!data || data.length === 0}
+                className="max-sm:hidden"
               >
                 {t('table.filters')}
               </Button>
