@@ -22,6 +22,8 @@
     "new-applications": "Novas",
     "accepted-applications": "Aceites",
     "rejected-applications": "Rejeitadas",
+    "scheduled-applications": "Agendadas",
+    "completed-applications": "Concluídas",
     "hosts": "Anfitriões",
     "pending-hosts": "Pendentes",
     "active-hosts": "Ativos",
@@ -36,6 +38,7 @@
     "search": "Pesquisar",
     "filters": "Filtros",
     "select-from-list": "Selecionar da lista",
+    "select-date": "Selecionar data",
     "clear": "Limpar",
     "apply": "Aplicar",
     "results": "Resultados:",
@@ -56,7 +59,9 @@
     "phone": "Contacto",
     "business_type": "Empresa",
     "max_of_persons": "Lotação",
-    "photos": "Fotografias"
+    "photos": "Fotografias",
+    "assigned_user_name": "Responsável",
+    "schedule_date": "Data/Hora"
   },
   "business_model": {
     "only-space": "Aluguer",
@@ -71,6 +76,49 @@
     "title": "Ações",
     "view_space": "Ir para Espaço",
     "view_host": "Ir para Anfitrião",
-    "view_photos": "Ver Fotografias"
+    "view_photos": "Ver Fotografias",
+    "application_accept": "Aceitar inscrição",
+    "application_reject": "Rejeitar inscrição",
+    "reasign": "Reasignar responsável",
+    "schedule": "Agendar reunião",
+    "reschedule": "Reagendar reunião",
+    "space_register": "Iniciar onboarding"
+  },
+  "titles": {
+    "photos": "Fotografias",
+    "reasign": "Atribuir responsável",
+    "accept-application": "Aceitar inscrição",
+    "schedule": "Agendar reunião",
+    "reject": "Rejeitar inscrição"
+  },
+  "subtitles": {
+    "reasign": "Selecione a pessoa que pretende que seja responsável pelo seguimento deste processo",
+    "schedule": "Indique a data e hora combinada com o anfitrião",
+    "reject": "Tem a certeza que deseja rejeitar a inscrição?"
+  },
+  "button-actions": {
+    "confirm": "Confirmar",
+    "apply": "Aplicar",
+    "cancel": "Cancelar"
+  },
+  "error": "Erro",
+  "success": "Sucesso",
+  "success-messages": {
+    "accept": "Inscrição aceite com sucesso.",
+    "reject": "Inscrição rejeitada com sucesso.",
+    "reasign": "Responsável assignado com sucesso.",
+    "schedule": "Inscrição agendada com sucesso."
+  },
+  "error-messages": {
+    "accept": "Erro inesperado a aceitar inscrição.",
+    "reject": "Erro inesperado a rejeitar inscrição.",
+    "reasign": "Erro inesperado a assignar inscrição.",
+    "schedule": "Erro inesperado a agendar inscrição.",
+    "empty-photos": "Não existem Fotografias."
+  },
+  "calendar": {
+    "today": "Hoje",
+    "date": "Data",
+    "hour": "Hora"
   }
 }

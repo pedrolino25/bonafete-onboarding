@@ -72,7 +72,7 @@ export function Sidebar({ links }: SidebarProps) {
                     size: 'md',
                   }),
                   !path.includes(link.alias),
-                  'justify-start'
+                  'justify-start text-sm font-medium'
                 )}
               >
                 <link.icon className="mr-2 h-4 w-4" />
@@ -84,7 +84,7 @@ export function Sidebar({ links }: SidebarProps) {
       </div>
       <div className="px-2 py-4">
         <Button
-          className="w-full"
+          className="w-full text-sm font-medium"
           color="secondary"
           size="xs"
           onClick={signOut}

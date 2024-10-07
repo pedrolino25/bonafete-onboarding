@@ -1,12 +1,31 @@
 'use client'
 
+import { SelectInput } from '@/components/inputs/select-input/select-input'
 import { TextInput } from '@/components/inputs/text-input/text-input'
 import { ApplicationsListFilterMenu } from '@/components/menus/ApplicationsListFilterMenu'
 import { Navbar } from '@/components/navbar/Navbar'
 import { DataTable } from '@/components/table/table'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { ApplicationsListItemResponse } from '@/services/api/applications'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import useAuthenticatedUser from '@/lib/hooks/authenticated-user'
+import { useToast } from '@/lib/hooks/use-toast'
+import {
+  acceptApplication,
+  ApplicationsListItemResponse,
+  ApplicationStatus,
+  reasignApplication,
+  rejectApplication,
+  scheduleApplication,
+} from '@/services/api/applications'
+import { useMutation } from '@tanstack/react-query'
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -19,20 +38,86 @@ import {
 import { format } from 'date-fns'
 import { ChevronDown, ChevronUp, Filter, Images, Search } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { useState } from 'react'
+
 interface ApplicationsListSectionProps {
   data: ApplicationsListItemResponse[] | undefined
   isPending: boolean
+  type: ApplicationStatus
+  refresh: () => void
 }
+
 export default function ApplicationsListSection({
   data,
   isPending,
+  type,
+  refresh,
 }: ApplicationsListSectionProps) {
   const t = useTranslations()
-  const router = useRouter()
+  const user = useAuthenticatedUser()
+  const { toast } = useToast()
 
   const columns: ColumnDef<ApplicationsListItemResponse>[] = [
+    ...(type === ApplicationStatus.Scheduled
+      ? [
+          {
+            accessorKey: 'schedule_date',
+            id: 'schedule_date',
+            header: ({ column }: any) => {
+              return (
+                <Button
+                  variant="link"
+                  color="secondary"
+                  onClick={() =>
+                    column.toggleSorting(column.getIsSorted() === 'asc')
+                  }
+                >
+                  {t('columns.schedule_date')}
+                  {column.getIsSorted() === 'desc' ? (
+                    <ChevronUp className="ml-2 h-3 w-3" />
+                  ) : column.getIsSorted() === 'asc' ? (
+                    <ChevronDown className="ml-2 h-3 w-3" />
+                  ) : null}
+                </Button>
+              )
+            },
+            cell: ({ row }: any) => {
+              return format(
+                new Date(row.getValue('schedule_date')),
+                'dd/MM/yyyy HH:mm'
+              )
+            },
+          },
+        ]
+      : []),
+    ...(type === ApplicationStatus.Scheduled ||
+    type === ApplicationStatus.Accepted
+      ? [
+          {
+            accessorKey: 'assigned_user_name',
+            id: 'assigned_user_name',
+            header: ({ column }: any) => {
+              return (
+                <Button
+                  variant="link"
+                  color="secondary"
+                  onClick={() =>
+                    column.toggleSorting(column.getIsSorted() === 'asc')
+                  }
+                >
+                  {t('columns.assigned_user_name')}
+                  {column.getIsSorted() === 'desc' ? (
+                    <ChevronUp className="ml-2 h-3 w-3" />
+                  ) : column.getIsSorted() === 'asc' ? (
+                    <ChevronDown className="ml-2 h-3 w-3" />
+                  ) : null}
+                </Button>
+              )
+            },
+          },
+        ]
+      : []),
     {
       accessorKey: 'id',
       id: 'id',
@@ -223,7 +308,7 @@ export default function ApplicationsListSection({
     {
       accessorKey: 'photos',
       id: 'photos',
-      header: ({ column }) => {
+      header: () => {
         return (
           <Button variant="link" color="secondary">
             {t('columns.photos')}
@@ -233,7 +318,7 @@ export default function ApplicationsListSection({
       cell: ({ row, table }) => {
         const handleClick = () => {
           if (table.options.meta?.viewPhotos) {
-            table.options.meta.viewPhotos(row.original.id)
+            table.options.meta.viewPhotos(row.original.photos)
           }
         }
 
@@ -265,7 +350,7 @@ export default function ApplicationsListSection({
         )
       },
       cell: ({ row }) => {
-        return format(new Date(row.getValue('created_at')), 'dd/MM/yyyy hh:mm')
+        return format(new Date(row.getValue('created_at')), 'dd/MM/yyyy HH:mm')
       },
     },
     {
@@ -275,15 +360,45 @@ export default function ApplicationsListSection({
       },
       cell: ({ row, table }) => {
         const handleClick = (action: string) => {
-          if (table.options.meta?.viewPhotos && action === 'view_photos') {
-            table.options.meta.viewPhotos(row.original.id)
+          if (table.options.meta?.accept && action === 'application_accept') {
+            table.options.meta.accept(row.original.id)
+          }
+          if (table.options.meta?.reject && action === 'application_reject') {
+            table.options.meta.reject(row.original.id)
+          }
+          if (table.options.meta?.schedule && action === 'schedule') {
+            table.options.meta.schedule(row.original.id)
+          }
+          if (table.options.meta?.schedule && action === 'reschedule') {
+            table.options.meta.schedule(row.original.id)
+          }
+          if (table.options.meta?.reasign && action === 'reasign') {
+            table.options.meta.reasign(row.original.id)
+          }
+          if (table.options.meta?.register && action === 'space_register') {
+            table.options.meta.register(row.original.id)
           }
         }
 
         return (
           <div className="inline-flex gap-x-[4px] items-center justify-end w-[100%]">
             <DataTable.ActionsDropdown
-              actions={['view_photos']}
+              actions={
+                type === ApplicationStatus.New
+                  ? ['application_accept', 'application_reject']
+                  : type === ApplicationStatus.Accepted
+                  ? ['schedule', 'reasign', 'application_reject']
+                  : type === ApplicationStatus.Rejected
+                  ? ['application_accept', 'schedule']
+                  : type === ApplicationStatus.Scheduled
+                  ? [
+                      'space_register',
+                      'reschedule',
+                      'reasign',
+                      'application_reject',
+                    ]
+                  : []
+              }
               onClick={handleClick}
             />
           </div>
@@ -295,13 +410,136 @@ export default function ApplicationsListSection({
   ]
 
   const [openFilters, setOpenFilters] = useState<boolean>(false)
+  const [openPhotos, setOpenPhotos] = useState<boolean>(false)
+  const [openReasign, setOpenReasign] = useState<boolean>(false)
+  const [openAccept, setOpenAccept] = useState<boolean>(false)
+  const [openSchedule, setOpenSchedule] = useState<boolean>(false)
+  const [openReject, setOpenReject] = useState<boolean>(false)
+
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
     id: false,
     targets: false,
     email: false,
+    created_at: type === ApplicationStatus.New,
   })
   const [search, setSearch] = useState<string>('')
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [photos, setPhotos] = useState<string[]>([])
+  const [applicationId, setApplicationId] = useState<string>()
+  const [responsableUser, setResponsableUser] = useState<string>(user?.id)
+  const [scheduleDate, setScheduleDate] = useState<Date>()
+  const [scheduleHour, setScheduleHour] = useState<string>()
+
+  const acceptApplicationMutation = useMutation({
+    mutationFn: acceptApplication,
+    onSuccess: () => {
+      refresh()
+      toast({
+        variant: 'success',
+        title: t('success'),
+        description: t('success-messages.accept'),
+      })
+    },
+    onError: () => {
+      refresh()
+      toast({
+        variant: 'destructive',
+        title: t('error'),
+        description: t('error-messages.accept'),
+      })
+    },
+  })
+
+  const rejectApplicationMutation = useMutation({
+    mutationFn: rejectApplication,
+    onSuccess: () => {
+      refresh()
+      toast({
+        variant: 'success',
+        title: t('success'),
+        description: t('success-messages.reject'),
+      })
+    },
+    onError: () => {
+      refresh()
+      toast({
+        variant: 'destructive',
+        title: t('error'),
+        description: t('error-messages.reject'),
+      })
+    },
+  })
+
+  const scheduleApplicationMutation = useMutation({
+    mutationFn: scheduleApplication,
+    onSuccess: () => {
+      refresh()
+      toast({
+        variant: 'success',
+        title: t('success'),
+        description: t('success-messages.schedule'),
+      })
+    },
+    onError: () => {
+      refresh()
+      toast({
+        variant: 'destructive',
+        title: t('error'),
+        description: t('error-messages.schedule'),
+      })
+    },
+  })
+
+  const reasignApplicationMutation = useMutation({
+    mutationFn: reasignApplication,
+    onSuccess: () => {
+      refresh()
+      toast({
+        variant: 'success',
+        title: t('success'),
+        description: t('success-messages.reasign'),
+      })
+    },
+    onError: () => {
+      refresh()
+      toast({
+        variant: 'destructive',
+        title: t('error'),
+        description: t('error-messages.reasign'),
+      })
+    },
+  })
+
+  const handleAcceptApplication = (id: string) => {
+    setApplicationId(id)
+    setOpenAccept(true)
+  }
+
+  const handleRejectApplication = (id: string) => {
+    setApplicationId(id)
+    setOpenReject(true)
+  }
+
+  const handleScheduleApplication = (id: string) => {
+    setScheduleDate(undefined)
+    setScheduleHour(undefined)
+    setApplicationId(id)
+    setOpenSchedule(true)
+  }
+
+  const handleReasignApplication = (id: string) => {
+    setApplicationId(id)
+    setOpenReasign(true)
+  }
+
+  const handleRegisterApplication = (id: string) => {
+    console.log('register', id)
+  }
+
+  const handleViewPhotos = (photos: string[]) => {
+    setPhotos(photos)
+    setOpenPhotos(true)
+  }
 
   const table = useReactTable({
     data: data || [],
@@ -319,7 +557,12 @@ export default function ApplicationsListSection({
       columnVisibility,
     },
     meta: {
-      viewPhotos: (id: string) => console.log(id),
+      accept: handleAcceptApplication,
+      reject: handleRejectApplication,
+      schedule: handleScheduleApplication,
+      reasign: handleReasignApplication,
+      register: handleRegisterApplication,
+      viewPhotos: handleViewPhotos,
     },
   })
 
@@ -328,11 +571,27 @@ export default function ApplicationsListSection({
     setOpenFilters(false)
   }
 
+  const handleChangeDate = (value: string) => {
+    const d = value.split('-')
+    const date = new Date(parseInt(d[0]), parseInt(d[1]) - 1, parseInt(d[2]))
+    setScheduleDate(date)
+  }
+
+  const handleChangeHour = (value: string) => {
+    const d = value.split(':')
+    if (scheduleDate) {
+      setScheduleHour(value)
+      scheduleDate.setHours(parseInt(d[0]))
+      scheduleDate.setMinutes(parseInt(d[1]))
+      setScheduleDate(scheduleDate)
+    }
+  }
+
   return (
     <main>
       <Navbar>
         <DataTable.HeaderContainer>
-          <div className="flex items-end h-16">
+          <div className="flex items-end h-16 max-sm:hidden">
             <DataTable.Title
               rowCount={table.getRowCount()}
               data-testid="title"
@@ -350,7 +609,7 @@ export default function ApplicationsListSection({
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder={t('table.search')}
                 data-testid="search-input"
-                className="w-[320px]"
+                className="w-[320px] max-sm:w-full"
               />
               <Button
                 color="secondary"
@@ -358,6 +617,7 @@ export default function ApplicationsListSection({
                 data-testid="filters-button"
                 onClick={() => setOpenFilters(true)}
                 disabled={!data || data.length === 0}
+                className="max-sm:hidden"
               >
                 {t('table.filters')}
               </Button>
@@ -379,6 +639,188 @@ export default function ApplicationsListSection({
           />
         )}
       </Navbar>
+      <Dialog open={openPhotos} onOpenChange={setOpenPhotos}>
+        <DialogContent className="sm:max-w-[800px]">
+          <DialogHeader>
+            <DialogTitle>{t('titles.photos')}</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            {photos && photos.length > 0 && (
+              <div className="overflow-y-auto max-h-[500px]">
+                {photos.map((photo) => {
+                  return (
+                    <div className="relative w-full h-[400px] mb-6">
+                      <Image src={photo} alt={photo} fill />
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+            {!photos && (
+              <p className="text-md">{t('error-messages.empty-photos')}</p>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={openAccept} onOpenChange={setOpenAccept}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>{t('titles.accept-application')}</DialogTitle>
+            <DialogDescription className="pt-2">
+              {t('subtitles.reasign')}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <SelectInput
+              options={[
+                {
+                  value: user?.id,
+                  label: user?.name,
+                  info: user?.email,
+                },
+              ]}
+              value={[
+                {
+                  value: user?.id,
+                  label: user?.name,
+                  info: user?.email,
+                },
+              ]}
+              onSelect={(option) => setResponsableUser(option[0]?.value)}
+            />
+          </div>
+          <DialogFooter>
+            <Button onClick={() => setOpenAccept(false)} color="secondary">
+              {t('button-actions.cancel')}
+            </Button>
+            <Button
+              onClick={() => {
+                acceptApplicationMutation.mutate({
+                  id: applicationId as string,
+                  userId: responsableUser,
+                })
+                setOpenAccept(false)
+              }}
+            >
+              {t('button-actions.confirm')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={openReject} onOpenChange={setOpenReject}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>{t('titles.reject')}</DialogTitle>
+            <DialogDescription className="pt-2 pb-6">
+              {t('subtitles.reject')}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button color="secondary" onClick={() => setOpenReject(false)}>
+              {t('button-actions.cancel')}
+            </Button>
+            <Button
+              color="destructive"
+              onClick={() => {
+                rejectApplicationMutation.mutate({
+                  id: applicationId as string,
+                })
+                setOpenReject(false)
+              }}
+            >
+              {t('button-actions.confirm')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={openReasign} onOpenChange={setOpenReasign}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>{t('titles.reasign')}</DialogTitle>
+            <DialogDescription className="pt-2">
+              {t('subtitles.reasign')}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <SelectInput
+              options={[
+                {
+                  value: user?.id,
+                  label: user?.name,
+                  info: user?.email,
+                },
+              ]}
+              value={[
+                {
+                  value: user?.id,
+                  label: user?.name,
+                  info: user?.email,
+                },
+              ]}
+              onSelect={(option) => setResponsableUser(option[0]?.value)}
+            />
+          </div>
+          <DialogFooter>
+            <Button onClick={() => setOpenReasign(false)} color="secondary">
+              {t('button-actions.cancel')}
+            </Button>
+            <Button
+              onClick={() => {
+                reasignApplicationMutation.mutate({
+                  id: applicationId as string,
+                  userId: responsableUser,
+                })
+                setOpenReasign(false)
+              }}
+            >
+              {t('button-actions.confirm')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={openSchedule} onOpenChange={setOpenSchedule}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>{t('titles.schedule')}</DialogTitle>
+            <DialogDescription className="pt-2">
+              {t('subtitles.schedule')}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <TextInput
+              label={t('calendar.date')}
+              type="date"
+              onChange={(e) => handleChangeDate(e.target.value)}
+            />
+            <TextInput
+              label={t('calendar.hour')}
+              type="time"
+              onChange={(e) => handleChangeHour(e.target.value)}
+              disabled={!scheduleDate}
+            />
+          </div>
+          <DialogFooter>
+            <Button onClick={() => setOpenSchedule(false)} color="secondary">
+              {t('button-actions.cancel')}
+            </Button>
+            <Button
+              onClick={() => {
+                scheduleApplicationMutation.mutate({
+                  id: applicationId as string,
+                  scheduleDate: scheduleDate as Date,
+                })
+                setOpenSchedule(false)
+              }}
+              disabled={!scheduleDate || !scheduleHour}
+            >
+              {t('button-actions.confirm')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </main>
   )
 }

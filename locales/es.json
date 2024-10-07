@@ -3,20 +3,84 @@
     "title": "Portal de Onboarding",
     "subtitle": "Inicia sesión en tu cuenta",
     "submit": "Iniciar sesión",
-    "logout": "Salir",
+    "logout": "Cerrar sesión",
     "email": "Correo electrónico",
     "password": "Contraseña",
     "errors": {
       "invalid-email-format": "Formato de correo electrónico inválido",
-      "empty-email": "Por favor ingresa el correo electrónico",
-      "empty-password": "Por favor ingresa la contraseña",
+      "empty-email": "Por favor ingrese el correo electrónico",
+      "empty-password": "Por favor ingrese la contraseña",
       "invalid-email-passord": "Correo electrónico o contraseña incorrectos"
     }
   },
   "navigation": {
-    "processes": "Processos",
-    "applications": "Inscrições",
-    "hosts": "Anfitriões",
-    "spaces": "Espaços"
+    "processes": "Procesos",
+    "ongoing-processes": "En curso",
+    "archived-processes": "Archivados",
+    "completed-processes": "Completados",
+    "applications": "Solicitudes",
+    "new-applications": "Nuevas",
+    "accepted-applications": "Aceptadas",
+    "rejected-applications": "Rechazadas",
+    "scheduled-applications": "Agendadas",
+    "completed-applications": "Completadas",
+    "hosts": "Anfitriones",
+    "pending-hosts": "Pendientes",
+    "active-hosts": "Activos",
+    "suspended-hosts": "Suspendidos",
+    "archived-hosts": "Archivados",
+    "spaces": "Espacios",
+    "pending-spaces": "Pendientes",
+    "active-spaces": "Activos",
+    "archived-spaces": "Archivados"
+  },
+  "table": {
+    "search": "Buscar",
+    "filters": "Filtros",
+    "select-from-list": "Seleccionar de la lista",
+    "clear": "Limpiar",
+    "apply": "Aplicar",
+    "results": "Resultados:",
+    "loading": "Cargando...",
+    "no-results": "Sin resultados."
+  },
+  "columns": {
+    "id": "ID",
+    "name": "Nombre",
+    "host_name": "Anfitrión",
+    "locality": "Localidad",
+    "type": "Tipo de espacio",
+    "business_model": "Modelo de negocio",
+    "targets": "Tipos de fiesta",
+    "created_at": "Creado en",
+    "account_id": "Stripe ID",
+    "email": "Correo electrónico",
+    "phone": "Contacto",
+    "business_type": "Tipo de empresa",
+    "max_of_persons": "Capacidad",
+    "photos": "Fotos",
+    "assigned_user_name": "Usuario responsable",
+    "schedule_date": "Fecha/Hora"
+  },
+  "business_model": {
+    "only-space": "Alquiler",
+    "space-and-packages": "Alquiler + Paquetes",
+    "packages": "Paquetes"
+  },
+  "business_type": {
+    "individual": "Individuo",
+    "company": "Empresa"
+  },
+  "actions": {
+    "title": "Acciones",
+    "view_space": "Ir a Espacio",
+    "view_host": "Ir a Anfitrión",
+    "view_photos": "Ver Fotos",
+    "application_accept": "Aceptar solicitud",
+    "application_reject": "Rechazar solicitud",
+    "reasign": "Reasignar usuario responsable",
+    "schedule": "Agendar reunión",
+    "reschedule": "Reagendar reunión",
+    "space_register": "Iniciar onboarding"
   }
 }

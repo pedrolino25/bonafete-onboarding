@@ -9,16 +9,16 @@ import { useQuery } from '@tanstack/react-query'
 
 export default function Applications() {
   const { isPending, data, refetch } = useQuery({
-    queryKey: ['applications', ApplicationStatus.Rejected],
+    queryKey: ['applications', ApplicationStatus.Scheduled],
     queryFn: async () => {
-      return await getApplicationsListByStatus(ApplicationStatus.Rejected)
+      return await getApplicationsListByStatus(ApplicationStatus.Scheduled)
     },
   })
   return (
     <ApplicationsListSection
       data={data}
       isPending={isPending}
-      type={ApplicationStatus.Rejected}
+      type={ApplicationStatus.Scheduled}
       refresh={refetch}
     />
   )
