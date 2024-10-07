@@ -54,7 +54,9 @@
     "account_id": "Stripe ID",
     "email": "Email",
     "phone": "Contacto",
-    "business_type": "Empresa"
+    "business_type": "Empresa",
+    "max_of_persons": "Lotação",
+    "photos": "Fotografias"
   },
   "business_model": {
     "only-space": "Aluguer",
@@ -68,6 +70,7 @@
   "actions": {
     "title": "Ações",
     "view_space": "Ir para Espaço",
-    "view_host": "Ir para Anfitrião"
+    "view_host": "Ir para Anfitrião",
+    "view_photos": "Ver Fotografias"
   }
 }

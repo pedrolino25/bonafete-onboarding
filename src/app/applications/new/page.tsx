@@ -1,13 +1,18 @@
 'use client'
 
-import { Navbar } from '@/components/navbar/Navbar'
-import { useTranslations } from 'next-intl'
+import ApplicationsListSection from '@/components/sections/applications-list/ApplicationsListSection'
+import {
+  ApplicationStatus,
+  getApplicationsListByStatus,
+} from '@/services/api/applications'
+import { useQuery } from '@tanstack/react-query'
 
 export default function Applications() {
-  const t = useTranslations()
-  return (
-    <main>
-      <Navbar></Navbar>
-    </main>
-  )
+  const { isPending, data } = useQuery({
+    queryKey: ['applications', ApplicationStatus.New],
+    queryFn: async () => {
+      return await getApplicationsListByStatus(ApplicationStatus.New)
+    },
+  })
+  return <ApplicationsListSection data={data} isPending={isPending} />
 }
