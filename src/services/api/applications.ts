@@ -1,5 +1,6 @@
 import { Cookies } from '@/middleware'
 import { getCookie } from 'cookies-next'
+import { OnboardingProcessListItemResponse } from './onboarding-processes'
 
 const ROOT = process.env.NEXT_PUBLIC_API_URL
 
@@ -121,10 +122,29 @@ const scheduleApplication = async (
   return response.json()
 }
 
+interface StartOnboardingProcessProps {
+  applicationId: string
+  userId: string
+}
+const startOnboardingProcess = async (
+  data: StartOnboardingProcessProps
+): Promise<OnboardingProcessListItemResponse> => {
+  const response = await fetch(`${ROOT}/api/onboarding/process`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+    body: JSON.stringify(data),
+  })
+  return response.json()
+}
+
 export {
   acceptApplication,
   getApplicationsListByStatus,
   reasignApplication,
   rejectApplication,
   scheduleApplication,
+  startOnboardingProcess,
 }

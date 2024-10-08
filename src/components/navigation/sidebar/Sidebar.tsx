@@ -1,11 +1,9 @@
 'use client'
-import logo from '@/assets/logo.png'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { handleSignOut } from '@/services/auth'
-import { LogOut, LucideIcon } from 'lucide-react'
+import { LogOut, LucideIcon, Settings } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -40,11 +38,6 @@ export function Sidebar({ links }: SidebarProps) {
       onMouseLeave={() => setIsCollapsed(true)}
     >
       <div>
-        <div className="h-14 px-2 py-2 border-b-[1px] flex content-center justify-center relative">
-          <div>
-            <Image src={logo} alt={'logo-image'} height={40} width={40} />
-          </div>
-        </div>
         <nav className="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2 pt-2">
           {links.map((link, index) =>
             isCollapsed ? (
@@ -83,6 +76,18 @@ export function Sidebar({ links }: SidebarProps) {
         </nav>
       </div>
       <div className="px-2 py-4">
+        <Button
+          className="text-sm font-medium w-full mb-2"
+          color="secondary"
+          size="xs"
+          startAdornment={!isCollapsed && <Settings className="h-4 w-4" />}
+        >
+          {isCollapsed ? (
+            <Settings className="h-4 w-4" />
+          ) : (
+            <>{t('navigation.manage-users')}</>
+          )}
+        </Button>
         <Button
           className="w-full text-sm font-medium"
           color="secondary"

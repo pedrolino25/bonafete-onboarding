@@ -10,9 +10,10 @@ interface AuthenticatedUser {
   locale?: string
 }
 
-export default function useAuthenticatedUser() {
+export default function useAuthenticatedUser(): AuthenticatedUser {
   const currentUser = getCookie(Cookies.CURRENT_USER_COOKIE)
   if (currentUser) {
-    return JSON.parse(currentUser)
+    return JSON.parse(currentUser) as AuthenticatedUser
   }
+  return {} as AuthenticatedUser
 }

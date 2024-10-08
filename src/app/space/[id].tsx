@@ -1,6 +1,6 @@
 'use client'
 
-import { Navbar } from '@/components/navbar/Navbar'
+import { Navbar } from '@/components/navigation/Navbar'
 import { useTranslations } from 'next-intl'
 
 export default function Space() {

@@ -2,7 +2,7 @@
 
 import { TextInput } from '@/components/inputs/text-input/text-input'
 import { HostsListFilterMenu } from '@/components/menus/HostsListFilterMenu'
-import { Navbar } from '@/components/navbar/Navbar'
+import { Navbar } from '@/components/navigation/Navbar'
 import { DataTable } from '@/components/table/table'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'

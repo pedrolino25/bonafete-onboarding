@@ -1,6 +1,6 @@
 import { Inbox, Loader, PartyPopper, Users } from 'lucide-react'
-import { SidebarLink } from './components/navbar/sidebar/Sidebar'
-import { TopbarLink } from './components/navbar/topbar/Topbar'
+import { SidebarLink } from './components/navigation/sidebar/Sidebar'
+import { TopbarLink } from './components/navigation/topbar/Topbar'
 
 export const routes = {
   sidebar: [
@@ -13,7 +13,7 @@ export const routes = {
     {
       title: 'navigation.processes',
       icon: Loader,
-      path: '/processes/ongoing',
+      path: '/processes/in-progress',
       alias: 'processes',
     },
     {
@@ -71,8 +71,12 @@ export const routes = {
   ] as TopbarLink[],
   processes: [
     {
-      title: 'navigation.ongoing-processes',
-      path: '/processes/ongoing',
+      title: 'navigation.in-progress-processes',
+      path: '/processes/in-progress',
+    },
+    {
+      title: 'navigation.scheduled-processes',
+      path: '/processes/scheduled',
     },
     {
       title: 'navigation.completed-processes',

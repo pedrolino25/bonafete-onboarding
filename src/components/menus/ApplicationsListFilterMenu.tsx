@@ -27,6 +27,7 @@ const ApplicationsListFilterFormSchema = z.object({
   targets: z.array(optionSchema).optional(),
   type: z.array(optionSchema).optional(),
   locality: z.array(optionSchema).optional(),
+  assigned_user_name: z.array(optionSchema).optional(),
   created_at: z.date().optional(),
 })
 
@@ -84,9 +85,24 @@ export function ApplicationsListFilterMenu({
     return options
   }
 
+  const getResponsableUserModelOptions = (): Option[] => {
+    const modelSet = new Set<string>()
+    data.forEach((item) => {
+      modelSet.add(item.assigned_user_name)
+    })
+    const options: Option[] = Array.from(modelSet).map((item) => ({
+      value: item,
+      label: item,
+    }))
+    return options
+  }
+
   const [businessModelOptions] = useState<Option[]>(getBusinessModelOptions())
   const [localityOptions] = useState<Option[]>(getLocalityOptions())
   const [typeOptions] = useState<Option[]>(getTypeOptions())
+  const [responsableUserModelOptions] = useState<Option[]>(
+    getResponsableUserModelOptions()
+  )
 
   const {
     handleSubmit,
@@ -118,6 +134,12 @@ export function ApplicationsListFilterMenu({
     if (values.locality && values.locality[0]) {
       filter.push({ id: 'locality', value: values.locality[0].value })
     }
+    if (values.assigned_user_name && values.assigned_user_name[0]) {
+      filter.push({
+        id: 'assigned_user_name',
+        value: values.assigned_user_name[0].value,
+      })
+    }
     submit(filter)
   }
 
@@ -128,6 +150,10 @@ export function ApplicationsListFilterMenu({
     })
     setValue('type', [], { shouldValidate: true, shouldDirty: true })
     setValue('locality', [], { shouldValidate: true, shouldDirty: true })
+    setValue('assigned_user_name', [], {
+      shouldValidate: true,
+      shouldDirty: true,
+    })
     submit([])
   }
 
@@ -162,6 +188,14 @@ export function ApplicationsListFilterMenu({
               options={typeOptions}
               value={getValues().type}
               onSelect={handleSelectChange('type')}
+            />
+            <SelectInput
+              data-testid="assigned_user_name"
+              label={t('columns.assigned_user_name')}
+              placeholder={t('table.select-from-list')}
+              options={responsableUserModelOptions}
+              value={getValues().assigned_user_name}
+              onSelect={handleSelectChange('assigned_user_name')}
             />
           </div>
           <div className="flex gap-4 py-6">

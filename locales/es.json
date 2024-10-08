@@ -15,7 +15,7 @@
   },
   "navigation": {
     "processes": "Procesos",
-    "ongoing-processes": "En curso",
+    "in-progress-processes": "En curso",
     "archived-processes": "Archivados",
     "completed-processes": "Completados",
     "applications": "Solicitudes",

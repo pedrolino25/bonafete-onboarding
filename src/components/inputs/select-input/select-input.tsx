@@ -18,7 +18,7 @@ export function SelectInput({
   ...props
 }: SelectInputProps) {
   return (
-    <div data-testid={props['data-testid']}>
+    <div data-testid={props['data-testid']} className="grid">
       {label && (
         <label
           data-testid="label"

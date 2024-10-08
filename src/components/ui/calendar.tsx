@@ -1,4 +1,6 @@
+import useAuthenticatedUser from '@/lib/hooks/authenticated-user'
 import { cn } from '@/lib/utils'
+import { enGB, es, pt } from 'date-fns/locale'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import * as React from 'react'
 import { DayPicker } from 'react-day-picker'
@@ -12,8 +14,18 @@ function Calendar({
   showOutsideDays = true,
   ...props
 }: CalendarProps) {
+  const user = useAuthenticatedUser()
   return (
     <DayPicker
+      locale={
+        user.locale === 'pt'
+          ? pt
+          : user.locale === 'es'
+          ? es
+          : user.locale === 'en'
+          ? enGB
+          : pt
+      }
       showOutsideDays={showOutsideDays}
       className={cn('pt-3 w-full', className)}
       classNames={{
@@ -31,12 +43,12 @@ function Calendar({
         table: 'w-full border-collapse space-y-1',
         head_row: 'flex',
         head_cell:
-          'text-muted-foreground rounded-md w-10 font-medium text-sm text-utility-gray-700',
-        row: 'flex w-full mt-2',
-        cell: 'h-10 w-10 !text-primary-foreground text-center text-sm p-0 relative focus-within:relative focus-within:z-20',
+          'text-muted-foreground rounded-md w-8 font-medium text-sm text-utility-gray-700',
+        row: 'flex w-full mt-1',
+        cell: 'h-8 w-8 !text-primary-foreground text-center text-sm p-0 relative focus-within:relative focus-within:z-20',
         day: cn(
           buttonVariants({ variant: 'ghost', color: 'secondary' }),
-          '!rounded-full active:rounded-full !shadow-none h-10 w-10 p-0 font-normal hover:font-medium hover:text-utility-gray-900 active:!text-primary-foreground active:!font-normal'
+          '!rounded-full active:rounded-full !shadow-none h-8 w-8 p-0 font-normal hover:font-medium hover:text-utility-gray-900 active:!text-primary-foreground active:!font-normal'
         ),
         day_range_end: 'day-range-end',
         day_selected:

@@ -15,7 +15,8 @@
   },
   "navigation": {
     "processes": "Processos",
-    "ongoing-processes": "Em curso",
+    "in-progress-processes": "Em curso",
+    "scheduled-processes": "Agendados",
     "archived-processes": "Arquivados",
     "completed-processes": "Concluídos",
     "applications": "Inscrições",
@@ -32,7 +33,9 @@
     "spaces": "Espaços",
     "pending-spaces": "Pendentes",
     "active-spaces": "Ativos",
-    "archived-spaces": "Arquivados"
+    "archived-spaces": "Arquivados",
+    "manage-users": "Gerir utilizadores",
+    "back": "Voltar"
   },
   "table": {
     "search": "Pesquisar",
@@ -61,7 +64,8 @@
     "max_of_persons": "Lotação",
     "photos": "Fotografias",
     "assigned_user_name": "Responsável",
-    "schedule_date": "Data/Hora"
+    "schedule_date": "Data/Hora",
+    "fase": "Progresso"
   },
   "business_model": {
     "only-space": "Aluguer",
@@ -82,24 +86,31 @@
     "reasign": "Reasignar responsável",
     "schedule": "Agendar reunião",
     "reschedule": "Reagendar reunião",
-    "space_register": "Iniciar onboarding"
+    "space_register": "Iniciar onboarding",
+    "continue": "Continuar onboarding",
+    "archive": "Arquivar"
   },
   "titles": {
     "photos": "Fotografias",
     "reasign": "Atribuir responsável",
     "accept-application": "Aceitar inscrição",
     "schedule": "Agendar reunião",
-    "reject": "Rejeitar inscrição"
+    "reject": "Rejeitar inscrição",
+    "archive": "Arquivar processo",
+    "init-process": "Iniciar onboarding"
   },
   "subtitles": {
     "reasign": "Selecione a pessoa que pretende que seja responsável pelo seguimento deste processo",
     "schedule": "Indique a data e hora combinada com o anfitrião",
-    "reject": "Tem a certeza que deseja rejeitar a inscrição?"
+    "reject": "Tem a certeza que deseja rejeitar a inscrição?",
+    "archive": "Tem a certeza que deseja arquivar o processo?",
+    "init-process": "Tem a certeza que deseja iniciar o processo de onboarding?"
   },
   "button-actions": {
     "confirm": "Confirmar",
     "apply": "Aplicar",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "submit": "Submeter"
   },
   "error": "Erro",
   "success": "Sucesso",
@@ -107,18 +118,40 @@
     "accept": "Inscrição aceite com sucesso.",
     "reject": "Inscrição rejeitada com sucesso.",
     "reasign": "Responsável assignado com sucesso.",
-    "schedule": "Inscrição agendada com sucesso."
+    "schedule": "Inscrição agendada com sucesso.",
+    "init-process": "Onboarding iniciado com sucesso."
   },
   "error-messages": {
     "accept": "Erro inesperado a aceitar inscrição.",
     "reject": "Erro inesperado a rejeitar inscrição.",
     "reasign": "Erro inesperado a assignar inscrição.",
     "schedule": "Erro inesperado a agendar inscrição.",
+    "init-process": "Erro inesperado a iniciar onboarding.",
     "empty-photos": "Não existem Fotografias."
   },
   "calendar": {
     "today": "Hoje",
     "date": "Data",
     "hour": "Hora"
+  },
+  "sections": {
+    "onboarding": {
+      "title": "Onboarding",
+      "subtitle": "Processo de inscrição de anfitriões",
+      "navigation": {
+        "intro": "Introdução",
+        "space-info": "Informações do espaço",
+        "offers": "Ofertas",
+        "host-info": "Informações de anfitrião"
+      },
+      "documentation": "Documentação",
+      "introduction-title": "Introduzir Anfitrião",
+      "introduction-subtitle": "Informe o anfitrião sobre a Bonafete. Esclareça sobre o seu funcionamento e regras.",
+      "form-question-1": "Esclarecimento do processo de reserva",
+      "form-question-2": "Esclarecimento de politicas de reembolso e possibilidade de configuração",
+      "form-question-3": "Esclarecimento sobre pagamentos, reembolsos e repasses",
+      "form-question-4": "Esclarecimento de regras em relação a pagamentos fora da plataforma?",
+      "form-question-5": "Esclarecimento de regras em relação a partilha de contactos com utilizadores?"
+    }
   }
 }

@@ -1,10 +1,9 @@
-import { format, isValid, parse } from 'date-fns'
+import { format } from 'date-fns'
 import { Calendar as CalendarIcon } from 'lucide-react'
 import * as React from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
-import { Input } from '@/components/ui/input'
 import {
   Popover,
   PopoverContent,
@@ -98,28 +97,6 @@ export function DatePicker({
           className="!rounded-md !border !bg-popover !text-popover-foreground !animate-in !shadow-dropdown-shadow w-full p-0"
         >
           <div className="w-full px-6 pt-5">
-            <div className="w-full flex items-center gap-3">
-              <Input
-                type="date"
-                className="date-picker-hide w-full"
-                onChange={(val) => {
-                  if (
-                    isValid(parse(val.target.value, 'yyyy-MM-dd', new Date()))
-                  ) {
-                    setSelectedDate(
-                      parse(val.target.value, 'yyyy-MM-dd', new Date())
-                    )
-                  }
-                }}
-                value={selectedDate ? format(selectedDate, 'yyyy-MM-dd') : ''}
-              />
-              <Button
-                color="secondary"
-                onClick={() => setSelectedDate(new Date())}
-              >
-                {t('calendar.today')}
-              </Button>
-            </div>
             <Calendar
               mode="single"
               selected={selectedDate}
