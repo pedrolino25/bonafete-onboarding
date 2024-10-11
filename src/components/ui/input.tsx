@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils'
 import { VariantProps, cva } from 'class-variance-authority'
 import * as React from 'react'
+import { useEffect } from 'react'
 
 const inputVariants = cva(
   'flex w-full shadow-xs rounded-lg border border-utility-gray-300 bg-white text-base font-light placeholder:text-utility-gray-500 text-utility-gray-900 hover:placeholder:text-utility-gray-900 disabled:cursor-not-allowed disabled:bg-utility-gray-50 disabled:!text-utility-gray-500 disabled:hover:!text-utility-gray-500 disabled:hover:placeholder:!text-utility-gray-500 focus-visible:outline-none',
@@ -48,6 +49,25 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     },
     ref
   ) => {
+    useEffect(() => {
+      const handleWheel = (event: WheelEvent) => {
+        const activeElement = document.activeElement as HTMLInputElement
+        if (
+          activeElement &&
+          activeElement.type === 'number' &&
+          activeElement.contains(event.target as Node)
+        ) {
+          event.preventDefault()
+        }
+      }
+
+      document.addEventListener('wheel', handleWheel, { passive: false })
+
+      return () => {
+        document.removeEventListener('wheel', handleWheel)
+      }
+    }, [])
+
     return (
       <div className="relative w-full flex">
         {startAdornment && (
@@ -82,7 +102,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {fixedEndAdornment && (
           <div
             data-testid="fixed-end-adornment"
-            className="border-t border-b border-r border-utility-gray-300 rounded-e-lg bg-white px-3 text-utility-gray-500"
+            className="border-t border-b border-r border-utility-gray-300 rounded-e-lg bg-white  text-utility-gray-500"
           >
             {fixedEndAdornment}
           </div>

@@ -37,4 +37,18 @@ const getSpacesListByStatus = async (
   return response.json()
 }
 
-export { getSpacesListByStatus }
+const verifySpaceTitle = async (title: string, id: string): Promise<string> => {
+  const response = await fetch(
+    `${ROOT}/api/onboarding/verify-space-title?url=${title}&id=${id}`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+      },
+    }
+  )
+  return response.json()
+}
+
+export { getSpacesListByStatus, verifySpaceTitle }

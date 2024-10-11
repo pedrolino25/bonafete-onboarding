@@ -65,7 +65,18 @@
     "photos": "Fotografias",
     "assigned_user_name": "Responsável",
     "schedule_date": "Data/Hora",
-    "fase": "Progresso"
+    "fase": "Progresso",
+    "conveniences": "Comodidades",
+    "min_hours": "Minimo de horas",
+    "tour": "Link de visita virtual",
+    "description": "Descrição",
+    "rules": "Regras",
+    "city": "Cidade",
+    "postal": "Código postal",
+    "street": "Rua",
+    "address": "Morada",
+    "latitude": "Latitude",
+    "longitude": "Longitude"
   },
   "business_model": {
     "only-space": "Aluguer",
@@ -88,7 +99,9 @@
     "reschedule": "Reagendar reunião",
     "space_register": "Iniciar onboarding",
     "continue": "Continuar onboarding",
-    "archive": "Arquivar"
+    "archive": "Arquivar",
+    "yes": "Sim",
+    "no": "Não"
   },
   "titles": {
     "photos": "Fotografias",
@@ -110,7 +123,10 @@
     "confirm": "Confirmar",
     "apply": "Aplicar",
     "cancel": "Cancelar",
-    "submit": "Submeter"
+    "submit": "Submeter",
+    "save": "Guardar",
+    "select-all": "Selecionar todos",
+    "unselect-all": "Deselecionar todos"
   },
   "error": "Erro",
   "success": "Sucesso",
@@ -119,7 +135,8 @@
     "reject": "Inscrição rejeitada com sucesso.",
     "reasign": "Responsável assignado com sucesso.",
     "schedule": "Inscrição agendada com sucesso.",
-    "init-process": "Onboarding iniciado com sucesso."
+    "init-process": "Onboarding iniciado com sucesso.",
+    "submit": "Dados guardados com sucesso"
   },
   "error-messages": {
     "accept": "Erro inesperado a aceitar inscrição.",
@@ -127,7 +144,8 @@
     "reasign": "Erro inesperado a assignar inscrição.",
     "schedule": "Erro inesperado a agendar inscrição.",
     "init-process": "Erro inesperado a iniciar onboarding.",
-    "empty-photos": "Não existem Fotografias."
+    "empty-photos": "Não existem Fotografias.",
+    "submit": "Erro inesperdado a guardar"
   },
   "calendar": {
     "today": "Hoje",
@@ -142,16 +160,26 @@
         "intro": "Introdução",
         "space-info": "Informações do espaço",
         "offers": "Ofertas",
-        "host-info": "Informações de anfitrião"
+        "host-info": "Informações de anfitrião",
+        "photos": "Fotografias"
       },
       "documentation": "Documentação",
       "introduction-title": "Introduzir Anfitrião",
+      "space-info-title": "Informações do Espaço",
       "introduction-subtitle": "Informe o anfitrião sobre a Bonafete. Esclareça sobre o seu funcionamento e regras.",
-      "form-question-1": "Esclarecimento do processo de reserva",
-      "form-question-2": "Esclarecimento de politicas de reembolso e possibilidade de configuração",
-      "form-question-3": "Esclarecimento sobre pagamentos, reembolsos e repasses",
-      "form-question-4": "Esclarecimento de regras em relação a pagamentos fora da plataforma?",
-      "form-question-5": "Esclarecimento de regras em relação a partilha de contactos com utilizadores?"
+      "space-info-subtitle": "Introduza todas as informações referentes ao espaço e transversais a qualquer oferta do anfitrião",
+      "form-question-1": "O anfitrião ficou esclarecido em relação ao processo de reserva?",
+      "form-question-2": "O anfitrião ficou esclarecido em relação á possibilidade de configuração da politica de cancelamento e reembolso?",
+      "form-question-3": "O anfitrião ficou esclarecido em relação ao processamento de pagamentos, reembolsos e repasses?",
+      "form-question-4": "O anfitrião reconhece que não pode ser cobrado nenhum custo adicional ao consumidor fora da plataforma?",
+      "form-question-5": "O anfitrião reconhece que é proibida a partilha de contactos (contacto telefónico, email, sites, moradas, etc) com utilizadores?",
+      "form-question-6": "O anfitrião reconhece que ter sistema de som é requisito obrigatório e não pode ter custo adicional ao consumidor?",
+      "rules": {
+        "allow_alcool": "É permitido o consumo de alcool",
+        "allow_smoking": "É permitido fumar",
+        "allow_high_sound": "É permitido som elevado",
+        "allow_pets": "São permitidos animais de Estimação"
+      }
     }
   }
 }

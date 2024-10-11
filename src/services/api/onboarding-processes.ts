@@ -13,6 +13,7 @@ export interface OnboardingProcessListItemResponse {
   fase2: string
   fase3: string
   fase4: string
+  fase5: string
   assigned_user_name: string
   assigned_user_email: string
   assigned_user_id: string
@@ -99,9 +100,145 @@ const scheduleOnboardingProcess = async (
   return response.json()
 }
 
+export interface ApplicationSpaceType {
+  id: string
+  label: string
+}
+
+export interface ApplicationSpaceTarget {
+  id: string
+  label: string
+  url: string
+}
+
+export interface OnboardingSpaceConveniences {
+  id: string
+  label: string
+}
+
+export interface OnboardingSpaceInfo {
+  space_id: string
+  max_of_persons?: number
+  photos?: string[]
+  targets?: ApplicationSpaceTarget[]
+  type?: ApplicationSpaceType
+  conveniences?: OnboardingSpaceConveniences[]
+  title?: string
+  tour?: string
+  description?: string
+  allow_pets?: string
+  allow_alcool?: string
+  allow_smoking?: string
+  allow_high_sound?: string
+  has_security_cameras?: string
+  rules?: string
+  street?: string
+  postal?: string
+  locality?: string
+  city?: string
+  latitude?: number
+  longitude?: number
+}
+
+export interface ApplicationSpaceInfo {
+  max_of_persons: number
+  photos: string[]
+  targets: ApplicationSpaceTarget[]
+  type: ApplicationSpaceType
+}
+
+export interface OnboardingProcessItemResponse {
+  id: string
+  status: string
+  fase1: string
+  fase2: string
+  fase3: string
+  fase4: string
+  fase5: string
+  schedule_date: string
+  created_at: string
+  application: ApplicationSpaceInfo
+  space: OnboardingSpaceInfo
+}
+
+const getOnboardingProcessesById = async (
+  id: string
+): Promise<OnboardingProcessItemResponse> => {
+  const response = await fetch(`${ROOT}/api/onboarding/process?id=${id}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+  })
+  return response.json()
+}
+
+interface SaveOnboardingIntroProps {
+  id: string
+}
+
+const saveOnboardingIntro = async (
+  data: SaveOnboardingIntroProps
+): Promise<unknown> => {
+  const response = await fetch(`${ROOT}/api/onboarding/process/intro`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+    body: JSON.stringify(data),
+  })
+  return response.json()
+}
+
+export interface ListItem {
+  id: string
+  label: string
+}
+export interface SaveOnboardingSpaceInfoProps {
+  onboarding_id: string
+  type?: ListItem
+  targets?: ListItem[]
+  conveniences?: ListItem[]
+  title?: string
+  tour?: string
+  description?: string
+  allow_pets?: string
+  allow_alcool?: string
+  allow_smoking?: string
+  allow_high_sound?: string
+  has_security_cameras?: string
+  rules?: string
+  street?: string
+  postal?: string
+  locality?: string
+  city_id?: string
+  city?: string
+  latitude?: number
+  longitude?: number
+}
+
+const saveOnboardingSpaceInfo = async (
+  data: SaveOnboardingSpaceInfoProps
+): Promise<unknown> => {
+  const response = await fetch(`${ROOT}/api/onboarding/process/space-info`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+    body: JSON.stringify(data),
+  })
+  return response.json()
+}
+
 export {
   archiveOnboardingProcess,
+  getOnboardingProcessesById,
   getOnboardingsProcessesListByStatus,
   reasignOnboardingProcess,
+  saveOnboardingIntro,
+  saveOnboardingSpaceInfo,
   scheduleOnboardingProcess,
 }

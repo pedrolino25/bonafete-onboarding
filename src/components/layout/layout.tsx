@@ -86,7 +86,7 @@ function Sidebar({ items, value, onChange }: SidebarProps) {
   const t = useTranslations()
 
   return (
-    <div className="group justify-between flex flex-col gap-4 transition-all duration-200 ease-out w-fit h-full pr-4">
+    <div className="group justify-between flex flex-col gap-4 transition-all duration-200 ease-out w-fit max-sm:w-full h-full pr-4 max-sm:pr-0">
       <div>
         <nav className="grid gap-1 px-2 pt-2">
           {items.map((item) => (
@@ -109,7 +109,7 @@ function Sidebar({ items, value, onChange }: SidebarProps) {
               }
             >
               <div className="w-max font-medium text-left pr-2">
-                {t(item.label)}
+                {t(`sections.onboarding.navigation.${item.value}`)}
               </div>
             </Button>
           ))}

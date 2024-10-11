@@ -1,3 +1,5 @@
+'use client'
+
 import { Select, SelectProps } from '@/components/ui/select'
 
 export interface SelectInputProps extends SelectProps {

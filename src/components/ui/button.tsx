@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils'
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
+import { LoaderCircle } from 'lucide-react'
 import * as React from 'react'
 
 const buttonVariants = cva(
@@ -86,6 +87,7 @@ export interface ButtonProps
   asChild?: boolean
   startAdornment?: React.ReactNode
   endAdornment?: React.ReactNode
+  loading?: boolean
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -99,6 +101,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       children,
       startAdornment,
       endAdornment,
+      loading,
       ...props
     },
     ref
@@ -112,6 +115,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {startAdornment}
         {children}
+        {loading && <LoaderCircle className="w-4 h-4 animate-spin" />}
         {endAdornment}
       </Comp>
     )

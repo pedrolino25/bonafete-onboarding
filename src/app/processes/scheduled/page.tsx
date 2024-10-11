@@ -9,7 +9,7 @@ import { useQuery } from '@tanstack/react-query'
 
 export default function Processes() {
   const { isPending, data, refetch } = useQuery({
-    queryKey: ['applications', ApplicationOnboardingStatus.Scheduled],
+    queryKey: ['onboarding-processes', ApplicationOnboardingStatus.Scheduled],
     queryFn: async () => {
       return await getOnboardingsProcessesListByStatus(
         ApplicationOnboardingStatus.Scheduled

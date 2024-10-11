@@ -1,43 +1,85 @@
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
+import { toast } from '@/lib/hooks/use-toast'
+import { saveOnboardingIntro } from '@/services/api/onboarding-processes'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { FileSearch } from 'lucide-react'
+import { useMutation } from '@tanstack/react-query'
+import { FileSearch, Send } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
 
-export default function OnboardingIntro() {
+interface OnboardingIntroProps {
+  id: string
+  completed?: boolean
+  refetch: () => void
+}
+
+const onboardingIntroFormSchema = z.object({
+  question_1: z.boolean().refine((val) => val === true),
+  question_2: z.boolean().refine((val) => val === true),
+  question_3: z.boolean().refine((val) => val === true),
+  question_4: z.boolean().refine((val) => val === true),
+  question_5: z.boolean().refine((val) => val === true),
+  question_6: z.boolean().refine((val) => val === true),
+})
+
+type OnboardingIntroFormSchema = z.infer<typeof onboardingIntroFormSchema>
+
+export default function OnboardingIntro({
+  id,
+  completed,
+  refetch,
+}: OnboardingIntroProps) {
   const t = useTranslations()
 
-  const onboardingIntroFormSchema = z.object({
-    question_1: z.boolean().refine((val) => val === true),
-    question_2: z.boolean().refine((val) => val === true),
-    question_3: z.boolean().refine((val) => val === true),
-    question_4: z.boolean().refine((val) => val === true),
-    question_5: z.boolean().refine((val) => val === true),
+  const saveOnboardingIntroMutation = useMutation({
+    mutationFn: saveOnboardingIntro,
+    onSuccess: () => {
+      refetch?.()
+      toast({
+        variant: 'success',
+        title: t('success'),
+        description: t('success-messages.submit'),
+      })
+    },
+    onError: () => {
+      toast({
+        variant: 'destructive',
+        title: t('error'),
+        description: t('error-messages.submit'),
+      })
+    },
   })
-
-  type OnboardingIntroFormSchema = z.infer<typeof onboardingIntroFormSchema>
 
   const {
     handleSubmit,
-    register,
     setValue,
     getValues,
     formState: { isValid },
   } = useForm<OnboardingIntroFormSchema>({
     resolver: zodResolver(onboardingIntroFormSchema),
     defaultValues: {
-      question_1: false,
-      question_2: false,
-      question_3: false,
-      question_4: false,
-      question_5: false,
+      question_1: completed,
+      question_2: completed,
+      question_3: completed,
+      question_4: completed,
+      question_5: completed,
+      question_6: completed,
     },
   })
 
   const onSubmit = (values: OnboardingIntroFormSchema) => {
-    console.log(values)
+    if (
+      values.question_1 &&
+      values.question_2 &&
+      values.question_3 &&
+      values.question_4 &&
+      values.question_5 &&
+      values.question_6
+    ) {
+      saveOnboardingIntroMutation.mutate({ id })
+    }
   }
 
   return (
@@ -50,7 +92,7 @@ export default function OnboardingIntro() {
           <h3 className="text-lg font-semibold text-utility-brand-600">
             {t('sections.onboarding.introduction-title')}
           </h3>
-          <p className="text-sm font-light text-utility-gray-500 pt-1">
+          <p className="text-sm font-light text-utility-gray-500 pt-1 pr-4">
             {t('sections.onboarding.introduction-subtitle')}
           </p>
         </div>
@@ -62,7 +104,11 @@ export default function OnboardingIntro() {
           >
             {t('sections.onboarding.documentation')}
           </Button>
-          <Button type="submit" disabled={!isValid}>
+          <Button
+            type="submit"
+            disabled={!isValid || completed}
+            startAdornment={<Send className="h-4 w-4" />}
+          >
             {t('button-actions.submit')}
           </Button>
         </div>
@@ -80,6 +126,7 @@ export default function OnboardingIntro() {
                 shouldDirty: true,
               })
             }}
+            disabled={completed}
           />
         </div>
         <div className="w-full flex items-center justify-between">
@@ -94,6 +141,7 @@ export default function OnboardingIntro() {
                 shouldDirty: true,
               })
             }}
+            disabled={completed}
           />
         </div>
         <div className="w-full flex items-center justify-between">
@@ -108,6 +156,7 @@ export default function OnboardingIntro() {
                 shouldDirty: true,
               })
             }}
+            disabled={completed}
           />
         </div>
         <div className="w-full flex items-center justify-between">
@@ -122,6 +171,7 @@ export default function OnboardingIntro() {
                 shouldDirty: true,
               })
             }}
+            disabled={completed}
           />
         </div>
         <div className="w-full flex items-center justify-between">
@@ -136,6 +186,22 @@ export default function OnboardingIntro() {
                 shouldDirty: true,
               })
             }}
+            disabled={completed}
+          />
+        </div>
+        <div className="w-full flex items-center justify-between">
+          <p className="w-10/12 font-medium tex-sm text-utility-gray-600">
+            {t('sections.onboarding.form-question-6')}
+          </p>
+          <Checkbox
+            checked={getValues('question_6')}
+            onCheckedChange={(val) => {
+              setValue('question_6', val as boolean, {
+                shouldValidate: true,
+                shouldDirty: true,
+              })
+            }}
+            disabled={completed}
           />
         </div>
       </div>
