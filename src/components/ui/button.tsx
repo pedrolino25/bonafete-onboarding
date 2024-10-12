@@ -5,7 +5,7 @@ import { LoaderCircle } from 'lucide-react'
 import * as React from 'react'
 
 const buttonVariants = cva(
-  'inline-flex gap-x-2 items-center justify-center whitespace-nowrap rounded-lg text-sm font-bold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none',
+  'inline-flex gap-x-2 items-center justify-center whitespace-nowrap rounded-lg text-sm font-bold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:pointer-events-none',
   {
     variants: {
       variant: {
@@ -24,7 +24,7 @@ const buttonVariants = cva(
         link: 'text-utility-gray-700 bg-transparent disabled:bg-utility-gray-100 disabled:!bg-white disabled:!text-utility-gray-400 font-medium disabled:font-medium',
       },
       size: {
-        xs: 'h-9 px-3 py-2 font-normal text-sm',
+        xs: 'h-8 px-3 py-2 font-medium text-sm',
         sm: 'h-10 px-3.5 py-2.5',
         md: 'h-11 px-4 py-2.5',
         lg: 'h-12 px-[18px] py-3',

@@ -5,11 +5,12 @@ import {
   fetchUserAttributes,
   getCurrentUser,
 } from 'aws-amplify/auth/server'
-import { authConfig } from './amplify-config'
+import { authConfig, storageConfig } from './amplify-config'
 
 export const { runWithAmplifyServerContext } = createServerRunner({
   config: {
     Auth: authConfig,
+    Storage: storageConfig,
   },
 })
 

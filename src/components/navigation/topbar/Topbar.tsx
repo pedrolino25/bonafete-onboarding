@@ -33,8 +33,15 @@ export function Topbar({
     <div className="w-svw h-svh">
       <div className="w-full h-14 border-b-[1px] flex items-center overflow-x-auto">
         {showIcon && (
-          <div className="relative pl-4">
-            <Image src={logo} alt={'logo-image'} height={40} width={40} />
+          <div className="pl-4">
+            <Image
+              src={logo}
+              alt={'logo-image'}
+              priority
+              height={40}
+              width={40}
+              quality={70}
+            />
           </div>
         )}
         <div className="w-full flex gap-6 justify-center items-center">

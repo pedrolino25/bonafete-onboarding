@@ -18,6 +18,7 @@ import { useTranslations } from 'next-intl'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import SpaceInfoSection from './space-info/SpaceInfoSection'
+import SpacePhotosSection from './space-photos/SpacePhotosSection'
 
 export enum OnboardingFaseStatus {
   Init = 'init',
@@ -187,7 +188,7 @@ export default function OnboardingSection({
               <Layout.Container>
                 {section.value === OnboardingSections.Intro && (
                   <OnboardingIntro
-                    id={id}
+                    onboardingInfo={data}
                     completed={
                       data && data.fase1 === OnboardingFaseStatus.Completed
                     }
@@ -196,7 +197,7 @@ export default function OnboardingSection({
                 )}
                 {section.value === OnboardingSections.SpaceInfo && (
                   <SpaceInfoSection
-                    id={id}
+                    onboardingInfo={data}
                     localitiesList={localitiesList}
                     conveniencesList={conveniencesList}
                     spaceTypesList={spaceTypesList}
@@ -205,11 +206,18 @@ export default function OnboardingSection({
                     completed={
                       data && data.fase2 === OnboardingFaseStatus.Completed
                     }
-                    onboardingInfo={data}
                     refetch={refetch}
                   />
                 )}
-                {section.value === OnboardingSections.Photos && <div />}
+                {section.value === OnboardingSections.Photos && (
+                  <SpacePhotosSection
+                    onboardingInfo={data}
+                    completed={
+                      data && data.fase3 === OnboardingFaseStatus.Completed
+                    }
+                    refetch={refetch}
+                  />
+                )}
                 {section.value === OnboardingSections.Offers && <div />}
                 {section.value === OnboardingSections.HostInfo && <div />}
               </Layout.Container>

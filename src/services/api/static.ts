@@ -11,6 +11,7 @@ export interface LocalityListItemResponse {
   radius: number
   url: string
 }
+
 const getLocalitiesList = async (): Promise<LocalityListItemResponse[]> => {
   const response = await fetch(`${ROOT}/static/localities`, {
     method: 'GET',
@@ -50,6 +51,7 @@ export interface SpaceTypeListItemResponse {
   label: string
   image?: string
 }
+
 const getSpaceTypesList = async (): Promise<SpaceTypeListItemResponse[]> => {
   const response = await fetch(`${ROOT}/static/types`, {
     method: 'GET',
@@ -67,6 +69,7 @@ export interface SpaceTargetListItemResponse {
   description?: string
   url: string
 }
+
 const getSpaceTargetsList = async (): Promise<
   SpaceTargetListItemResponse[]
 > => {
@@ -88,6 +91,7 @@ export interface PostalCodesListItemResponse {
   latitude: number
   longitude: number
 }
+
 const getPostalCodesList = async (): Promise<PostalCodesListItemResponse[]> => {
   const response = await fetch(`${ROOT}/static/postal-codes`, {
     method: 'GET',

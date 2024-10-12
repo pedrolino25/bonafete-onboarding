@@ -196,6 +196,7 @@ export interface ListItem {
   id: string
   label: string
 }
+
 export interface SaveOnboardingSpaceInfoProps {
   onboarding_id: string
   type?: ListItem
@@ -233,6 +234,25 @@ const saveOnboardingSpaceInfo = async (
   return response.json()
 }
 
+export interface SaveOnboardingSpacePhotosProps {
+  onboarding_id: string
+  photos?: string[]
+}
+
+const saveOnboardingSpacePhotos = async (
+  data: SaveOnboardingSpacePhotosProps
+): Promise<unknown> => {
+  const response = await fetch(`${ROOT}/api/onboarding/process/space-photos`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+    body: JSON.stringify(data),
+  })
+  return response.json()
+}
+
 export {
   archiveOnboardingProcess,
   getOnboardingProcessesById,
@@ -240,5 +260,6 @@ export {
   reasignOnboardingProcess,
   saveOnboardingIntro,
   saveOnboardingSpaceInfo,
+  saveOnboardingSpacePhotos,
   scheduleOnboardingProcess,
 }

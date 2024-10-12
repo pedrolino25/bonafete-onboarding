@@ -101,7 +101,11 @@
     "continue": "Continuar onboarding",
     "archive": "Arquivar",
     "yes": "Sim",
-    "no": "Não"
+    "no": "Não",
+    "set-profile-picture": "Definir como foto de capa",
+    "delete-picture": "Eliminar fotografia",
+    "drag-grop-image": "Arraste ou clique para adicionar imagens",
+    "view-photo": "Ver fotografia"
   },
   "titles": {
     "photos": "Fotografias",
@@ -126,7 +130,8 @@
     "submit": "Submeter",
     "save": "Guardar",
     "select-all": "Selecionar todos",
-    "unselect-all": "Deselecionar todos"
+    "unselect-all": "Deselecionar todos",
+    "update-needed": "Necessita atualização"
   },
   "error": "Erro",
   "success": "Sucesso",
@@ -145,7 +150,8 @@
     "schedule": "Erro inesperado a agendar inscrição.",
     "init-process": "Erro inesperado a iniciar onboarding.",
     "empty-photos": "Não existem Fotografias.",
-    "submit": "Erro inesperdado a guardar"
+    "submit": "Erro inesperdado a guardar",
+    "photos-limite-exceded": "Excedeu o máximo de fotografias permitido. Apenas são permitidas 10 fotografias"
   },
   "calendar": {
     "today": "Hoje",
@@ -166,8 +172,10 @@
       "documentation": "Documentação",
       "introduction-title": "Introduzir Anfitrião",
       "space-info-title": "Informações do Espaço",
+      "space-photos-title": "Fotografias",
       "introduction-subtitle": "Informe o anfitrião sobre a Bonafete. Esclareça sobre o seu funcionamento e regras.",
       "space-info-subtitle": "Introduza todas as informações referentes ao espaço e transversais a qualquer oferta do anfitrião",
+      "space-photos-subtitle": "Introduza as fotografias do espaço. Certifique-se de que as fotografias tem a qualidade desejada",
       "form-question-1": "O anfitrião ficou esclarecido em relação ao processo de reserva?",
       "form-question-2": "O anfitrião ficou esclarecido em relação á possibilidade de configuração da politica de cancelamento e reembolso?",
       "form-question-3": "O anfitrião ficou esclarecido em relação ao processamento de pagamentos, reembolsos e repasses?",

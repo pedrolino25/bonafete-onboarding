@@ -1,4 +1,5 @@
 // eslint-disable-next-line prettier/prettier
+import { uploadData } from 'aws-amplify/storage'
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
@@ -6,11 +7,28 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export interface S3File {
+  file: File
+  path: string
+}
+export async function uploadPictureToS3Bucket(file: S3File): Promise<string> {
+  await uploadData({
+    path: file.path,
+    data: file.file,
+  }).result
+  return `${process.env.NEXT_PUBLIC_AWS_STORAGE_BUCKET_URL}/public/${file.path}`
+}
+
 export function splitCommaGetFirst(data: String): string {
   return data?.split(',')[0] || (data as string)
 }
 
-export async function convertImageToWebP(file: File): Promise<string> {
+export interface ImageType {
+  file: File
+  path: string
+}
+
+export async function convertImageToWebP(file: File): Promise<ImageType> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
     reader.readAsDataURL(file)
@@ -60,8 +78,12 @@ export async function convertImageToWebP(file: File): Promise<string> {
               reject(new Error('Conversion to WebP failed'))
               return
             }
+
             const url = URL.createObjectURL(blob)
-            resolve(url)
+            resolve({
+              file: new File([blob], file.name, { type: 'image/webp' }),
+              path: url,
+            })
           },
           'image/webp',
           0.75 // Quality (1.0 = max quality)

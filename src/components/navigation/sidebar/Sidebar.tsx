@@ -33,7 +33,7 @@ export function Sidebar({ links }: SidebarProps) {
   return (
     <div
       data-collapsed={isCollapsed}
-      className="group justify-between flex flex-col gap-4 transition-all duration-200 ease-out w-[250px] data-[collapsed=true]:w-14 border-r border-1 h-svh"
+      className="group justify-between flex flex-col gap-4 transition-all duration-200 ease-out w-[250px] data-[collapsed=true]:w-14 border-r border-1 h-[calc(100svh-3.5rem)]"
       onMouseEnter={() => setIsCollapsed(false)}
       onMouseLeave={() => setIsCollapsed(true)}
     >

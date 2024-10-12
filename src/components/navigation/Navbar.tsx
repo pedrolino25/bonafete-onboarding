@@ -14,8 +14,8 @@ interface NavbarProps {
 
 export function Navbar({
   children,
-  showIcon,
-  hideSideBar,
+  showIcon = true,
+  hideSideBar = false,
   topbarActions,
 }: NavbarProps) {
   const path = usePathname()

@@ -3,13 +3,21 @@ import img from '@/assets/signin-img.jpg'
 import SignInForm from '@/components/forms/signin/SignInForm'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
+
 export default function SignInSection() {
   const t = useTranslations()
 
   return (
     <main className="h-svh w-svw flex">
       <div className="hidden sm:block h-svh w-0 sm:w-1/2 relative">
-        <Image src={img} alt={'signin-image'} fill objectFit="cover" />
+        <Image
+          src={img}
+          alt={'signin-image'}
+          fill
+          objectFit="cover"
+          priority
+          quality={70}
+        />
         <div className="hidden sm:block h-svh w-0 sm:w-full absolute top-0 bg-black opacity-40"></div>
         <div className="hidden sm:block h-svh w-0 sm:w-full absolute top-0">
           <div className="h-svh w-full flex items-center justify-center px-6">
@@ -19,7 +27,7 @@ export default function SignInSection() {
           </div>
         </div>
       </div>
-      <div className="h-svh sm:min-w-[400px] w-full sm:w-1/2 flex items-center justify-center">
+      <div className="h-svh sm:min-w-[300px] w-full sm:w-1/2 flex items-center justify-center">
         <div className="w-full sm:w-96">
           <Image
             src={logo}

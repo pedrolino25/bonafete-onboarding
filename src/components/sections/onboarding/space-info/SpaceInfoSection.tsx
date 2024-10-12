@@ -68,26 +68,24 @@ const spaceInfoFormSchema = z.object({
 type SpaceInfoFormType = z.infer<typeof spaceInfoFormSchema>
 
 interface SpaceInfoSectionProps {
-  id: string
+  onboardingInfo: OnboardingProcessItemResponse
   localitiesList: LocalityListItemResponse[]
   conveniencesList: SpaceConvenienceResponse
   spaceTypesList: SpaceTypeListItemResponse[]
   spaceTargetsList: SpaceTargetListItemResponse[]
   postalCodesList: PostalCodesListItemResponse[]
   completed?: boolean
-  onboardingInfo: OnboardingProcessItemResponse
   refetch: () => void
 }
 
 export default function SpaceInfoSection({
-  id,
+  onboardingInfo,
   localitiesList,
   postalCodesList,
   conveniencesList,
   spaceTypesList,
   spaceTargetsList,
   completed,
-  onboardingInfo,
   refetch,
 }: SpaceInfoSectionProps) {
   const t = useTranslations()
@@ -229,7 +227,7 @@ export default function SpaceInfoSection({
 
   const onSubmit = (values: SpaceInfoFormType) => {
     saveOnboardingSpaceInfoMutation.mutate({
-      onboarding_id: id || '',
+      onboarding_id: onboardingInfo.id || '',
       type:
         values.type?.map((item) => {
           return {
@@ -460,12 +458,90 @@ export default function SpaceInfoSection({
           placeholder={t('columns.description')}
           required
         />
-        <TextInput
-          label={t('columns.tour')}
-          placeholder={t('columns.tour')}
-          value={getValues().tour}
-          onChange={handleChange('tour')}
-        />
+
+        <div className="grid">
+          <span className="text-sm font-medium text-utility-gray-700 mb-1.5">
+            {t('columns.address')}
+            {'*'}
+          </span>
+          <div className="w-full flex flex-col gap-2">
+            <div className="flex w-full gap-2">
+              <div className="w-2/3">
+                <TextInput
+                  placeholder={t('columns.street')}
+                  value={getValues().street}
+                  onChange={handleChange('street')}
+                />
+              </div>
+              <div className="w-1/3">
+                <TextInput
+                  placeholder={t('columns.postal')}
+                  value={getValues().postal}
+                  onChange={handleChange('postal')}
+                  className="w-full"
+                  type="number"
+                />
+              </div>
+            </div>
+            <div className="flex w-full gap-2">
+              <div className="w-full">
+                <TextInput
+                  placeholder={t('columns.locality')}
+                  value={getValues().locality}
+                  disabled
+                />
+              </div>
+              <div className="w-full">
+                <TextInput
+                  placeholder={t('columns.city')}
+                  value={getValues().city}
+                  disabled
+                />
+              </div>
+            </div>
+            {getValues().latitude && getValues().longitude && (
+              <>
+                <div className="w-full h-96">
+                  <MapInput
+                    latitude={parseFloat(getValues().latitude)}
+                    longitude={parseFloat(getValues().longitude)}
+                    zoom={14}
+                    onMove={(val) => {
+                      setValue('latitude', val.latitude.toString(), {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      })
+                      setValue('longitude', val.longitude.toString(), {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      })
+                    }}
+                  />
+                </div>
+                <div className="flex w-full gap-2">
+                  <div className="w-full">
+                    <TextInput
+                      placeholder={t('columns.latitude')}
+                      value={getValues().latitude}
+                      onChange={handleChange('latitude')}
+                      disabled={!getValues().locality}
+                      type="number"
+                    />
+                  </div>
+                  <div className="w-full">
+                    <TextInput
+                      placeholder={t('columns.longitude')}
+                      value={getValues().longitude}
+                      onChange={handleChange('longitude')}
+                      disabled={!getValues().locality}
+                      type="number"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
         <div className="flex flex-col w-full gap-4">
           <TextEditorInput
             label={t('columns.rules')}
@@ -596,89 +672,12 @@ export default function SpaceInfoSection({
             </div>
           </div>
         </div>
-        <div className="grid">
-          <span className="text-sm font-medium text-utility-gray-700 mb-1.5">
-            {t('columns.address')}
-            {'*'}
-          </span>
-          <div className="w-full flex flex-col gap-2">
-            <div className="flex w-full gap-2">
-              <div className="w-2/3">
-                <TextInput
-                  placeholder={t('columns.street')}
-                  value={getValues().street}
-                  onChange={handleChange('street')}
-                />
-              </div>
-              <div className="w-1/3">
-                <TextInput
-                  placeholder={t('columns.postal')}
-                  value={getValues().postal}
-                  onChange={handleChange('postal')}
-                  className="w-full"
-                  type="number"
-                />
-              </div>
-            </div>
-            <div className="flex w-full gap-2">
-              <div className="w-full">
-                <TextInput
-                  placeholder={t('columns.locality')}
-                  value={getValues().locality}
-                  disabled
-                />
-              </div>
-              <div className="w-full">
-                <TextInput
-                  placeholder={t('columns.city')}
-                  value={getValues().city}
-                  disabled
-                />
-              </div>
-            </div>
-            {getValues().latitude && getValues().longitude && (
-              <>
-                <div className="w-full h-96">
-                  <MapInput
-                    latitude={parseFloat(getValues().latitude)}
-                    longitude={parseFloat(getValues().longitude)}
-                    zoom={14}
-                    onMove={(val) => {
-                      setValue('latitude', val.latitude.toString(), {
-                        shouldDirty: true,
-                        shouldValidate: true,
-                      })
-                      setValue('longitude', val.longitude.toString(), {
-                        shouldDirty: true,
-                        shouldValidate: true,
-                      })
-                    }}
-                  />
-                </div>
-                <div className="flex w-full gap-2">
-                  <div className="w-full">
-                    <TextInput
-                      placeholder={t('columns.latitude')}
-                      value={getValues().latitude}
-                      onChange={handleChange('latitude')}
-                      disabled={!getValues().locality}
-                      type="number"
-                    />
-                  </div>
-                  <div className="w-full">
-                    <TextInput
-                      placeholder={t('columns.longitude')}
-                      value={getValues().longitude}
-                      onChange={handleChange('longitude')}
-                      disabled={!getValues().locality}
-                      type="number"
-                    />
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
+        <TextInput
+          label={t('columns.tour')}
+          placeholder={t('columns.tour')}
+          value={getValues().tour}
+          onChange={handleChange('tour')}
+        />
       </div>
     </form>
   )

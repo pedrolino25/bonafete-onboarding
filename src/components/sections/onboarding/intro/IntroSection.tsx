@@ -1,7 +1,10 @@
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { toast } from '@/lib/hooks/use-toast'
-import { saveOnboardingIntro } from '@/services/api/onboarding-processes'
+import {
+  OnboardingProcessItemResponse,
+  saveOnboardingIntro,
+} from '@/services/api/onboarding-processes'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { FileSearch, Send } from 'lucide-react'
@@ -10,7 +13,7 @@ import { useForm } from 'react-hook-form'
 import z from 'zod'
 
 interface OnboardingIntroProps {
-  id: string
+  onboardingInfo: OnboardingProcessItemResponse
   completed?: boolean
   refetch: () => void
 }
@@ -27,7 +30,7 @@ const onboardingIntroFormSchema = z.object({
 type OnboardingIntroFormSchema = z.infer<typeof onboardingIntroFormSchema>
 
 export default function OnboardingIntro({
-  id,
+  onboardingInfo,
   completed,
   refetch,
 }: OnboardingIntroProps) {
@@ -78,7 +81,7 @@ export default function OnboardingIntro({
       values.question_5 &&
       values.question_6
     ) {
-      saveOnboardingIntroMutation.mutate({ id })
+      saveOnboardingIntroMutation.mutate({ id: onboardingInfo.id })
     }
   }
 
