@@ -335,7 +335,7 @@ export default function OnboardingsListSection({
   })
   const [search, setSearch] = useState<string>('')
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [photos, setPhotos] = useState<string[]>([])
+  // const [photos, setPhotos] = useState<string[]>([])
   const [applicationId, setApplicationId] = useState<string>()
   const [responsableUser, setResponsableUser] = useState<string>(user?.id)
   const [scheduleDate, setScheduleDate] = useState<Date>()

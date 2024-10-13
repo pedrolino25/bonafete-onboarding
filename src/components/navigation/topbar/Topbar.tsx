@@ -1,5 +1,3 @@
-'use client'
-
 import logo from '@/assets/logo.png'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useTranslations } from 'next-intl'

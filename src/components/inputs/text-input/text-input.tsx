@@ -1,3 +1,5 @@
+'use client'
+
 import { Input } from '@/components/ui/input'
 import { Info } from 'lucide-react'
 import * as React from 'react'

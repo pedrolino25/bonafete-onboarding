@@ -1,3 +1,5 @@
+'use client'
+
 import { cn } from '@/lib/utils'
 import { VariantProps, cva } from 'class-variance-authority'
 import * as React from 'react'
@@ -60,7 +62,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           event.preventDefault()
         }
       }
-
       document.addEventListener('wheel', handleWheel, { passive: false })
 
       return () => {
