@@ -3,7 +3,6 @@
 import { SelectInput } from '@/components/inputs/select-input/select-input'
 import { TextInput } from '@/components/inputs/text-input/text-input'
 import { OnboardingsListFilterMenu } from '@/components/menus/OnboardingsListFilterMenu'
-import { Navbar } from '@/components/navigation/Navbar'
 import { DataTable } from '@/components/table/table'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -458,56 +457,50 @@ export default function OnboardingsListSection({
 
   return (
     <main>
-      <Navbar>
-        <DataTable.HeaderContainer>
-          <div className="flex items-end h-16 max-sm:hidden">
-            <DataTable.Title
-              rowCount={table.getRowCount()}
-              data-testid="title"
-              className="pl-4 font-normal text-sm"
+      <DataTable.HeaderContainer>
+        <div className="flex items-end h-16 max-sm:hidden">
+          <DataTable.Title
+            rowCount={table.getRowCount()}
+            data-testid="title"
+            className="pl-4 font-normal text-sm"
+          >
+            {t('table.results')}
+          </DataTable.Title>
+        </div>
+        <DataTable.HeaderActionsContainer className="pl-4">
+          <div className="flex items-center gap-3">
+            <TextInput
+              startAdornment={
+                <Search className="h-4 w-4 text-utility-gray-600" />
+              }
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={t('table.search')}
+              data-testid="search-input"
+              className="w-[320px] max-sm:w-full"
+            />
+            <Button
+              color="secondary"
+              startAdornment={<Filter className="h-4 w-4" />}
+              data-testid="filters-button"
+              onClick={() => setOpenFilters(true)}
+              disabled={!data || data.length === 0}
+              className="max-sm:hidden"
             >
-              {t('table.results')}
-            </DataTable.Title>
+              {t('table.filters')}
+            </Button>
+            <DataTable.ColumnVisibilityDropdown table={table} />
           </div>
-          <DataTable.HeaderActionsContainer className="pl-4">
-            <div className="flex items-center gap-3">
-              <TextInput
-                startAdornment={
-                  <Search className="h-4 w-4 text-utility-gray-600" />
-                }
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder={t('table.search')}
-                data-testid="search-input"
-                className="w-[320px] max-sm:w-full"
-              />
-              <Button
-                color="secondary"
-                startAdornment={<Filter className="h-4 w-4" />}
-                data-testid="filters-button"
-                onClick={() => setOpenFilters(true)}
-                disabled={!data || data.length === 0}
-                className="max-sm:hidden"
-              >
-                {t('table.filters')}
-              </Button>
-              <DataTable.ColumnVisibilityDropdown table={table} />
-            </div>
-          </DataTable.HeaderActionsContainer>
-        </DataTable.HeaderContainer>
-        <DataTable.Table
-          table={table}
-          columns={columns}
-          isLoading={isPending}
+        </DataTable.HeaderActionsContainer>
+      </DataTable.HeaderContainer>
+      <DataTable.Table table={table} columns={columns} isLoading={isPending} />
+      {data && data.length > 0 && (
+        <OnboardingsListFilterMenu
+          open={openFilters}
+          onOpenChange={setOpenFilters}
+          submit={handleFilters}
+          data={data || []}
         />
-        {data && data.length > 0 && (
-          <OnboardingsListFilterMenu
-            open={openFilters}
-            onOpenChange={setOpenFilters}
-            submit={handleFilters}
-            data={data || []}
-          />
-        )}
-      </Navbar>
+      )}
 
       <Dialog open={openArchive} onOpenChange={setOpenArchive}>
         <DialogContent className="sm:max-w-[425px]">
