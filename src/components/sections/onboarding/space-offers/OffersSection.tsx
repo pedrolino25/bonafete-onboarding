@@ -1,8 +1,6 @@
-import { Button } from '@/components/ui/button'
 import { Option } from '@/components/ui/select'
 import { OnboardingProcessItemResponse } from '@/services/api/onboarding-processes'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Send } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
@@ -57,10 +55,10 @@ export default function SpaceOffersSection({
 
   return (
     <form
-      className="w-full max-sm:border-t max-sm:px-4 py-4"
+      className="w-full max-sm:border-t max-sm:px-1 py-4"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <div className="w-full border-b pb-4 flex justify-between items-center max-sm:flex-col">
+      <div className="w-full border-b pb-4 flex items-center">
         <div>
           <h3 className="text-lg font-semibold text-utility-brand-600">
             {t('sections.onboarding.space-offers-title')}
@@ -69,17 +67,8 @@ export default function SpaceOffersSection({
             {t('sections.onboarding.space-offers-subtitle')}
           </p>
         </div>
-        <div className="flex justify-between items-center gap-4 max-sm:items-start max-sm:pt-4 max-sm:w-full">
-          <Button
-            type="submit"
-            disabled={!isValid || completed}
-            startAdornment={<Send className="h-4 w-4" />}
-          >
-            {t('button-actions.submit')}
-          </Button>
-        </div>
       </div>
-      <div className="w-9/12 max-w-[700px] max-sm:w-full flex flex-col gap-4 pt-8 pl-6 max-sm:pl-2 pb-12">
+      <div className="w-9/12 max-w-[700px] max-sm:w-full flex flex-col gap-4 pt-8 pl-6 max-sm:pl-0 pb-12">
         <SpaceRentalSection />
         {getValues().business_model?.[0]?.value !== 'only-space' && (
           <SpacePackageSection disabled />

@@ -36,7 +36,7 @@ export function Navbar({
           : undefined
       }
     >
-      <div className="flex">
+      <div className="flex overflow-auto max-w-full">
         {!hideSideBar && <Sidebar links={routes.sidebar} />}
         <div className="w-full">{children}</div>
       </div>

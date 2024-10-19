@@ -484,7 +484,6 @@ export default function OnboardingsListSection({
               data-testid="filters-button"
               onClick={() => setOpenFilters(true)}
               disabled={!data || data.length === 0}
-              className="max-sm:hidden"
             >
               {t('table.filters')}
             </Button>

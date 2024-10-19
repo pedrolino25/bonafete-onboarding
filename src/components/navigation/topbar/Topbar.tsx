@@ -42,7 +42,7 @@ export function Topbar({
             />
           </div>
         )}
-        <div className="w-full flex gap-6 justify-center items-center">
+        <div className="w-full flex gap-6 justify-center items-center max-sm:justify-start">
           {links && links.length > 0 && (
             <Tabs defaultValue={path} className="w-fit">
               <TabsList className="bg-white">

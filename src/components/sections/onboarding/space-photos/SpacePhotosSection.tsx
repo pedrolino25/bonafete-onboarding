@@ -144,7 +144,7 @@ export default function SpacePhotosSection({
 
   return (
     <form
-      className="w-full max-sm:border-t max-sm:px-4 py-4"
+      className="w-full max-sm:border-t max-sm:px-2 py-4"
       onSubmit={handleSubmit(onSubmit)}
     >
       <div className="w-full border-b pb-4 flex justify-between items-center max-sm:flex-col">
@@ -187,7 +187,7 @@ export default function SpacePhotosSection({
           </Button>
         </div>
       </div>
-      <div className="w-9/12 max-w-[700px] max-sm:w-full flex flex-col gap-8 pt-8 pl-6 max-sm:pl-2 pb-12">
+      <div className="w-9/12 max-w-[700px] max-sm:w-full flex flex-col gap-8 pt-8 pl-6 max-sm:pl-0 pb-12">
         <div className="grid grid-cols-2 max-sm:grid-cols-1 gap-6">
           {getValues().photos?.map((item, index) => {
             return (

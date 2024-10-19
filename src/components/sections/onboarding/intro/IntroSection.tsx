@@ -87,7 +87,7 @@ export default function OnboardingIntro({
 
   return (
     <form
-      className="w-full max-sm:border-t max-sm:px-4 py-4"
+      className="w-full max-sm:border-t max-sm:px-2 py-4"
       onSubmit={handleSubmit(onSubmit)}
     >
       <div className="w-full border-b pb-4 flex justify-between items-center max-sm:flex-col">
@@ -116,7 +116,7 @@ export default function OnboardingIntro({
           </Button>
         </div>
       </div>
-      <div className="w-9/12 max-w-[700px] max-sm:w-full flex flex-col gap-4 pt-8 pl-6 max-sm:pl-2 pb-12">
+      <div className="w-9/12 max-w-[700px] max-sm:w-full flex flex-col gap-4 pt-8 pl-6 max-sm:pl-0 pb-12">
         <div className="w-full flex items-center justify-between">
           <p className="w-10/12 font-medium tex-sm text-utility-gray-600">
             {t('sections.onboarding.form-question-1')}
