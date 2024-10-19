@@ -1,6 +1,7 @@
 'use client'
 
 import { TextInput } from '@/components/inputs/text-input/text-input'
+import { OnboardingFormLayout } from '@/components/layouts/onboarding-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useTranslations } from 'next-intl'
 import { useEffect } from 'react'
@@ -52,14 +53,14 @@ export default function SpaceRentalLotationForm({
     }
 
   return (
-    <div className="w-full border-t border-utility-gray-300">
-      <p className="text-base pt-4">
+    <OnboardingFormLayout.Main>
+      <OnboardingFormLayout.Title>
         {t('sections.onboarding.rental-form.lotation')}
-      </p>
-      <span className="font-light text-sm text-utility-gray-600">
+      </OnboardingFormLayout.Title>
+      <OnboardingFormLayout.Subtitle>
         {t('sections.onboarding.rental-form.define-lotation')}
-      </span>
-      <div className="w-full pt-4">
+      </OnboardingFormLayout.Subtitle>
+      <OnboardingFormLayout.Container>
         <TextInput
           data-testid="lotation"
           placeholder={t('sections.onboarding.rental-form.lotation')}
@@ -73,7 +74,14 @@ export default function SpaceRentalLotationForm({
               : undefined
           }
         />
-      </div>
-    </div>
+        {isValid && (
+          <OnboardingFormLayout.Info>
+            {t(
+              'sections.onboarding.rental-form.explanation-messages.lotation'
+            ).replace('$1', lotation)}
+          </OnboardingFormLayout.Info>
+        )}
+      </OnboardingFormLayout.Container>
+    </OnboardingFormLayout.Main>
   )
 }

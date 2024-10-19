@@ -1,6 +1,7 @@
 'use client'
 
 import { TextInput } from '@/components/inputs/text-input/text-input'
+import { OnboardingFormLayout } from '@/components/layouts/onboarding-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Clock, Euro } from 'lucide-react'
 import { useTranslations } from 'next-intl'
@@ -11,6 +12,7 @@ import z from 'zod'
 interface FlexiblePriceFormProps {
   defaultValues?: FlexiblePriceFormType
   onChange?: (values: FlexiblePriceFormType) => void
+  resetFormValues?: boolean
 }
 
 export const flexiblePriceFormSchema = z.object({
@@ -24,6 +26,7 @@ type FlexiblePriceFormType = z.infer<typeof flexiblePriceFormSchema>
 export default function FlexiblePriceForm({
   defaultValues,
   onChange,
+  resetFormValues,
 }: FlexiblePriceFormProps) {
   const t = useTranslations()
 
@@ -31,11 +34,16 @@ export default function FlexiblePriceForm({
     setValue,
     getValues,
     watch,
+    reset,
     formState: { errors, isValid },
   } = useForm<FlexiblePriceFormType>({
     resolver: zodResolver(flexiblePriceFormSchema),
     defaultValues,
   })
+
+  useEffect(() => {
+    if (resetFormValues) reset()
+  }, [resetFormValues])
 
   const handleChange =
     (field: keyof FlexiblePriceFormType) =>
@@ -55,7 +63,7 @@ export default function FlexiblePriceForm({
   }, [isValid, base_price, time_limit, price_after])
 
   return (
-    <div className="w-full flex flex-col gap-4 pt-4">
+    <OnboardingFormLayout.Container>
       <TextInput
         data-testid="base_price"
         value={getValues('base_price')}
@@ -107,6 +115,16 @@ export default function FlexiblePriceForm({
             : undefined
         }
       />
-    </div>
+      {isValid && (
+        <OnboardingFormLayout.Info>
+          {t(
+            'sections.onboarding.rental-form.explanation-messages.hourly-flexible-price'
+          )
+            .replace('$1', base_price)
+            .replace('$2', time_limit)
+            .replace('$3', price_after)}
+        </OnboardingFormLayout.Info>
+      )}
+    </OnboardingFormLayout.Container>
   )
 }

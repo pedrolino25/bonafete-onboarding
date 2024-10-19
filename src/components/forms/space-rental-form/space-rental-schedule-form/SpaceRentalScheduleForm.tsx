@@ -1,18 +1,26 @@
 'use client'
 
 import { SelectInput } from '@/components/inputs/select-input/select-input'
+import { OnboardingFormLayout } from '@/components/layouts/onboarding-form'
 import { Option } from '@/components/ui/select'
 import { HOURS } from '@/lib/utils/consts'
+import { getAvailableHourOptions } from '@/lib/utils/functions'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
 
+export interface CustomScheduleFormInfoProps {
+  minHours?: number
+}
+
 interface SpaceRentalScheduleFormProps {
   defaultValues?: SpaceRentalScheduleFormType
   onChange?: (values: SpaceRentalScheduleFormType) => void
   disabled?: boolean
+  resetFormValues?: boolean
+  info?: CustomScheduleFormInfoProps
 }
 
 const optionSchema = z.object({
@@ -92,6 +100,8 @@ export default function SpaceRentalScheduleForm({
   defaultValues,
   onChange,
   disabled = false,
+  resetFormValues,
+  info,
 }: SpaceRentalScheduleFormProps) {
   const t = useTranslations()
   const [mondayHoursOptions, setMondayHoursOptions] = useState<Option[]>([])
@@ -108,11 +118,16 @@ export default function SpaceRentalScheduleForm({
     setValue,
     getValues,
     watch,
+    reset,
     formState: { isValid, errors },
   } = useForm<SpaceRentalScheduleFormType>({
     resolver: zodResolver(spaceRentalScheduleFormSchema),
     defaultValues,
   })
+
+  useEffect(() => {
+    if (resetFormValues) reset()
+  }, [resetFormValues])
 
   const monday_from = watch('monday_from')
   const monday_to = watch('monday_to')
@@ -163,43 +178,30 @@ export default function SpaceRentalScheduleForm({
         { from: data.sunday_from, to: data.sunday_to },
       ]
 
-      let minHourOption: Option = {
-        value: '23:59',
-        label: '23:59',
-        disabled: false,
-      }
-      let maxHourOption: Option = {
-        value: '00:00',
-        label: '00:00',
-        disabled: false,
-      }
+      let minHourOption: number = HOURS.length
+      let maxHourOption: number = 0
 
       weekdays.forEach(({ from, to }) => {
-        const earliestFrom = from.reduce((min, option) => {
-          return option.value < min.value && !isUnavailable([option])
-            ? option
-            : min
-        }, minHourOption)
-
-        if (earliestFrom.value < minHourOption.value) {
-          minHourOption = earliestFrom
+        if (!isUnavailable(from)) {
+          const fromIndex = HOURS.findIndex(
+            (option) => option.label === from[0].label
+          )
+          minHourOption = minHourOption > fromIndex ? fromIndex : minHourOption
         }
 
         if (to && to.length > 0) {
-          const latestTo = to.reduce((max, option) => {
-            return option.value > max.value ? option : max
-          }, maxHourOption)
-
-          if (latestTo.value > maxHourOption.value) {
-            maxHourOption = latestTo
-          }
+          const toIndex = HOURS.findIndex(
+            (option) => option.label === to[0].label
+          )
+          maxHourOption = maxHourOption < toIndex ? toIndex : maxHourOption
         }
       })
-      setValue('min_hour', [minHourOption], {
+
+      setValue('min_hour', [HOURS[minHourOption]], {
         shouldDirty: true,
         shouldValidate: true,
       })
-      setValue('max_hour', [maxHourOption], {
+      setValue('max_hour', [HOURS[maxHourOption]], {
         shouldDirty: true,
         shouldValidate: true,
       })
@@ -231,27 +233,15 @@ export default function SpaceRentalScheduleForm({
     sunday_to,
   ])
 
-  const getAvailableHourOptions = (from: Option[]): Option[] => {
-    if (from.length === 0 || from[0].value === '--:--') {
-      return []
-    } else {
-      const fromIndex = HOURS.findIndex(
-        (option) => option.label === from[0].label
-      )
-
-      if (fromIndex >= 0) {
-        const updatedOptions = HOURS.slice(fromIndex + 1)
-        return updatedOptions
-      }
-      return HOURS
-    }
-  }
-
   const handleHourFromChange = (
     field: keyof SpaceRentalScheduleFormType,
     option: Option[]
   ) => {
-    const options = getAvailableHourOptions(option)
+    const deviation = info?.minHours && info.minHours > 1 ? info?.minHours : 1
+    const options = getAvailableHourOptions(HOURS, option, undefined, {
+      fromDeviation: deviation,
+      returnEmptyForUnavailable: true,
+    })
     switch (field) {
       case 'monday_from':
         if (options.length === 0) {
@@ -307,252 +297,259 @@ export default function SpaceRentalScheduleForm({
     }
 
   return (
-    <div className="w-full border-t border-utility-gray-300">
-      <p className="text-base pt-4">
+    <OnboardingFormLayout.Main>
+      <OnboardingFormLayout.Title>
         {t('sections.onboarding.rental-form.schedule')}
-      </p>
-      <span className="font-light text-sm text-utility-gray-600">
+      </OnboardingFormLayout.Title>
+      <OnboardingFormLayout.Subtitle>
         {t('sections.onboarding.rental-form.define-schedule')}
-      </span>
-      <div className="w-full grid grid-cols-5 pt-4 gap-2 items-center">
-        <span className="text-sm text-utility-gray-700 col-span-1">
-          {t('week-days.monday')}
-        </span>
-        <div className="col-span-2">
-          <SelectInput
-            data-testid="monday_from"
-            placeholder={t('sections.onboarding.rental-form.from')}
-            options={HOURS}
-            value={getValues('monday_from')}
-            onSelect={handleSelectChange('monday_from')}
-            disabled={disabled}
-            error={
-              errors.monday_from?.message
-                ? t(`error-messages.${errors.monday_from?.message}`)
-                : undefined
-            }
-          />
-        </div>
-        <div className="col-span-2">
-          <SelectInput
-            data-testid="monday_to"
-            placeholder={t('sections.onboarding.rental-form.to')}
-            options={mondayHoursOptions}
-            disabled={mondayHoursOptions.length === 0 || disabled}
-            value={getValues('monday_to')}
-            onSelect={handleSelectChange('monday_to')}
-            error={
-              errors.monday_to?.message
-                ? t(`error-messages.${errors.monday_to?.message}`)
-                : undefined
-            }
-          />
-        </div>
+      </OnboardingFormLayout.Subtitle>
+      <OnboardingFormLayout.Container>
+        <div className="w-full grid grid-cols-5 pt-4 gap-2 items-center">
+          <span className="text-sm text-utility-gray-700 col-span-1">
+            {t('week-days.monday')}
+          </span>
+          <div className="col-span-2">
+            <SelectInput
+              data-testid="monday_from"
+              placeholder={t('sections.onboarding.rental-form.from')}
+              options={HOURS}
+              value={getValues('monday_from')}
+              onSelect={handleSelectChange('monday_from')}
+              disabled={disabled}
+              error={
+                errors.monday_from?.message
+                  ? t(`error-messages.${errors.monday_from?.message}`)
+                  : undefined
+              }
+            />
+          </div>
+          <div className="col-span-2">
+            <SelectInput
+              data-testid="monday_to"
+              placeholder={t('sections.onboarding.rental-form.to')}
+              options={mondayHoursOptions}
+              disabled={mondayHoursOptions.length === 0 || disabled}
+              value={getValues('monday_to')}
+              onSelect={handleSelectChange('monday_to')}
+              error={
+                errors.monday_to?.message
+                  ? t(`error-messages.${errors.monday_to?.message}`)
+                  : undefined
+              }
+            />
+          </div>
 
-        <span className="text-sm text-utility-gray-700 col-span-1">
-          {t('week-days.tuesday')}
-        </span>
-        <div className="col-span-2">
-          <SelectInput
-            data-testid="tuesday_from"
-            placeholder={t('sections.onboarding.rental-form.from')}
-            options={HOURS}
-            value={getValues('tuesday_from')}
-            onSelect={handleSelectChange('tuesday_from')}
-            disabled={disabled}
-            error={
-              errors.tuesday_from?.message
-                ? t(`error-messages.${errors.tuesday_from?.message}`)
-                : undefined
-            }
-          />
-        </div>
-        <div className="col-span-2">
-          <SelectInput
-            data-testid="tuesday_to"
-            placeholder={t('sections.onboarding.rental-form.to')}
-            options={tuesdayHoursOptions}
-            disabled={tuesdayHoursOptions.length === 0 || disabled}
-            value={getValues('tuesday_to')}
-            onSelect={handleSelectChange('tuesday_to')}
-            error={
-              errors.tuesday_to?.message
-                ? t(`error-messages.${errors.tuesday_to?.message}`)
-                : undefined
-            }
-          />
-        </div>
+          <span className="text-sm text-utility-gray-700 col-span-1">
+            {t('week-days.tuesday')}
+          </span>
+          <div className="col-span-2">
+            <SelectInput
+              data-testid="tuesday_from"
+              placeholder={t('sections.onboarding.rental-form.from')}
+              options={HOURS}
+              value={getValues('tuesday_from')}
+              onSelect={handleSelectChange('tuesday_from')}
+              disabled={disabled}
+              error={
+                errors.tuesday_from?.message
+                  ? t(`error-messages.${errors.tuesday_from?.message}`)
+                  : undefined
+              }
+            />
+          </div>
+          <div className="col-span-2">
+            <SelectInput
+              data-testid="tuesday_to"
+              placeholder={t('sections.onboarding.rental-form.to')}
+              options={tuesdayHoursOptions}
+              disabled={tuesdayHoursOptions.length === 0 || disabled}
+              value={getValues('tuesday_to')}
+              onSelect={handleSelectChange('tuesday_to')}
+              error={
+                errors.tuesday_to?.message
+                  ? t(`error-messages.${errors.tuesday_to?.message}`)
+                  : undefined
+              }
+            />
+          </div>
 
-        <span className="text-sm text-utility-gray-700 col-span-1">
-          {t('week-days.wednesday')}
-        </span>
-        <div className="col-span-2">
-          <SelectInput
-            data-testid="wednesday_from"
-            placeholder={t('sections.onboarding.rental-form.from')}
-            options={HOURS}
-            value={getValues('wednesday_from')}
-            onSelect={handleSelectChange('wednesday_from')}
-            disabled={disabled}
-            error={
-              errors.wednesday_from?.message
-                ? t(`error-messages.${errors.wednesday_from?.message}`)
-                : undefined
-            }
-          />
-        </div>
-        <div className="col-span-2">
-          <SelectInput
-            data-testid="wednesday_to"
-            placeholder={t('sections.onboarding.rental-form.to')}
-            options={wednesdayHoursOptions}
-            disabled={wednesdayHoursOptions.length === 0 || disabled}
-            value={getValues('wednesday_to')}
-            onSelect={handleSelectChange('wednesday_to')}
-            error={
-              errors.wednesday_to?.message
-                ? t(`error-messages.${errors.wednesday_to?.message}`)
-                : undefined
-            }
-          />
-        </div>
+          <span className="text-sm text-utility-gray-700 col-span-1">
+            {t('week-days.wednesday')}
+          </span>
+          <div className="col-span-2">
+            <SelectInput
+              data-testid="wednesday_from"
+              placeholder={t('sections.onboarding.rental-form.from')}
+              options={HOURS}
+              value={getValues('wednesday_from')}
+              onSelect={handleSelectChange('wednesday_from')}
+              disabled={disabled}
+              error={
+                errors.wednesday_from?.message
+                  ? t(`error-messages.${errors.wednesday_from?.message}`)
+                  : undefined
+              }
+            />
+          </div>
+          <div className="col-span-2">
+            <SelectInput
+              data-testid="wednesday_to"
+              placeholder={t('sections.onboarding.rental-form.to')}
+              options={wednesdayHoursOptions}
+              disabled={wednesdayHoursOptions.length === 0 || disabled}
+              value={getValues('wednesday_to')}
+              onSelect={handleSelectChange('wednesday_to')}
+              error={
+                errors.wednesday_to?.message
+                  ? t(`error-messages.${errors.wednesday_to?.message}`)
+                  : undefined
+              }
+            />
+          </div>
 
-        <span className="text-sm text-utility-gray-700 col-span-1">
-          {t('week-days.thursday')}
-        </span>
-        <div className="col-span-2">
-          <SelectInput
-            data-testid="thursday_from"
-            placeholder={t('sections.onboarding.rental-form.from')}
-            options={HOURS}
-            value={getValues('thursday_from')}
-            onSelect={handleSelectChange('thursday_from')}
-            disabled={disabled}
-            error={
-              errors.thursday_from?.message
-                ? t(`error-messages.${errors.thursday_from?.message}`)
-                : undefined
-            }
-          />
-        </div>
-        <div className="col-span-2">
-          <SelectInput
-            data-testid="thursday_to"
-            placeholder={t('sections.onboarding.rental-form.to')}
-            options={thursdayHoursOptions}
-            disabled={thursdayHoursOptions.length === 0 || disabled}
-            value={getValues('thursday_to')}
-            onSelect={handleSelectChange('thursday_to')}
-            error={
-              errors.thursday_to?.message
-                ? t(`error-messages.${errors.thursday_to?.message}`)
-                : undefined
-            }
-          />
-        </div>
+          <span className="text-sm text-utility-gray-700 col-span-1">
+            {t('week-days.thursday')}
+          </span>
+          <div className="col-span-2">
+            <SelectInput
+              data-testid="thursday_from"
+              placeholder={t('sections.onboarding.rental-form.from')}
+              options={HOURS}
+              value={getValues('thursday_from')}
+              onSelect={handleSelectChange('thursday_from')}
+              disabled={disabled}
+              error={
+                errors.thursday_from?.message
+                  ? t(`error-messages.${errors.thursday_from?.message}`)
+                  : undefined
+              }
+            />
+          </div>
+          <div className="col-span-2">
+            <SelectInput
+              data-testid="thursday_to"
+              placeholder={t('sections.onboarding.rental-form.to')}
+              options={thursdayHoursOptions}
+              disabled={thursdayHoursOptions.length === 0 || disabled}
+              value={getValues('thursday_to')}
+              onSelect={handleSelectChange('thursday_to')}
+              error={
+                errors.thursday_to?.message
+                  ? t(`error-messages.${errors.thursday_to?.message}`)
+                  : undefined
+              }
+            />
+          </div>
 
-        <span className="text-sm text-utility-gray-700 col-span-1">
-          {t('week-days.friday')}
-        </span>
-        <div className="col-span-2">
-          <SelectInput
-            data-testid="friday_from"
-            placeholder={t('sections.onboarding.rental-form.from')}
-            options={HOURS}
-            value={getValues('friday_from')}
-            onSelect={handleSelectChange('friday_from')}
-            disabled={disabled}
-            error={
-              errors.friday_from?.message
-                ? t(`error-messages.${errors.friday_from?.message}`)
-                : undefined
-            }
-          />
-        </div>
-        <div className="col-span-2">
-          <SelectInput
-            data-testid="friday_to"
-            placeholder={t('sections.onboarding.rental-form.to')}
-            options={fridayHoursOptions}
-            disabled={fridayHoursOptions.length === 0 || disabled}
-            value={getValues('friday_to')}
-            onSelect={handleSelectChange('friday_to')}
-            error={
-              errors.friday_to?.message
-                ? t(`error-messages.${errors.friday_to?.message}`)
-                : undefined
-            }
-          />
-        </div>
+          <span className="text-sm text-utility-gray-700 col-span-1">
+            {t('week-days.friday')}
+          </span>
+          <div className="col-span-2">
+            <SelectInput
+              data-testid="friday_from"
+              placeholder={t('sections.onboarding.rental-form.from')}
+              options={HOURS}
+              value={getValues('friday_from')}
+              onSelect={handleSelectChange('friday_from')}
+              disabled={disabled}
+              error={
+                errors.friday_from?.message
+                  ? t(`error-messages.${errors.friday_from?.message}`)
+                  : undefined
+              }
+            />
+          </div>
+          <div className="col-span-2">
+            <SelectInput
+              data-testid="friday_to"
+              placeholder={t('sections.onboarding.rental-form.to')}
+              options={fridayHoursOptions}
+              disabled={fridayHoursOptions.length === 0 || disabled}
+              value={getValues('friday_to')}
+              onSelect={handleSelectChange('friday_to')}
+              error={
+                errors.friday_to?.message
+                  ? t(`error-messages.${errors.friday_to?.message}`)
+                  : undefined
+              }
+            />
+          </div>
 
-        <span className="text-sm text-utility-gray-700 col-span-1">
-          {t('week-days.saturday')}
-        </span>
-        <div className="col-span-2">
-          <SelectInput
-            data-testid="saturday_from"
-            placeholder={t('sections.onboarding.rental-form.from')}
-            options={HOURS}
-            value={getValues('saturday_from')}
-            onSelect={handleSelectChange('saturday_from')}
-            disabled={disabled}
-            error={
-              errors.saturday_from?.message
-                ? t(`error-messages.${errors.saturday_from?.message}`)
-                : undefined
-            }
-          />
-        </div>
-        <div className="col-span-2">
-          <SelectInput
-            data-testid="saturday_to"
-            placeholder={t('sections.onboarding.rental-form.to')}
-            options={saturdayHoursOptions}
-            disabled={saturdayHoursOptions.length === 0 || disabled}
-            value={getValues('saturday_to')}
-            onSelect={handleSelectChange('saturday_to')}
-            error={
-              errors.saturday_to?.message
-                ? t(`error-messages.${errors.saturday_to?.message}`)
-                : undefined
-            }
-          />
-        </div>
+          <span className="text-sm text-utility-gray-700 col-span-1">
+            {t('week-days.saturday')}
+          </span>
+          <div className="col-span-2">
+            <SelectInput
+              data-testid="saturday_from"
+              placeholder={t('sections.onboarding.rental-form.from')}
+              options={HOURS}
+              value={getValues('saturday_from')}
+              onSelect={handleSelectChange('saturday_from')}
+              disabled={disabled}
+              error={
+                errors.saturday_from?.message
+                  ? t(`error-messages.${errors.saturday_from?.message}`)
+                  : undefined
+              }
+            />
+          </div>
+          <div className="col-span-2">
+            <SelectInput
+              data-testid="saturday_to"
+              placeholder={t('sections.onboarding.rental-form.to')}
+              options={saturdayHoursOptions}
+              disabled={saturdayHoursOptions.length === 0 || disabled}
+              value={getValues('saturday_to')}
+              onSelect={handleSelectChange('saturday_to')}
+              error={
+                errors.saturday_to?.message
+                  ? t(`error-messages.${errors.saturday_to?.message}`)
+                  : undefined
+              }
+            />
+          </div>
 
-        <span className="text-sm text-utility-gray-700 col-span-1">
-          {t('week-days.sunday')}
-        </span>
-        <div className="col-span-2">
-          <SelectInput
-            data-testid="sunday_from"
-            placeholder={t('sections.onboarding.rental-form.from')}
-            options={HOURS}
-            value={getValues('sunday_from')}
-            onSelect={handleSelectChange('sunday_from')}
-            disabled={disabled}
-            error={
-              errors.sunday_from?.message
-                ? t(`error-messages.${errors.sunday_from?.message}`)
-                : undefined
-            }
-          />
+          <span className="text-sm text-utility-gray-700 col-span-1">
+            {t('week-days.sunday')}
+          </span>
+          <div className="col-span-2">
+            <SelectInput
+              data-testid="sunday_from"
+              placeholder={t('sections.onboarding.rental-form.from')}
+              options={HOURS}
+              value={getValues('sunday_from')}
+              onSelect={handleSelectChange('sunday_from')}
+              disabled={disabled}
+              error={
+                errors.sunday_from?.message
+                  ? t(`error-messages.${errors.sunday_from?.message}`)
+                  : undefined
+              }
+            />
+          </div>
+          <div className="col-span-2">
+            <SelectInput
+              data-testid="sunday_to"
+              placeholder={t('sections.onboarding.rental-form.to')}
+              options={sundayHoursOptions}
+              disabled={sundayHoursOptions.length === 0 || disabled}
+              value={getValues('sunday_to')}
+              onSelect={handleSelectChange('sunday_to')}
+              error={
+                errors.sunday_to?.message
+                  ? t(`error-messages.${errors.sunday_to?.message}`)
+                  : undefined
+              }
+            />
+          </div>
         </div>
-        <div className="col-span-2">
-          <SelectInput
-            data-testid="sunday_to"
-            placeholder={t('sections.onboarding.rental-form.to')}
-            options={sundayHoursOptions}
-            disabled={sundayHoursOptions.length === 0 || disabled}
-            value={getValues('sunday_to')}
-            onSelect={handleSelectChange('sunday_to')}
-            error={
-              errors.sunday_to?.message
-                ? t(`error-messages.${errors.sunday_to?.message}`)
-                : undefined
-            }
-          />
-        </div>
-      </div>
-    </div>
+        {isValid && (
+          <OnboardingFormLayout.Info>
+            {t('sections.onboarding.rental-form.explanation-messages.schedule')}
+          </OnboardingFormLayout.Info>
+        )}
+      </OnboardingFormLayout.Container>
+    </OnboardingFormLayout.Main>
   )
 }

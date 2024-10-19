@@ -84,7 +84,7 @@ export interface SidebarProps {
 
 function Sidebar({ items, value, onChange }: SidebarProps) {
   const t = useTranslations()
-  console.log(items)
+
   return (
     <div className="group justify-between flex flex-col gap-4 transition-all duration-200 ease-out w-fit max-sm:w-full h-full pr-4 max-sm:pr-0">
       <div>
@@ -119,7 +119,7 @@ function Sidebar({ items, value, onChange }: SidebarProps) {
   )
 }
 
-export const Layout = {
+export const SidebarLayout = {
   Root,
   Header,
   Main,

@@ -1,6 +1,7 @@
 'use client'
 
 import { TextInput } from '@/components/inputs/text-input/text-input'
+import { OnboardingFormLayout } from '@/components/layouts/onboarding-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Euro } from 'lucide-react'
 import { useTranslations } from 'next-intl'
@@ -11,6 +12,7 @@ import z from 'zod'
 interface FixedPriceFormProps {
   defaultValues?: FixedPriceFormType
   onChange?: (values: FixedPriceFormType) => void
+  resetFormValues?: boolean
 }
 
 export const fixedPriceFormSchema = z.object({
@@ -22,6 +24,7 @@ type FixedPriceFormType = z.infer<typeof fixedPriceFormSchema>
 export default function FixedPriceForm({
   defaultValues,
   onChange,
+  resetFormValues,
 }: FixedPriceFormProps) {
   const t = useTranslations()
 
@@ -29,11 +32,16 @@ export default function FixedPriceForm({
     setValue,
     getValues,
     watch,
+    reset,
     formState: { errors, isValid },
   } = useForm<FixedPriceFormType>({
     resolver: zodResolver(fixedPriceFormSchema),
     defaultValues,
   })
+
+  useEffect(() => {
+    if (resetFormValues) reset()
+  }, [resetFormValues])
 
   const handleChange =
     (field: keyof FixedPriceFormType) =>
@@ -51,7 +59,7 @@ export default function FixedPriceForm({
   }, [isValid, price])
 
   return (
-    <div className="w-full pt-4">
+    <OnboardingFormLayout.Container>
       <TextInput
         data-testid="price"
         placeholder={t('sections.onboarding.rental-form.price')}
@@ -69,6 +77,13 @@ export default function FixedPriceForm({
             : undefined
         }
       />
-    </div>
+      {isValid && (
+        <OnboardingFormLayout.Info>
+          {t(
+            'sections.onboarding.rental-form.explanation-messages.hourly-fixed-price'
+          ).replace('$1', price)}
+        </OnboardingFormLayout.Info>
+      )}
+    </OnboardingFormLayout.Container>
   )
 }

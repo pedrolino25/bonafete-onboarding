@@ -87,7 +87,7 @@ export default function CustomAccordion({
       </div>
       <div
         className={cn(
-          'h-0 hidden px-6 py-6',
+          'h-0 hidden px-6 pb-6',
           opened && '!block !h-fit transition-all'
         )}
       >

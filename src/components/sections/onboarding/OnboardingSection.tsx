@@ -1,6 +1,6 @@
 'use client'
 
-import { Layout, SidebarLink } from '@/components/layout/layout'
+import { SidebarLayout, SidebarLink } from '@/components/layouts/sidebar'
 import { Navbar } from '@/components/navigation/Navbar'
 import OnboardingIntro from '@/components/sections/onboarding/intro/IntroSection'
 import { Button } from '@/components/ui/button'
@@ -176,21 +176,23 @@ export default function OnboardingSection({
           </Button>
         }
       >
-        <Layout.Root>
-          <Layout.Header>
-            <Layout.Title>{t('sections.onboarding.title')}</Layout.Title>
-            <Layout.Subtitle>
+        <SidebarLayout.Root>
+          <SidebarLayout.Header>
+            <SidebarLayout.Title>
+              {t('sections.onboarding.title')}
+            </SidebarLayout.Title>
+            <SidebarLayout.Subtitle>
               {t('sections.onboarding.subtitle')}
-            </Layout.Subtitle>
-          </Layout.Header>
+            </SidebarLayout.Subtitle>
+          </SidebarLayout.Header>
           {data && sections.length > 0 && section && (
-            <Layout.Main>
-              <Layout.Sidebar
+            <SidebarLayout.Main>
+              <SidebarLayout.Sidebar
                 onChange={handlePageChange}
                 value={section}
                 items={sections}
               />
-              <Layout.Container>
+              <SidebarLayout.Container>
                 {section.value === OnboardingSections.Intro && (
                   <OnboardingIntro
                     onboardingInfo={data}
@@ -233,10 +235,10 @@ export default function OnboardingSection({
                   />
                 )}
                 {section.value === OnboardingSections.HostInfo && <div />}
-              </Layout.Container>
-            </Layout.Main>
+              </SidebarLayout.Container>
+            </SidebarLayout.Main>
           )}
-        </Layout.Root>
+        </SidebarLayout.Root>
       </Navbar>
     </main>
   )

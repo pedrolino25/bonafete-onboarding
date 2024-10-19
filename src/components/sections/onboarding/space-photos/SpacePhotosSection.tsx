@@ -121,7 +121,6 @@ export default function SpacePhotosSection({
   const onSubmit = async (values: SpacePhotosFormType) => {
     const pictures = await Promise.all(
       values.photos.map(async (photo, index) => {
-        console.log('photo', photo)
         if (photo.file) {
           return await uploadPictureToS3Bucket({
             file: photo.file,

@@ -226,7 +226,9 @@ export function Select({
           placeholder={
             !multiple
               ? useTranslation
-                ? t(selected[0]?.label) || placeholder
+                ? selected[0]?.label
+                  ? t(selected[0]?.label)
+                  : placeholder
                 : selected[0]?.label || placeholder
               : placeholder
           }

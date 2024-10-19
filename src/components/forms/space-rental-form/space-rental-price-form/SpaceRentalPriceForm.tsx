@@ -1,6 +1,7 @@
 'use client'
 
 import { SelectInput } from '@/components/inputs/select-input/select-input'
+import { OnboardingFormLayout } from '@/components/layouts/onboarding-form'
 import { Option } from '@/components/ui/select'
 import { PRICE_MODEL_OPTIONS } from '@/lib/utils/consts'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -24,6 +25,7 @@ interface SpaceRentalPriceFormProps {
   onChange?: (values: SpaceRentalPriceFormType) => void
   disabled?: boolean
   info?: CustomPriceFormInfoProps
+  resetFormValues?: boolean
 }
 
 const optionSchema = z.object({
@@ -56,6 +58,7 @@ export default function SpaceRentalPriceForm({
   onChange,
   disabled = false,
   info,
+  resetFormValues,
 }: SpaceRentalPriceFormProps) {
   const t = useTranslations()
 
@@ -63,6 +66,7 @@ export default function SpaceRentalPriceForm({
     setValue,
     getValues,
     watch,
+    reset,
     formState: { isValid, errors },
   } = useForm<SpaceRentalPriceFormType>({
     resolver: zodResolver(spaceRentalPriceFormSchema),
@@ -77,6 +81,12 @@ export default function SpaceRentalPriceForm({
   const fixed_price_form = watch('fixed_price_form')
   const flexible_price_form = watch('flexible_price_form')
   const custom_price_form = watch('custom_price_form')
+
+  useEffect(() => {
+    if (resetFormValues) {
+      reset()
+    }
+  }, [resetFormValues])
 
   useEffect(() => {
     if (isValid) {
@@ -138,26 +148,27 @@ export default function SpaceRentalPriceForm({
     }
 
   return (
-    <div className="w-full border-t border-utility-gray-300">
-      <p className="text-base pt-4">
+    <OnboardingFormLayout.Main>
+      <OnboardingFormLayout.Title>
         {t('sections.onboarding.rental-form.price')}
-      </p>
-      <span className="font-light text-sm text-utility-gray-600">
+      </OnboardingFormLayout.Title>
+      <OnboardingFormLayout.Subtitle>
         {t('sections.onboarding.rental-form.price-model-title')}
-      </span>
-      <div className="w-full pt-4">
+      </OnboardingFormLayout.Subtitle>
+      <OnboardingFormLayout.Container className="!gap-0">
         <SelectInput
           required
           data-testid="price_model"
           placeholder={t('sections.onboarding.rental-form.price-model')}
           options={PRICE_MODEL_OPTIONS}
-          value={getValues().price_model}
+          value={price_model || []}
           onSelect={handleSelectChange('price_model')}
           useTranslation
           disabled={disabled}
         />
         {showFixed && (
           <FixedPriceForm
+            resetFormValues={resetFormValues}
             defaultValues={defaultValues?.fixed_price_form}
             onChange={(value) =>
               setValue('fixed_price_form', value, {
@@ -169,6 +180,7 @@ export default function SpaceRentalPriceForm({
         )}
         {showFlexible && (
           <FlexiblePriceForm
+            resetFormValues={resetFormValues}
             defaultValues={defaultValues?.flexible_price_form}
             onChange={(value) =>
               setValue('flexible_price_form', value, {
@@ -180,6 +192,7 @@ export default function SpaceRentalPriceForm({
         )}
         {showCustom && (
           <CustomPriceForm
+            resetFormValues={resetFormValues}
             defaultValues={defaultValues?.custom_price_form}
             info={info}
             onChange={(value) =>
@@ -190,7 +203,7 @@ export default function SpaceRentalPriceForm({
             }
           />
         )}
-      </div>
-    </div>
+      </OnboardingFormLayout.Container>
+    </OnboardingFormLayout.Main>
   )
 }
