@@ -179,9 +179,6 @@
 }
 
 @layer base {
-  body {
-    @apply overflow-hidden;
-  }
   .date-picker-hide::-webkit-calendar-picker-indicator {
     @apply hidden;
     width: 0px !important;
