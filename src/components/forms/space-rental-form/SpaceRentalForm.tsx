@@ -60,6 +60,7 @@ const spaceRentalFormSchema = z
       if (data.business_model[0].value === 'packages') {
         return !!(
           data.lotation_form?.lotation &&
+          data.min_hours_form?.min_hours &&
           data.price_form?.price_model &&
           (data.price_form?.fixed_price_form?.price ||
             data.price_form?.flexible_price_form?.base_price ||
@@ -171,18 +172,16 @@ export default function SpaceRentalForm({
           })
         }
       />
-      {requireFullConfiguration && (
-        <SpaceRentalMinimumHoursForm
-          disabled={disableMinHoursForm}
-          defaultValues={defaultValues?.min_hours_form}
-          onChange={(value) =>
-            setValue('min_hours_form', value, {
-              shouldValidate: true,
-              shouldDirty: true,
-            })
-          }
-        />
-      )}
+      <SpaceRentalMinimumHoursForm
+        disabled={disableMinHoursForm}
+        defaultValues={defaultValues?.min_hours_form}
+        onChange={(value) =>
+          setValue('min_hours_form', value, {
+            shouldValidate: true,
+            shouldDirty: true,
+          })
+        }
+      />
       {requireFullConfiguration && (
         <SpaceRentalScheduleForm
           resetFormValues={resetFormValues}

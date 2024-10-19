@@ -305,7 +305,7 @@ export default function SpaceRentalScheduleForm({
         {t('sections.onboarding.rental-form.define-schedule')}
       </OnboardingFormLayout.Subtitle>
       <OnboardingFormLayout.Container>
-        <div className="w-full grid grid-cols-5 pt-4 gap-2 items-center">
+        <div className="w-full grid grid-cols-5 gap-2 items-center">
           <span className="text-sm text-utility-gray-700 col-span-1">
             {t('week-days.monday')}
           </span>
