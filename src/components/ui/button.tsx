@@ -102,6 +102,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       startAdornment,
       endAdornment,
       loading,
+      type = 'button',
       ...props
     },
     ref
@@ -111,6 +112,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <Comp
         className={cn(buttonVariants({ variant, size, color, className }))}
         ref={ref}
+        type={type}
         {...props}
       >
         {startAdornment}

@@ -20,7 +20,7 @@ export function SelectInput({
   ...props
 }: SelectInputProps) {
   return (
-    <div data-testid={props['data-testid']} className="grid">
+    <div data-testid={props['data-testid']} className="flex flex-col w-full">
       {label && (
         <label
           data-testid="label"
@@ -31,6 +31,7 @@ export function SelectInput({
         </label>
       )}
       <Select
+        className="max-w-full"
         variant={error ? 'error' : 'default'}
         startAdornment={startAdornment}
         {...props}

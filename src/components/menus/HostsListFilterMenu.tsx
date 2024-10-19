@@ -106,7 +106,7 @@ export function HostsListFilterMenu({
       shouldValidate: true,
       shouldDirty: true,
     })
-    setValue('locality', [], { shouldValidate: true, shouldDirty: true })
+    setValue('locality', [], { shouldDirty: true })
     submit([])
   }
 

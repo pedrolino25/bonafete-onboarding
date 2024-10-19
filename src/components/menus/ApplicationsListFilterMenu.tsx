@@ -148,8 +148,8 @@ export function ApplicationsListFilterMenu({
       shouldValidate: true,
       shouldDirty: true,
     })
-    setValue('type', [], { shouldValidate: true, shouldDirty: true })
-    setValue('locality', [], { shouldValidate: true, shouldDirty: true })
+    setValue('type', [], { shouldDirty: true })
+    setValue('locality', [], { shouldDirty: true })
     setValue('assigned_user_name', [], {
       shouldValidate: true,
       shouldDirty: true,

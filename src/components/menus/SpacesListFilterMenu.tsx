@@ -124,8 +124,8 @@ export function SpacesListFilterMenu({
       shouldValidate: true,
       shouldDirty: true,
     })
-    setValue('type', [], { shouldValidate: true, shouldDirty: true })
-    setValue('locality', [], { shouldValidate: true, shouldDirty: true })
+    setValue('type', [], { shouldDirty: true })
+    setValue('locality', [], { shouldDirty: true })
     submit([])
   }
 

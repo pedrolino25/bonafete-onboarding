@@ -105,7 +105,9 @@
     "set-profile-picture": "Definir como foto de capa",
     "delete-picture": "Eliminar fotografia",
     "drag-grop-image": "Arraste ou clique para adicionar imagens",
-    "view-photo": "Ver fotografia"
+    "view-photo": "Ver fotografia",
+    "submit": "Submeter",
+    "validate": "Validar"
   },
   "titles": {
     "photos": "Fotografias",
@@ -151,7 +153,14 @@
     "init-process": "Erro inesperado a iniciar onboarding.",
     "empty-photos": "Não existem Fotografias.",
     "submit": "Erro inesperdado a guardar",
-    "photos-limite-exceded": "Excedeu o máximo de fotografias permitido. Apenas são permitidas 10 fotografias"
+    "photos-limite-exceded": "Excedeu o máximo de fotografias permitido. Apenas são permitidas 10 fotografias",
+    "price_not_defined": "Defina o preço",
+    "base_price_not_defined": "Defina o preço base",
+    "time_limit_not_defined": "Defina o limite de horas até ser cobrado outro valor",
+    "price_after_not_defined": "Defina o preço após excedido o limite de horas",
+    "time_not_defined": "Defina a hora",
+    "define-lotation": "Defina a lotação máxima do espaço",
+    "define-cleaning-fee": "Defina a taxa de limpeza (opcional)"
   },
   "calendar": {
     "today": "Hoje",
@@ -173,9 +182,11 @@
       "introduction-title": "Introduzir Anfitrião",
       "space-info-title": "Informações do Espaço",
       "space-photos-title": "Fotografias",
+      "space-offers-title": "Ofertas",
       "introduction-subtitle": "Informe o anfitrião sobre a Bonafete. Esclareça sobre o seu funcionamento e regras.",
       "space-info-subtitle": "Introduza todas as informações referentes ao espaço e transversais a qualquer oferta do anfitrião",
       "space-photos-subtitle": "Introduza as fotografias do espaço. Certifique-se de que as fotografias tem a qualidade desejada",
+      "space-offers-subtitle": "Introduza todas as ofertas do anfitrião",
       "form-question-1": "O anfitrião ficou esclarecido em relação ao processo de reserva?",
       "form-question-2": "O anfitrião ficou esclarecido em relação á possibilidade de configuração da politica de cancelamento e reembolso?",
       "form-question-3": "O anfitrião ficou esclarecido em relação ao processamento de pagamentos, reembolsos e repasses?",
@@ -187,7 +198,43 @@
         "allow_smoking": "É permitido fumar",
         "allow_high_sound": "É permitido som elevado",
         "allow_pets": "São permitidos animais de Estimação"
+      },
+      "rental-form": {
+        "business-model-title": "Defina o modelo de negócio do anfitrição",
+        "price-model-title": "Defina a modalidade e o preço referente ao aluguer do espaço do anfitrião",
+        "price-model": "Modalidade de preço",
+        "price": "Preço",
+        "base-price": "Preço base",
+        "price-after": "Preço após excedido o limite de horas",
+        "time-limit": "Limite de horas até ser cobrado outro valor",
+        "schedule": "Horário",
+        "define-schedule": "Defina o horário do espaço",
+        "from": "De",
+        "to": "Até",
+        "lotation": "Lotação",
+        "define-lotation": "Defina a lotação máxima para aluguer do espaço",
+        "cleaning-fee": "Taxa de limpeza",
+        "define-cleaning-fee": "Defina a taxa de limpeza (opcional)"
       }
     }
+  },
+  "business-model-options": {
+    "only-space": "Aluguer de espaço",
+    "space-packages": "Aluguer de espaço + Pacotes",
+    "packages": "Apenas pacotes"
+  },
+  "price-model-options": {
+    "fixed": "Preço fixo á hora",
+    "flexible": "Preço fléxivel",
+    "custom": "Preço costumizável"
+  },
+  "week-days": {
+    "monday": "Segunda",
+    "tuesday": "Terça",
+    "wednesday": "Quarta",
+    "thursday": "Quinta",
+    "friday": "Sexta",
+    "saturday": "Sábado",
+    "sunday": "Domingo"
   }
 }

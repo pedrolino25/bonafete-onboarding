@@ -24,17 +24,17 @@ export default function SignInForm() {
     password: z.string().min(1, { message: t('signin.errors.empty-password') }),
   })
 
-  type SignInFormSchema = z.infer<typeof signInFormSchema>
+  type SignInFormType = z.infer<typeof signInFormSchema>
 
   const {
     handleSubmit,
     register,
     formState: { errors },
-  } = useForm<SignInFormSchema>({
+  } = useForm<SignInFormType>({
     resolver: zodResolver(signInFormSchema),
   })
 
-  const onSubmit = async (values: SignInFormSchema) => {
+  const onSubmit = async (values: SignInFormType) => {
     setErrorMessage(undefined)
 
     const { error } = await handleSignInWithEmailPassword(

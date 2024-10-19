@@ -212,35 +212,35 @@ export default function OnboardingsListSection({
       cell: ({ row }) => {
         return (
           <div className="flex gap-1">
-            {row.original.fase1 === OnboardingFaseStatus.Init ? (
+            {row.original.fase1 === OnboardingFaseStatus.Incomplete ? (
               <CircleAlert className="h-4 w-4 text-utility-blue-light-500" />
             ) : row.original.fase1 === OnboardingFaseStatus.Completed ? (
               <CircleCheck className="h-4 w-4 text-utility-success-500" />
             ) : (
               <CircleX className="h-4 w-4 text-utility-gray-300" />
             )}
-            {row.original.fase2 === OnboardingFaseStatus.Init ? (
+            {row.original.fase2 === OnboardingFaseStatus.Incomplete ? (
               <CircleAlert className="h-4 w-4 text-utility-blue-light-600" />
             ) : row.original.fase2 === OnboardingFaseStatus.Completed ? (
               <CircleCheck className="h-4 w-4 text-utility-success-500" />
             ) : (
               <CircleX className="h-4 w-4 text-utility-gray-300" />
             )}
-            {row.original.fase3 === OnboardingFaseStatus.Init ? (
+            {row.original.fase3 === OnboardingFaseStatus.Incomplete ? (
               <CircleAlert className="h-4 w-4 text-utility-blue-light-500" />
             ) : row.original.fase3 === OnboardingFaseStatus.Completed ? (
               <CircleCheck className="h-4 w-4 text-utility-success-500" />
             ) : (
               <CircleX className="h-4 w-4 text-utility-gray-300" />
             )}
-            {row.original.fase4 === OnboardingFaseStatus.Init ? (
+            {row.original.fase4 === OnboardingFaseStatus.Incomplete ? (
               <CircleAlert className="h-4 w-4 text-utility-blue-light-500" />
             ) : row.original.fase4 === OnboardingFaseStatus.Completed ? (
               <CircleCheck className="h-4 w-4 text-utility-success-500" />
             ) : (
               <CircleX className="h-4 w-4 text-utility-gray-300" />
             )}
-            {row.original.fase5 === OnboardingFaseStatus.Init ? (
+            {row.original.fase5 === OnboardingFaseStatus.Incomplete ? (
               <CircleAlert className="h-4 w-4 text-utility-blue-light-500" />
             ) : row.original.fase5 === OnboardingFaseStatus.Completed ? (
               <CircleCheck className="h-4 w-4 text-utility-success-500" />

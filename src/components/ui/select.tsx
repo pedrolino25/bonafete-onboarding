@@ -49,6 +49,7 @@ export interface SelectProps extends VariantProps<typeof selectVariants> {
   value?: Option[]
   onSelect?: (value: Option[]) => void
   disabled?: boolean
+  useTranslation?: boolean
 }
 
 export function Select({
@@ -63,6 +64,7 @@ export function Select({
   value,
   onSelect,
   disabled,
+  useTranslation = false,
 }: SelectProps) {
   const t = useTranslations()
   const comandRef = React.useRef<HTMLDivElement>(null)
@@ -190,7 +192,7 @@ export function Select({
                 shape="rounded"
               >
                 {option.node && <div>{option.node}</div>}
-                {option.label}
+                {useTranslation ? t(option.label) : option.label}
                 {!option.disabled && (
                   <button
                     className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
@@ -222,14 +224,18 @@ export function Select({
             setOpen(!open)
           }}
           placeholder={
-            !multiple ? selected[0]?.label || placeholder : placeholder
+            !multiple
+              ? useTranslation
+                ? t(selected[0]?.label) || placeholder
+                : selected[0]?.label || placeholder
+              : placeholder
           }
           className={cn(
             'flex-1 bg-transparent outline-none text-base font-light placeholder:text-utility-gray-500',
             isSelected && !multiple
               ? 'placeholder:text-utility-gray-900 font-light'
               : null,
-            !multiple ? 'cursor-pointer caret-transparent' : null
+            !multiple ? 'cursor-pointer caret-transparent min-w-0' : null
           )}
           disabled={disabled}
         />
@@ -280,11 +286,11 @@ export function Select({
                     <div className="flex items-center gap-2">
                       {option.node && <div>{option.node}</div>}
                       <span className="text-utility-gray-900 font-medium">
-                        {option.label}
+                        {useTranslation ? t(option.label) : option.label}
                       </span>
                       {option.info && (
                         <span className="text-utility-gray-600 font-light">
-                          {option.info}
+                          {useTranslation ? t(option.info) : option.info}
                         </span>
                       )}
                     </div>
@@ -353,11 +359,11 @@ export function Select({
                       <div className="flex items-center gap-2">
                         {option.node && <div>{option.node}</div>}
                         <span className="text-utility-gray-900 font-medium">
-                          {option.label}
+                          {useTranslation ? t(option.label) : option.label}
                         </span>
                         {option.info && (
                           <span className="text-utility-gray-600 font-light">
-                            {option.info}
+                            {useTranslation ? t(option.info) : option.info}
                           </span>
                         )}
                       </div>

@@ -18,14 +18,16 @@ import { useTranslations } from 'next-intl'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import SpaceInfoSection from './space-info/SpaceInfoSection'
+import SpaceOffersSection from './space-offers/OffersSection'
 import SpacePhotosSection from './space-photos/SpacePhotosSection'
 
 export enum OnboardingFaseStatus {
   Init = 'init',
+  Incomplete = 'incomplete',
   Completed = 'completed',
 }
 
-enum OnboardingSections {
+export enum OnboardingSections {
   Intro = 'intro',
   SpaceInfo = 'space-info',
   Photos = 'photos',
@@ -86,7 +88,10 @@ export default function OnboardingSection({
         {
           value: OnboardingSections.Offers,
           label: t('sections.onboarding.navigation.offers'),
-          disabled: data && data.fase3 !== OnboardingFaseStatus.Completed,
+          disabled:
+            data &&
+            data.fase3 !== OnboardingFaseStatus.Completed &&
+            data.fase3 !== OnboardingFaseStatus.Incomplete,
           complete: data && data.fase4 === OnboardingFaseStatus.Completed,
         },
         {
@@ -218,7 +223,15 @@ export default function OnboardingSection({
                     refetch={refetch}
                   />
                 )}
-                {section.value === OnboardingSections.Offers && <div />}
+                {section.value === OnboardingSections.Offers && (
+                  <SpaceOffersSection
+                    onboardingInfo={data}
+                    completed={
+                      data && data.fase4 === OnboardingFaseStatus.Completed
+                    }
+                    refetch={refetch}
+                  />
+                )}
                 {section.value === OnboardingSections.HostInfo && <div />}
               </Layout.Container>
             </Layout.Main>

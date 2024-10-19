@@ -1,58 +1,98 @@
-"use client"
+'use client'
 
-import * as React from "react"
-import * as AccordionPrimitive from "@radix-ui/react-accordion"
-import { ChevronDown } from "lucide-react"
+import { cn } from '@/lib/utils'
+import { ChevronDown, CircleCheck, Info, Minus, Plus } from 'lucide-react'
+import { ReactNode, useState } from 'react'
 
-import { cn } from "@/lib/utils"
-
-const Accordion = AccordionPrimitive.Root
-
-const AccordionItem = React.forwardRef<
-  React.ElementRef<typeof AccordionPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
->(({ className, ...props }, ref) => (
-  <AccordionPrimitive.Item
-    ref={ref}
-    className={cn("border-b", className)}
-    {...props}
-  />
-))
-AccordionItem.displayName = "AccordionItem"
-
-const AccordionTrigger = React.forwardRef<
-  React.ElementRef<typeof AccordionPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
-  <AccordionPrimitive.Header className="flex">
-    <AccordionPrimitive.Trigger
-      ref={ref}
+interface CustomAccordionProps {
+  disabled?: boolean
+  open?: boolean
+  title: string
+  children: ReactNode
+  variant?: 'default' | 'add'
+  complete?: boolean
+}
+export default function CustomAccordion({
+  disabled,
+  open = false,
+  title,
+  children,
+  variant = 'default',
+  complete = false,
+}: CustomAccordionProps) {
+  const [opened, setOpened] = useState<boolean>(open)
+  return (
+    <div
       className={cn(
-        "flex flex-1 items-center justify-between py-4 font-medium transition-all hover:underline [&[data-state=open]>svg]:rotate-180",
-        className
+        'w-full h-fit transition-all border-dashed rounded-xl border-[1.5px] border-utility-gray-300 hover:border-utility-gray-500',
+        disabled &&
+          'border-utility-gray-300 hover:border-utility-gray-300 cursor-not-allowed pointer-events-none',
+        (opened || complete) && 'border-solid'
       )}
-      {...props}
     >
-      {children}
-      <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
-    </AccordionPrimitive.Trigger>
-  </AccordionPrimitive.Header>
-))
-AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName
+      <div
+        className="px-4 py-4 flex items-center justify-between cursor-pointer"
+        onClick={() => setOpened(!opened)}
+      >
+        <div className="flex items-center gap-2">
+          {complete ? (
+            <CircleCheck className="h-4 w-4 text-utility-success-500" />
+          ) : (
+            <Info
+              className={cn(
+                'h-4 w-4 text-utility-gray-500',
+                disabled && 'text-utility-gray-400'
+              )}
+            />
+          )}
+          <span
+            className={cn(
+              'text-utility-gray-700 font-medium text-sm',
+              disabled && 'text-utility-gray-400'
+            )}
+          >
+            {title}
+          </span>
+        </div>
 
-const AccordionContent = React.forwardRef<
-  React.ElementRef<typeof AccordionPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>
->(({ className, children, ...props }, ref) => (
-  <AccordionPrimitive.Content
-    ref={ref}
-    className="overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
-    {...props}
-  >
-    <div className={cn("pb-4 pt-0", className)}>{children}</div>
-  </AccordionPrimitive.Content>
-))
-
-AccordionContent.displayName = AccordionPrimitive.Content.displayName
-
-export { Accordion, AccordionItem, AccordionTrigger, AccordionContent }
+        {variant === 'default' ? (
+          <ChevronDown
+            className={cn(
+              'h-4 w-4 text-utility-gray-700',
+              disabled && 'text-utility-gray-400',
+              opened && 'rotate-180 transition-all'
+            )}
+          />
+        ) : (
+          <>
+            {opened ? (
+              <Minus
+                className={cn(
+                  'h-4 w-4 text-utility-gray-700',
+                  disabled && 'text-utility-gray-400',
+                  opened && 'rotate-180 transition-all'
+                )}
+              />
+            ) : (
+              <Plus
+                className={cn(
+                  'h-4 w-4 text-utility-gray-700',
+                  disabled && 'text-utility-gray-400',
+                  opened && 'rotate-180 transition-all'
+                )}
+              />
+            )}
+          </>
+        )}
+      </div>
+      <div
+        className={cn(
+          'h-0 hidden px-6 py-6',
+          opened && '!block !h-fit transition-all'
+        )}
+      >
+        {children}
+      </div>
+    </div>
+  )
+}

@@ -27,7 +27,7 @@ const onboardingIntroFormSchema = z.object({
   question_6: z.boolean().refine((val) => val === true),
 })
 
-type OnboardingIntroFormSchema = z.infer<typeof onboardingIntroFormSchema>
+type OnboardingIntroFormType = z.infer<typeof onboardingIntroFormSchema>
 
 export default function OnboardingIntro({
   onboardingInfo,
@@ -60,7 +60,7 @@ export default function OnboardingIntro({
     setValue,
     getValues,
     formState: { isValid },
-  } = useForm<OnboardingIntroFormSchema>({
+  } = useForm<OnboardingIntroFormType>({
     resolver: zodResolver(onboardingIntroFormSchema),
     defaultValues: {
       question_1: completed,
@@ -72,7 +72,7 @@ export default function OnboardingIntro({
     },
   })
 
-  const onSubmit = (values: OnboardingIntroFormSchema) => {
+  const onSubmit = (values: OnboardingIntroFormType) => {
     if (
       values.question_1 &&
       values.question_2 &&

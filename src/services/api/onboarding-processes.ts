@@ -1,3 +1,7 @@
+import {
+  OnboardingFaseStatus,
+  OnboardingSections,
+} from '@/components/sections/onboarding/OnboardingSection'
 import { Cookies } from '@/middleware'
 import { getCookie } from 'cookies-next'
 
@@ -253,6 +257,29 @@ const saveOnboardingSpacePhotos = async (
   return response.json()
 }
 
+export interface UpdateOnboardingStatusProps {
+  onboarding_id: string
+  flow: OnboardingSections
+  status: OnboardingFaseStatus
+}
+
+const updateOnboardingStatus = async (
+  data: UpdateOnboardingStatusProps
+): Promise<unknown> => {
+  const response = await fetch(
+    `${ROOT}/api/onboarding/process/update-onboarding-status`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+      },
+      body: JSON.stringify(data),
+    }
+  )
+  return response.json()
+}
+
 export {
   archiveOnboardingProcess,
   getOnboardingProcessesById,
@@ -262,4 +289,5 @@ export {
   saveOnboardingSpaceInfo,
   saveOnboardingSpacePhotos,
   scheduleOnboardingProcess,
+  updateOnboardingStatus,
 }

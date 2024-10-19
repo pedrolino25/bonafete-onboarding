@@ -16,7 +16,13 @@ export async function uploadPictureToS3Bucket(file: S3File): Promise<string> {
     path: file.path,
     data: file.file,
   }).result
-  return `${process.env.NEXT_PUBLIC_AWS_STORAGE_BUCKET_URL}/public/${file.path}`
+  return `${process.env.NEXT_PUBLIC_AWS_STORAGE_BUCKET_URL}/${file.path}`
+}
+
+export async function urlToFile(imageUrl: string, fileName: string) {
+  const response = await fetch(imageUrl)
+  const blob = await response.blob()
+  return new File([blob], fileName, { type: blob.type })
 }
 
 export function splitCommaGetFirst(data: String): string {
