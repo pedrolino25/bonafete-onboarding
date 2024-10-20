@@ -4,6 +4,7 @@ import { SelectInput } from '@/components/inputs/select-input/select-input'
 import { TextInput } from '@/components/inputs/text-input/text-input'
 import { ApplicationsListFilterMenu } from '@/components/menus/ApplicationsListFilterMenu'
 import { DataTable } from '@/components/table/table'
+import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -670,25 +671,37 @@ export default function ApplicationsListSection({
         />
       )}
       <Dialog open={openPhotos} onOpenChange={setOpenPhotos}>
-        <DialogContent className="sm:max-w-[800px]">
+        <DialogContent className="max-w-[1024px] max-h-svh">
           <DialogHeader>
             <DialogTitle>{t('titles.photos')}</DialogTitle>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            {openPhotos && photos && photos.length > 0 && (
-              <div className="overflow-y-auto max-h-[500px]">
-                {photos.map((photo) => {
-                  return (
-                    <div className="relative w-full h-[400px] mb-6">
-                      <Image src={photo} alt={photo} fill loading="lazy" />
-                    </div>
-                  )
-                })}
-              </div>
-            )}
-            {!photos && (
-              <p className="text-md">{t('error-messages.empty-photos')}</p>
-            )}
+          <div className="max-h-[calc(100svh-100px)] w-full overflow-y-auto">
+            <div className="flex flex-col gap-8 py-8 px-1 w-full">
+              {openPhotos && photos && photos.length > 0 && (
+                <>
+                  {photos.map((photo, index) => {
+                    return (
+                      <div
+                        key={`space_image_${index}`}
+                        className="relative w-full"
+                      >
+                        <AspectRatio ratio={16 / 9}>
+                          <Image
+                            src={photo}
+                            alt={`space_image_${index}`}
+                            fill
+                            objectFit="cover"
+                          />
+                        </AspectRatio>
+                      </div>
+                    )
+                  })}
+                </>
+              )}
+              {!photos && (
+                <p className="text-md">{t('error-messages.empty-photos')}</p>
+              )}
+            </div>
           </div>
         </DialogContent>
       </Dialog>

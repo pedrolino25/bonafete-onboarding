@@ -13,6 +13,7 @@ export interface OnboardingProcessListItemResponse {
   phone: string
   email: string
   status: string
+  fase_order: string
   fase1: string
   fase2: string
   fase3: string

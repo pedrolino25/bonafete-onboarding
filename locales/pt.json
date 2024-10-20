@@ -65,7 +65,7 @@
     "photos": "Fotografias",
     "assigned_user_name": "Responsável",
     "schedule_date": "Data/Hora",
-    "fase": "Progresso",
+    "fase_order": "Progresso",
     "conveniences": "Comodidades",
     "min_hours": "Mínimo de horas",
     "tour": "Link de visita virtual",

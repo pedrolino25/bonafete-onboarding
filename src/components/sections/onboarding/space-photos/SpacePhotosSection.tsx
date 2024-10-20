@@ -258,7 +258,7 @@ export default function SpacePhotosSection({
             <DialogTitle>{t('titles.photos')}</DialogTitle>
           </DialogHeader>
           <div className="max-h-[calc(100svh-100px)] w-full overflow-y-auto">
-            <div className="flex flex-col gap-8 py-8 px-6 w-full">
+            <div className="flex flex-col gap-8 py-8 px-1 w-full">
               {getValues().photos?.map((photo, index) => {
                 return (
                   <div key={`space_image_${index}`} className="relative w-full">
