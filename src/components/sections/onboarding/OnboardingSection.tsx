@@ -83,7 +83,10 @@ export default function OnboardingSection({
         {
           value: OnboardingSections.Photos,
           label: t('sections.onboarding.navigation.photos'),
-          disabled: data && data.fase2 !== OnboardingFaseStatus.Completed,
+          disabled:
+            data &&
+            data.fase2 !== OnboardingFaseStatus.Completed &&
+            data.fase2 !== OnboardingFaseStatus.Incomplete,
           complete: data && data.fase3 === OnboardingFaseStatus.Completed,
           incomplete: data && data.fase3 === OnboardingFaseStatus.Incomplete,
         },

@@ -11,6 +11,7 @@ import { cn, splitCommaGetFirst } from '@/lib/utils'
 import {
   OnboardingProcessItemResponse,
   saveOnboardingSpaceInfo,
+  updateOnboardingStatus,
 } from '@/services/api/onboarding-processes'
 import { verifySpaceTitle } from '@/services/api/spaces'
 import {
@@ -25,6 +26,7 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import {
   CircleCheck,
   CircleX,
+  Info,
   LoaderCircle,
   Save,
   Search,
@@ -34,6 +36,7 @@ import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
+import { OnboardingFaseStatus, OnboardingSections } from '../OnboardingSection'
 
 const optionSchema = z.object({
   value: z.string().min(1, 'Value is required'),
@@ -221,6 +224,25 @@ export default function SpaceInfoSection({
     },
   })
 
+  const updateOnboardingStatusMutation = useMutation({
+    mutationFn: updateOnboardingStatus,
+    onSuccess: () => {
+      refetch?.()
+      toast({
+        variant: 'success',
+        title: t('success'),
+        description: t('success-messages.submit'),
+      })
+    },
+    onError: () => {
+      toast({
+        variant: 'destructive',
+        title: t('error'),
+        description: t('error-messages.submit'),
+      })
+    },
+  })
+
   const [lastVerification, setLastVerification] = useState<string>(
     onboardingInfo.space?.title || ''
   )
@@ -336,6 +358,22 @@ export default function SpaceInfoSection({
           </p>
         </div>
         <div className="flex justify-between items-center gap-4 max-sm:justify-end max-sm:items-start max-sm:pt-4 max-sm:w-full">
+          {onboardingInfo.fase2 === OnboardingFaseStatus.Completed && (
+            <Button
+              startAdornment={<Info className="h-4 w-4" />}
+              color="secondary"
+              variant="fill"
+              onClick={() =>
+                updateOnboardingStatusMutation.mutate({
+                  onboarding_id: onboardingInfo.id,
+                  flow: OnboardingSections.SpaceInfo,
+                  status: OnboardingFaseStatus.Incomplete,
+                })
+              }
+            >
+              {t('button-actions.update-needed')}
+            </Button>
+          )}
           {!isValid ? (
             <Button
               onClick={() => onSubmit(getValues())}

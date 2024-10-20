@@ -157,22 +157,24 @@ export default function SpacePhotosSection({
           </p>
         </div>
         <div className="flex justify-between items-center gap-4 max-sm:justify-end max-sm:items-start max-sm:pt-4 max-sm:w-full">
-          <Button
-            disabled={!isValid || saveOnboardingSpacePhotosMutation.isPending}
-            loading={saveOnboardingSpacePhotosMutation.isPending}
-            startAdornment={<Info className="h-4 w-4" />}
-            color="secondary"
-            variant="fill"
-            onClick={() =>
-              updateOnboardingStatusMutation.mutate({
-                onboarding_id: onboardingInfo.id,
-                flow: OnboardingSections.Photos,
-                status: OnboardingFaseStatus.Incomplete,
-              })
-            }
-          >
-            {t('button-actions.update-needed')}
-          </Button>
+          {onboardingInfo.fase3 !== OnboardingFaseStatus.Incomplete && (
+            <Button
+              disabled={!isValid || saveOnboardingSpacePhotosMutation.isPending}
+              loading={saveOnboardingSpacePhotosMutation.isPending}
+              startAdornment={<Info className="h-4 w-4" />}
+              color="secondary"
+              variant="fill"
+              onClick={() =>
+                updateOnboardingStatusMutation.mutate({
+                  onboarding_id: onboardingInfo.id,
+                  flow: OnboardingSections.Photos,
+                  status: OnboardingFaseStatus.Incomplete,
+                })
+              }
+            >
+              {t('button-actions.update-needed')}
+            </Button>
+          )}
           <Button
             type="submit"
             disabled={
