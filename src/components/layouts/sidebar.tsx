@@ -1,7 +1,7 @@
 'use client'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { CircleCheckBig } from 'lucide-react'
+import { CircleAlert, CircleCheckBig } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 function Root({
@@ -74,6 +74,7 @@ export interface SidebarLink {
   value: string
   disabled?: boolean
   complete?: boolean
+  incomplete?: boolean
 }
 
 export interface SidebarProps {
@@ -84,7 +85,7 @@ export interface SidebarProps {
 
 function Sidebar({ items, value, onChange }: SidebarProps) {
   const t = useTranslations()
-
+  console.log(items)
   return (
     <div className="group justify-between flex flex-col gap-4 transition-all duration-200 ease-out w-fit max-sm:w-full h-full pr-4 max-sm:pr-0">
       <div>
@@ -99,13 +100,17 @@ function Sidebar({ items, value, onChange }: SidebarProps) {
               className="hover:underline justify-between"
               onClick={() => onChange(item)}
               endAdornment={
-                <CircleCheckBig
-                  className={`w-4 h-4 ${
-                    item.complete
-                      ? 'text-utility-success-500'
-                      : 'text-transparent'
-                  }`}
-                />
+                item.incomplete ? (
+                  <CircleAlert className="w-4 h-4 text-utility-warning-400" />
+                ) : (
+                  <CircleCheckBig
+                    className={`w-4 h-4 ${
+                      item.complete
+                        ? 'text-utility-success-500'
+                        : 'text-transparent'
+                    }`}
+                  />
+                )
               }
             >
               <div className="w-max font-medium text-left pr-2">

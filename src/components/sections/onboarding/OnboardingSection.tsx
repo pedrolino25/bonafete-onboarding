@@ -78,12 +78,14 @@ export default function OnboardingSection({
           label: t('sections.onboarding.navigation.space-info'),
           disabled: data && data.fase1 !== OnboardingFaseStatus.Completed,
           complete: data && data.fase2 === OnboardingFaseStatus.Completed,
+          incomplete: data && data.fase2 === OnboardingFaseStatus.Incomplete,
         },
         {
           value: OnboardingSections.Photos,
           label: t('sections.onboarding.navigation.photos'),
           disabled: data && data.fase2 !== OnboardingFaseStatus.Completed,
           complete: data && data.fase3 === OnboardingFaseStatus.Completed,
+          incomplete: data && data.fase3 === OnboardingFaseStatus.Incomplete,
         },
         {
           value: OnboardingSections.Offers,
@@ -93,12 +95,14 @@ export default function OnboardingSection({
             data.fase3 !== OnboardingFaseStatus.Completed &&
             data.fase3 !== OnboardingFaseStatus.Incomplete,
           complete: data && data.fase4 === OnboardingFaseStatus.Completed,
+          incomplete: data && data.fase4 === OnboardingFaseStatus.Incomplete,
         },
         {
           value: OnboardingSections.HostInfo,
           label: t('sections.onboarding.navigation.host-info'),
           disabled: data && data.fase5 !== OnboardingFaseStatus.Completed,
           complete: data && data.fase5 === OnboardingFaseStatus.Completed,
+          incomplete: data && data.fase5 === OnboardingFaseStatus.Incomplete,
         },
       ])
       setSection(
@@ -119,6 +123,8 @@ export default function OnboardingSection({
               ),
               disabled: false,
               complete: true,
+              incomplete:
+                data && data.fase5 === OnboardingFaseStatus.Incomplete,
             }
           : data && data.fase3 === OnboardingFaseStatus.Completed
           ? {
@@ -128,6 +134,8 @@ export default function OnboardingSection({
               ),
               disabled: false,
               complete: false,
+              incomplete:
+                data && data.fase4 === OnboardingFaseStatus.Incomplete,
             }
           : data && data.fase2 === OnboardingFaseStatus.Completed
           ? {
@@ -137,6 +145,8 @@ export default function OnboardingSection({
               ),
               disabled: false,
               complete: false,
+              incomplete:
+                data && data.fase3 === OnboardingFaseStatus.Incomplete,
             }
           : data && data.fase1 === OnboardingFaseStatus.Completed
           ? {
@@ -146,12 +156,16 @@ export default function OnboardingSection({
               ),
               disabled: false,
               complete: false,
+              incomplete:
+                data && data.fase2 === OnboardingFaseStatus.Incomplete,
             }
           : {
               value: OnboardingSections.Intro,
               label: t('sections.onboarding.navigation.intro'),
               disabled: false,
               complete: false,
+              incomplete:
+                data && data.fase1 === OnboardingFaseStatus.Incomplete,
             }
       )
     }
