@@ -72,7 +72,7 @@ export const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(
         />
         {hint && !error && (
           <p
-            className="text-sm font-light text-utility-gray-600 p-0 m-0 mt-1.5"
+            className="pl-2 text-xs font-light text-utility-gray-600 p-0 m-0 mt-1.5"
             data-testid="hint-text"
           >
             {hint}

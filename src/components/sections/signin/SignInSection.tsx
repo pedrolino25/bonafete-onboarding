@@ -1,6 +1,6 @@
 import logo from '@/assets/logo.png'
 import img from '@/assets/signin-img.jpg'
-import SignInForm from '@/components/forms/signin/SignInForm'
+import SignInForm from '@/components/forms/signin-form/SignInForm'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 

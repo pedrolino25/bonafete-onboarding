@@ -1,32 +1,49 @@
 import { Option } from '@/components/ui/select'
 
+export enum SpaceBusinessModel {
+  OnlyRental = 'only-space',
+  RentalAndPackages = 'space-and-packages',
+  OnlyPackages = 'packages',
+}
+
 export const BUSINESS_MODEL_OPTIONS: Option[] = [
   {
-    value: 'only-space',
+    value: SpaceBusinessModel.OnlyRental,
     label: 'business-model-options.only-space',
   },
   {
-    value: 'space-packages',
-    label: 'business-model-options.space-packages',
+    value: SpaceBusinessModel.RentalAndPackages,
+    label: 'business-model-options.space-and-packages',
   },
   {
-    value: 'packages',
+    value: SpaceBusinessModel.OnlyPackages,
     label: 'business-model-options.packages',
   },
 ]
 
 export const PRICE_MODEL_OPTIONS: Option[] = [
   {
-    value: 'fixed',
-    label: 'price-model-options.fixed',
+    value: 'hourly-fixed',
+    label: 'price-model-options.hourly-fixed',
   },
   {
-    value: 'flexible',
-    label: 'price-model-options.flexible',
+    value: 'hourly-flexible',
+    label: 'price-model-options.hourly-flexible',
   },
   {
-    value: 'custom',
-    label: 'price-model-options.custom',
+    value: 'hourly-custom',
+    label: 'price-model-options.hourly-custom',
+  },
+]
+
+export const PRICING_MODEL_OPTIONS: Option[] = [
+  {
+    value: 'person',
+    label: 'price-model-options.person',
+  },
+  {
+    value: 'hourly',
+    label: 'price-model-options.hourly',
   },
 ]
 

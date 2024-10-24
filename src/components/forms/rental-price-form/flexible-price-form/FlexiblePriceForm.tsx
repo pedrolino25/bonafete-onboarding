@@ -21,7 +21,7 @@ export const flexiblePriceFormSchema = z.object({
   price_after: z.string().min(1, 'price_after_not_defined'),
 })
 
-type FlexiblePriceFormType = z.infer<typeof flexiblePriceFormSchema>
+export type FlexiblePriceFormType = z.infer<typeof flexiblePriceFormSchema>
 
 export default function FlexiblePriceForm({
   defaultValues,

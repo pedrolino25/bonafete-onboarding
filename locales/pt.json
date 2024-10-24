@@ -116,14 +116,16 @@
     "schedule": "Agendar reunião",
     "reject": "Rejeitar inscrição",
     "archive": "Arquivar processo",
-    "init-process": "Iniciar onboarding"
+    "init-process": "Iniciar onboarding",
+    "delete-package": "Eliminar pacote"
   },
   "subtitles": {
     "reasign": "Selecione a pessoa que pretende que seja responsável pelo seguimento deste processo",
     "schedule": "Indique a data e hora combinada com o anfitrião",
     "reject": "Tem a certeza que deseja rejeitar a inscrição?",
     "archive": "Tem a certeza que deseja arquivar o processo?",
-    "init-process": "Tem a certeza que deseja iniciar o processo de onboarding?"
+    "init-process": "Tem a certeza que deseja iniciar o processo de onboarding?",
+    "delete-package": "Tem a certeza que deseja eliminar o pacote?"
   },
   "button-actions": {
     "confirm": "Confirmar",
@@ -133,7 +135,10 @@
     "save": "Guardar",
     "select-all": "Selecionar todos",
     "unselect-all": "Deselecionar todos",
-    "update-needed": "Necessita atualização"
+    "update-needed": "Necessita atualização",
+    "add": "Adicionar",
+    "remove": "Remover",
+    "edit": "Editar"
   },
   "error": "Erro",
   "success": "Sucesso",
@@ -143,7 +148,8 @@
     "reasign": "Responsável assignado com sucesso.",
     "schedule": "Inscrição agendada com sucesso.",
     "init-process": "Onboarding iniciado com sucesso.",
-    "submit": "Dados guardados com sucesso"
+    "submit": "Dados guardados com sucesso",
+    "delete-package": "Pacote eliminado com sucesso"
   },
   "error-messages": {
     "accept": "Erro inesperado a aceitar inscrição.",
@@ -161,7 +167,8 @@
     "time_not_defined": "Defina a hora",
     "define-lotation": "Defina a lotação máxima do espaço",
     "define-cleaning-fee": "Defina a taxa de limpeza (opcional)",
-    "define-min-hours": "Defina o minimo de horas para reserva"
+    "define-min-hours": "Defina o minimo de horas para reserva",
+    "delete-package": "Erro inesperado a eliminar pacote"
   },
   "calendar": {
     "today": "Hoje",
@@ -233,23 +240,55 @@
           "hourly-custom-price-2": " $1€/hora das $2 às $3",
           "lotation": "* A lotação máxima definida para o espaço é de $1 pessoas. Não será possivel receber pedidos de reserva para mais pessoas",
           "only-space": "* Apenas será possivel alugar o espaço, os extras são opcionais",
-          "space-packages": "* Será possivel alugar o espaço, com ou sem pacotes de serviços, e os extras são opcionais",
+          "space-and-packages": "* Será possivel alugar o espaço, com ou sem pacotes de serviços, e os extras são opcionais",
           "packages": "* Apenas será possivel alugar o espaço com pacotes de serviço, e os extras são opcionais",
           "schedule": "* Apenas será possivel efetuar a reserva nos periodos horários definidos para cada dia da semana",
           "min-hours": "* Apenas será possivel reservar o espaço por um periodo mínimo de $1 horas"
         }
-      }
+      },
+      "package-form": {
+        "services-title": "Serviços",
+        "services-subtitle": "Define os serviços que compõem o pacote",
+        "description-title": "Descrição",
+        "description-subtitle": "Descreva sucintamente tudo o que está incluído no pacote",
+        "schedule-title": "Horário",
+        "schedule-subtitle": "Defina o horário em que este pacote estará disponível",
+        "min-hours-persons-title": "Minímo de horas e lotação",
+        "min-hours-persons-subtitle": "Defina o minímo de horas e o minímo e máximo de pessoas para este pacote estar disponível",
+        "min-hours": "Minímo de horas",
+        "min-persons": "Minímo de pessoas",
+        "max-persons": "Máximo de pessoas",
+        "pricing-title": "Preçário",
+        "pricing-subtitle": "Defina o preçário do pacote de serviços",
+        "select-pricing-model": "Selecione a modalidade de preço",
+        "base-price": "Preço base",
+        "extra-hour-price": "Preço por hora extra",
+        "extra-person-price": "Preço por pessoa extra",
+        "new-service": "Adicionar novo serviço",
+        "explanation-messages": {
+          "services": "* O pacote inclui os serviços selecionados",
+          "min-hours-persons": "* Apenas será possivel reservar este pacote por um periodo minímo de $1 horas, para no minímo $2 pessoas e um máximo de $3 pessoas",
+          "pricing": "* Será cobrado um preço base de $1€ $2, $3€ por hora extra e $4€ por pessoa extra"
+        }
+      },
+      "general-config": "Configuração de reserva",
+      "add-package": "Adicionar pacote de festa",
+      "add-extra": "Adicionar extra",
+      "package": "Pacote de festa ($1)",
+      "package-title": "Pacote $1"
     }
   },
   "business-model-options": {
     "only-space": "Aluguer de espaço",
-    "space-packages": "Aluguer de espaço + Pacotes",
+    "space-and-packages": "Aluguer de espaço + Pacotes",
     "packages": "Apenas pacotes"
   },
   "price-model-options": {
-    "fixed": "Preço fixo á hora",
-    "flexible": "Preço fléxivel",
-    "custom": "Preço costumizável"
+    "hourly-fixed": "Preço fixo á hora",
+    "hourly-flexible": "Preço fléxivel",
+    "hourly-custom": "Preço costumizável",
+    "person": "Por pessoa",
+    "hourly": "Por hora"
   },
   "week-days": {
     "monday": "Segunda",

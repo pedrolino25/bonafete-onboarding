@@ -19,7 +19,7 @@ export const fixedPriceFormSchema = z.object({
   price: z.string().min(1, 'price_not_defined'),
 })
 
-type FixedPriceFormType = z.infer<typeof fixedPriceFormSchema>
+export type FixedPriceFormType = z.infer<typeof fixedPriceFormSchema>
 
 export default function FixedPriceForm({
   defaultValues,

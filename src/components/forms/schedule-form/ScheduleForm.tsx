@@ -13,14 +13,20 @@ import z from 'zod'
 
 export interface CustomScheduleFormInfoProps {
   minHours?: number
+  limits?: {
+    start: Option[]
+    end: Option[]
+  }
 }
 
-interface SpaceRentalScheduleFormProps {
-  defaultValues?: SpaceRentalScheduleFormType
-  onChange?: (values: SpaceRentalScheduleFormType) => void
+interface ScheduleFormProps {
+  defaultValues?: ScheduleFormType
+  onChange?: (values: ScheduleFormType) => void
   disabled?: boolean
   resetFormValues?: boolean
   info?: CustomScheduleFormInfoProps
+  title?: string
+  subtitle?: string
 }
 
 const optionSchema = z.object({
@@ -40,7 +46,7 @@ const validateDay = (from: Option[], to: Option[] | undefined) => {
   return to && to.length > 0
 }
 
-export const spaceRentalScheduleFormSchema = z
+export const scheduleFormSchema = z
   .object({
     monday_from: z.array(optionSchema).min(1),
     monday_to: z.array(optionSchema).optional(),
@@ -94,15 +100,17 @@ export const spaceRentalScheduleFormSchema = z
     }
   )
 
-type SpaceRentalScheduleFormType = z.infer<typeof spaceRentalScheduleFormSchema>
+export type ScheduleFormType = z.infer<typeof scheduleFormSchema>
 
-export default function SpaceRentalScheduleForm({
+export default function ScheduleForm({
   defaultValues,
   onChange,
   disabled = false,
   resetFormValues,
   info,
-}: SpaceRentalScheduleFormProps) {
+  title,
+  subtitle,
+}: ScheduleFormProps) {
   const t = useTranslations()
   const [mondayHoursOptions, setMondayHoursOptions] = useState<Option[]>([])
   const [tuesdayHoursOptions, setTuesdayHoursOptions] = useState<Option[]>([])
@@ -114,14 +122,30 @@ export default function SpaceRentalScheduleForm({
   const [saturdayHoursOptions, setSaturdayHoursOptions] = useState<Option[]>([])
   const [sundayHoursOptions, setSundayHoursOptions] = useState<Option[]>([])
 
+  const getDefaultHoursList = () => {
+    if (info?.limits?.start && info?.limits?.end) {
+      const fromIndex = HOURS.findIndex(
+        (option) => option.label === info?.limits?.start[0].label
+      )
+      const toIndex = HOURS.findIndex(
+        (option) => option.label === info?.limits?.end[0].label
+      )
+      return HOURS.slice(fromIndex, toIndex + 1)
+    } else {
+      return HOURS
+    }
+  }
+
+  const [defaultHoursList] = useState<Option[]>(getDefaultHoursList())
+
   const {
     setValue,
     getValues,
     watch,
     reset,
     formState: { isValid, errors },
-  } = useForm<SpaceRentalScheduleFormType>({
-    resolver: zodResolver(spaceRentalScheduleFormSchema),
+  } = useForm<ScheduleFormType>({
+    resolver: zodResolver(scheduleFormSchema),
     defaultValues,
   })
 
@@ -144,7 +168,7 @@ export default function SpaceRentalScheduleForm({
   const sunday_from = watch('sunday_from')
   const sunday_to = watch('sunday_to')
 
-  const isValidForm = (data: SpaceRentalScheduleFormType) => {
+  const isValidForm = (data: ScheduleFormType) => {
     return (
       validateDay(data.monday_from, data.monday_to) &&
       validateDay(data.tuesday_from, data.tuesday_to) &&
@@ -178,30 +202,30 @@ export default function SpaceRentalScheduleForm({
         { from: data.sunday_from, to: data.sunday_to },
       ]
 
-      let minHourOption: number = HOURS.length
+      let minHourOption: number = defaultHoursList.length
       let maxHourOption: number = 0
 
       weekdays.forEach(({ from, to }) => {
         if (!isUnavailable(from)) {
-          const fromIndex = HOURS.findIndex(
+          const fromIndex = defaultHoursList.findIndex(
             (option) => option.label === from[0].label
           )
           minHourOption = minHourOption > fromIndex ? fromIndex : minHourOption
         }
 
         if (to && to.length > 0) {
-          const toIndex = HOURS.findIndex(
+          const toIndex = defaultHoursList.findIndex(
             (option) => option.label === to[0].label
           )
           maxHourOption = maxHourOption < toIndex ? toIndex : maxHourOption
         }
       })
 
-      setValue('min_hour', [HOURS[minHourOption]], {
+      setValue('min_hour', [defaultHoursList[minHourOption]], {
         shouldDirty: true,
         shouldValidate: true,
       })
-      setValue('max_hour', [HOURS[maxHourOption]], {
+      setValue('max_hour', [defaultHoursList[maxHourOption]], {
         shouldDirty: true,
         shouldValidate: true,
       })
@@ -234,14 +258,20 @@ export default function SpaceRentalScheduleForm({
   ])
 
   const handleHourFromChange = (
-    field: keyof SpaceRentalScheduleFormType,
+    field: keyof ScheduleFormType,
     option: Option[]
   ) => {
-    const deviation = info?.minHours && info.minHours > 1 ? info?.minHours : 1
-    const options = getAvailableHourOptions(HOURS, option, undefined, {
-      fromDeviation: deviation,
-      returnEmptyForUnavailable: true,
-    })
+    const fromDeviation =
+      info?.minHours && info.minHours > 1 ? info?.minHours : 1
+    const options = getAvailableHourOptions(
+      defaultHoursList,
+      option,
+      undefined,
+      {
+        fromDeviation: fromDeviation,
+        returnEmptyForUnavailable: true,
+      }
+    )
     switch (field) {
       case 'monday_from':
         if (options.length === 0) {
@@ -291,7 +321,7 @@ export default function SpaceRentalScheduleForm({
   }
 
   const handleSelectChange =
-    (field: keyof SpaceRentalScheduleFormType) => (option: Option[]) => {
+    (field: keyof ScheduleFormType) => (option: Option[]) => {
       setValue(field, option, { shouldValidate: true, shouldDirty: true })
       handleHourFromChange(field, option)
     }
@@ -299,10 +329,10 @@ export default function SpaceRentalScheduleForm({
   return (
     <OnboardingFormLayout.Main>
       <OnboardingFormLayout.Title>
-        {t('sections.onboarding.rental-form.schedule')}
+        {title || t('sections.onboarding.rental-form.schedule')}
       </OnboardingFormLayout.Title>
       <OnboardingFormLayout.Subtitle>
-        {t('sections.onboarding.rental-form.define-schedule')}
+        {subtitle || t('sections.onboarding.rental-form.define-schedule')}
       </OnboardingFormLayout.Subtitle>
       <OnboardingFormLayout.Container>
         <div className="w-full grid grid-cols-5 gap-2 items-center">
@@ -313,8 +343,8 @@ export default function SpaceRentalScheduleForm({
             <SelectInput
               data-testid="monday_from"
               placeholder={t('sections.onboarding.rental-form.from')}
-              options={HOURS}
-              value={getValues('monday_from')}
+              options={defaultHoursList}
+              value={monday_from}
               onSelect={handleSelectChange('monday_from')}
               disabled={disabled}
               error={
@@ -330,7 +360,7 @@ export default function SpaceRentalScheduleForm({
               placeholder={t('sections.onboarding.rental-form.to')}
               options={mondayHoursOptions}
               disabled={mondayHoursOptions.length === 0 || disabled}
-              value={getValues('monday_to')}
+              value={monday_to}
               onSelect={handleSelectChange('monday_to')}
               error={
                 errors.monday_to?.message
@@ -347,8 +377,8 @@ export default function SpaceRentalScheduleForm({
             <SelectInput
               data-testid="tuesday_from"
               placeholder={t('sections.onboarding.rental-form.from')}
-              options={HOURS}
-              value={getValues('tuesday_from')}
+              options={defaultHoursList}
+              value={tuesday_from}
               onSelect={handleSelectChange('tuesday_from')}
               disabled={disabled}
               error={
@@ -364,7 +394,7 @@ export default function SpaceRentalScheduleForm({
               placeholder={t('sections.onboarding.rental-form.to')}
               options={tuesdayHoursOptions}
               disabled={tuesdayHoursOptions.length === 0 || disabled}
-              value={getValues('tuesday_to')}
+              value={tuesday_to}
               onSelect={handleSelectChange('tuesday_to')}
               error={
                 errors.tuesday_to?.message
@@ -381,8 +411,8 @@ export default function SpaceRentalScheduleForm({
             <SelectInput
               data-testid="wednesday_from"
               placeholder={t('sections.onboarding.rental-form.from')}
-              options={HOURS}
-              value={getValues('wednesday_from')}
+              options={defaultHoursList}
+              value={wednesday_from}
               onSelect={handleSelectChange('wednesday_from')}
               disabled={disabled}
               error={
@@ -398,7 +428,7 @@ export default function SpaceRentalScheduleForm({
               placeholder={t('sections.onboarding.rental-form.to')}
               options={wednesdayHoursOptions}
               disabled={wednesdayHoursOptions.length === 0 || disabled}
-              value={getValues('wednesday_to')}
+              value={wednesday_to}
               onSelect={handleSelectChange('wednesday_to')}
               error={
                 errors.wednesday_to?.message
@@ -415,8 +445,8 @@ export default function SpaceRentalScheduleForm({
             <SelectInput
               data-testid="thursday_from"
               placeholder={t('sections.onboarding.rental-form.from')}
-              options={HOURS}
-              value={getValues('thursday_from')}
+              options={defaultHoursList}
+              value={thursday_from}
               onSelect={handleSelectChange('thursday_from')}
               disabled={disabled}
               error={
@@ -432,7 +462,7 @@ export default function SpaceRentalScheduleForm({
               placeholder={t('sections.onboarding.rental-form.to')}
               options={thursdayHoursOptions}
               disabled={thursdayHoursOptions.length === 0 || disabled}
-              value={getValues('thursday_to')}
+              value={thursday_to}
               onSelect={handleSelectChange('thursday_to')}
               error={
                 errors.thursday_to?.message
@@ -449,8 +479,8 @@ export default function SpaceRentalScheduleForm({
             <SelectInput
               data-testid="friday_from"
               placeholder={t('sections.onboarding.rental-form.from')}
-              options={HOURS}
-              value={getValues('friday_from')}
+              options={defaultHoursList}
+              value={friday_from}
               onSelect={handleSelectChange('friday_from')}
               disabled={disabled}
               error={
@@ -466,7 +496,7 @@ export default function SpaceRentalScheduleForm({
               placeholder={t('sections.onboarding.rental-form.to')}
               options={fridayHoursOptions}
               disabled={fridayHoursOptions.length === 0 || disabled}
-              value={getValues('friday_to')}
+              value={friday_to}
               onSelect={handleSelectChange('friday_to')}
               error={
                 errors.friday_to?.message
@@ -483,8 +513,8 @@ export default function SpaceRentalScheduleForm({
             <SelectInput
               data-testid="saturday_from"
               placeholder={t('sections.onboarding.rental-form.from')}
-              options={HOURS}
-              value={getValues('saturday_from')}
+              options={defaultHoursList}
+              value={saturday_from}
               onSelect={handleSelectChange('saturday_from')}
               disabled={disabled}
               error={
@@ -500,7 +530,7 @@ export default function SpaceRentalScheduleForm({
               placeholder={t('sections.onboarding.rental-form.to')}
               options={saturdayHoursOptions}
               disabled={saturdayHoursOptions.length === 0 || disabled}
-              value={getValues('saturday_to')}
+              value={saturday_to}
               onSelect={handleSelectChange('saturday_to')}
               error={
                 errors.saturday_to?.message
@@ -517,8 +547,8 @@ export default function SpaceRentalScheduleForm({
             <SelectInput
               data-testid="sunday_from"
               placeholder={t('sections.onboarding.rental-form.from')}
-              options={HOURS}
-              value={getValues('sunday_from')}
+              options={defaultHoursList}
+              value={sunday_from}
               onSelect={handleSelectChange('sunday_from')}
               disabled={disabled}
               error={
@@ -534,7 +564,7 @@ export default function SpaceRentalScheduleForm({
               placeholder={t('sections.onboarding.rental-form.to')}
               options={sundayHoursOptions}
               disabled={sundayHoursOptions.length === 0 || disabled}
-              value={getValues('sunday_to')}
+              value={sunday_to}
               onSelect={handleSelectChange('sunday_to')}
               error={
                 errors.sunday_to?.message

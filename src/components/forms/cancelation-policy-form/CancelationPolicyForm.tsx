@@ -9,27 +9,27 @@ import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
 
-interface SpaceCancelationPolicyFormProps {
-  defaultValues?: SpaceCancelationPolicyFormType
-  onChange?: (values: SpaceCancelationPolicyFormType) => void
+interface CancelationPolicyFormProps {
+  defaultValues?: CancelationPolicyFormType
+  onChange?: (values: CancelationPolicyFormType) => void
   disabled?: boolean
 }
 
-export const spaceCancelationPolicyFormSchema = z.object({
-  base_refund: z.string().min(0),
-  late_cancellation_days: z.string().min(0),
-  late_cancellation_refund: z.string().min(0),
+export const cancelationPolicyFormSchema = z.object({
+  base_refund: z.string().min(1),
+  late_cancellation_days: z.string().min(1),
+  late_cancellation_refund: z.string().min(1),
 })
 
-type SpaceCancelationPolicyFormType = z.infer<
-  typeof spaceCancelationPolicyFormSchema
+export type CancelationPolicyFormType = z.infer<
+  typeof cancelationPolicyFormSchema
 >
 
-export default function SpaceCancelationPolicyForm({
+export default function CancelationPolicyForm({
   defaultValues,
   onChange,
   disabled = false,
-}: SpaceCancelationPolicyFormProps) {
+}: CancelationPolicyFormProps) {
   const t = useTranslations()
 
   const {
@@ -37,13 +37,9 @@ export default function SpaceCancelationPolicyForm({
     getValues,
     watch,
     formState: { isValid, errors },
-  } = useForm<SpaceCancelationPolicyFormType>({
-    resolver: zodResolver(spaceCancelationPolicyFormSchema),
-    defaultValues: defaultValues || {
-      base_refund: '50',
-      late_cancellation_days: '2',
-      late_cancellation_refund: '0',
-    },
+  } = useForm<CancelationPolicyFormType>({
+    resolver: zodResolver(cancelationPolicyFormSchema),
+    defaultValues: defaultValues,
   })
 
   const base_refund = watch('base_refund')
@@ -57,7 +53,7 @@ export default function SpaceCancelationPolicyForm({
   }, [isValid, base_refund, late_cancellation_days, late_cancellation_refund])
 
   const handleChange =
-    (field: keyof SpaceCancelationPolicyFormType) =>
+    (field: keyof CancelationPolicyFormType) =>
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const value = event.target.value.replace(/[.,]/g, '')
       setValue(field, value, { shouldValidate: true, shouldDirty: true })

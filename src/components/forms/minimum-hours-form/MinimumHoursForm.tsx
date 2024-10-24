@@ -8,25 +8,23 @@ import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
 
-interface SpaceRentalCleaningFeeFormProps {
-  defaultValues?: SpaceRentalCleaningFeeFormType
-  onChange?: (values: SpaceRentalCleaningFeeFormType) => void
+interface MinimumHoursFormProps {
+  defaultValues?: MinimumHoursFormType
+  onChange?: (values: MinimumHoursFormType) => void
   disabled?: boolean
 }
 
-export const spaceRentalCleaningFeeFormSchema = z.object({
-  cleaning_fee: z.string().optional(),
+export const minimumHoursFormSchema = z.object({
+  min_hours: z.string().min(1, 'define-min-hours'),
 })
 
-type SpaceRentalCleaningFeeFormType = z.infer<
-  typeof spaceRentalCleaningFeeFormSchema
->
+export type MinimumHoursFormType = z.infer<typeof minimumHoursFormSchema>
 
-export default function SpaceRentalCleaningFeeForm({
+export default function MinimumHoursForm({
   defaultValues,
   onChange,
   disabled = false,
-}: SpaceRentalCleaningFeeFormProps) {
+}: MinimumHoursFormProps) {
   const t = useTranslations()
 
   const {
@@ -34,21 +32,21 @@ export default function SpaceRentalCleaningFeeForm({
     getValues,
     watch,
     formState: { isValid, errors },
-  } = useForm<SpaceRentalCleaningFeeFormType>({
-    resolver: zodResolver(spaceRentalCleaningFeeFormSchema),
+  } = useForm<MinimumHoursFormType>({
+    resolver: zodResolver(minimumHoursFormSchema),
     defaultValues,
   })
 
-  const cleaning_fee = watch('cleaning_fee')
+  const min_hours = watch('min_hours')
 
   useEffect(() => {
     if (isValid) {
       onChange?.(getValues())
     }
-  }, [isValid, cleaning_fee])
+  }, [isValid, min_hours])
 
   const handleChange =
-    (field: keyof SpaceRentalCleaningFeeFormType) =>
+    (field: keyof MinimumHoursFormType) =>
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const value = event.target.value.replace(/[.,]/g, '')
       setValue(field, value, { shouldValidate: true, shouldDirty: true })
@@ -57,29 +55,30 @@ export default function SpaceRentalCleaningFeeForm({
   return (
     <OnboardingFormLayout.Main>
       <OnboardingFormLayout.Title>
-        {t('sections.onboarding.rental-form.cleaning-fee')}
+        {t('sections.onboarding.rental-form.min-hours')}
       </OnboardingFormLayout.Title>
       <OnboardingFormLayout.Subtitle>
-        {t('sections.onboarding.rental-form.define-cleaning-fee')}
+        {t('sections.onboarding.rental-form.define-min-hours')}
       </OnboardingFormLayout.Subtitle>
       <OnboardingFormLayout.Container>
         <TextInput
-          data-testid="cleaning_fee"
-          placeholder={t('sections.onboarding.rental-form.cleaning-fee')}
-          value={getValues('cleaning_fee')}
-          onChange={handleChange('cleaning_fee')}
+          data-testid="min_hours"
+          placeholder={t('sections.onboarding.rental-form.min-hours')}
+          value={getValues('min_hours')}
+          onChange={handleChange('min_hours')}
           type="number"
           disabled={disabled}
+          error={
+            errors.min_hours?.message
+              ? t(`error-messages.${errors.min_hours?.message}`)
+              : undefined
+          }
         />
-        {isValid && !disabled && (
+        {isValid && (
           <OnboardingFormLayout.Info>
-            {cleaning_fee
-              ? t(
-                  'sections.onboarding.rental-form.explanation-messages.cleaning-fee'
-                ).replace('$1', cleaning_fee)
-              : t(
-                  'sections.onboarding.rental-form.explanation-messages.cleaning-fee-undefined'
-                )}
+            {t(
+              'sections.onboarding.rental-form.explanation-messages.min-hours'
+            ).replace('$1', min_hours)}
           </OnboardingFormLayout.Info>
         )}
       </OnboardingFormLayout.Container>

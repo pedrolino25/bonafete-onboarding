@@ -1,3 +1,12 @@
+import { CancelationPolicyFormType } from '@/components/forms/cancelation-policy-form/CancelationPolicyForm'
+import { CleaningFeeFormType } from '@/components/forms/cleaning-fee-form/CleaningFeeForm'
+import { LotationFormType } from '@/components/forms/lotation-form/LotationForm'
+import { MinimumHoursFormType } from '@/components/forms/minimum-hours-form/MinimumHoursForm'
+import { CustomPriceFormType } from '@/components/forms/rental-price-form/custom-price-form/CustomPriceForm'
+import { FixedPriceFormType } from '@/components/forms/rental-price-form/fixed-price-form/FixedPriceForm'
+import { FlexiblePriceFormType } from '@/components/forms/rental-price-form/flexible-price-form/FlexiblePriceForm'
+import { ScheduleFormType } from '@/components/forms/schedule-form/ScheduleForm'
+import { SpacePackageFormType } from '@/components/forms/space-package-form/SpacePackageForm'
 import {
   OnboardingFaseStatus,
   OnboardingSections,
@@ -143,6 +152,19 @@ export interface OnboardingSpaceInfo {
   city?: string
   latitude?: number
   longitude?: number
+  lotation?: LotationFormType
+  min_hours?: MinimumHoursFormType
+  business_model?: { value: string; label: string }[]
+  cancellation_policy?: CancelationPolicyFormType
+  schedule?: ScheduleFormType
+  prices?: {
+    priceModel?: { value: string; label: string }[]
+    cleaningFee?: CleaningFeeFormType
+    fixed?: FixedPriceFormType
+    flexible?: FlexiblePriceFormType
+    custom?: CustomPriceFormType
+  }
+  packages?: SpacePackageFormType[]
 }
 
 export interface ApplicationSpaceInfo {
@@ -281,14 +303,175 @@ const updateOnboardingStatus = async (
   return response.json()
 }
 
+export interface SpacePrice {
+  type: string
+  amount: number
+  amountAfter?: number
+  duration?: number
+  timeStart?: string
+  timeEnd?: string
+  space: { id: string }
+  createdAt: Date
+}
+
+export interface SpaceSchedule {
+  weekDay: string
+  timeStart: string
+  timeEnd: string
+  space: { id: string }
+  createdAt: Date
+}
+
+export interface CancelationPolicy {
+  afterConfimation: number
+  period: number
+  afterPeriod: number
+  space: { id: string }
+  createdAt: Date
+}
+
+export interface UpdateSpaceOffersRentalParameters {
+  onboarding_id: string
+  business_model: string
+  prices: SpacePrice[]
+  price_modality: string
+  cancellation_policy: CancelationPolicy
+  lotation?: number
+  min_hours?: number
+  schedule?: SpaceSchedule[]
+}
+
+const updateSpaceOffersRental = async (
+  data: UpdateSpaceOffersRentalParameters
+): Promise<unknown> => {
+  const response = await fetch(`${ROOT}/api/onboarding/process/space-rental`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+    body: JSON.stringify(data),
+  })
+  return response.json()
+}
+
+export interface ServiceListItemResponse {
+  key: string
+  value: string
+}
+
+const getServicesList = async (): Promise<ServiceListItemResponse[]> => {
+  const response = await fetch(`${ROOT}/static/services-list`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+  })
+  return response.json()
+}
+
+interface ServiceListItemProps {
+  key: string
+  value: string
+}
+
+export const addService = async (
+  data: ServiceListItemProps
+): Promise<OnboardingProcessListItemResponse> => {
+  const response = await fetch(`${ROOT}/static/services-list`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+    body: JSON.stringify(data),
+  })
+  return response.json()
+}
+
+export interface UpdateSpacePackageParameters {
+  onboarding_id: string
+  id?: string
+  services: string[]
+  description: string
+  schedule: SpaceSchedule[]
+  min_hours: string
+  min_persons: string
+  max_persons: string
+  price_modality: string
+  base_price: string
+  extra_hour_price?: string
+  extra_person_price?: string
+}
+
+const updateSpacePackage = async (
+  data: UpdateSpacePackageParameters
+): Promise<unknown> => {
+  const response = await fetch(`${ROOT}/api/onboarding/process/space-package`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+    body: JSON.stringify(data),
+  })
+  return response.json()
+}
+
+export interface DeleteSpacePackageParameters {
+  id: string
+}
+
+const deleteSpacePackage = async (
+  data: DeleteSpacePackageParameters
+): Promise<unknown> => {
+  const response = await fetch(`${ROOT}/api/onboarding/process/space-package`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+    body: JSON.stringify(data),
+  })
+  return response.json()
+}
+
+export interface UpdateOffersOnboardingStatusParameters {
+  space_id: string
+  onboarding_id: string
+}
+
+const updateOffersOnboardingStatus = async (
+  data: UpdateOffersOnboardingStatusParameters
+): Promise<unknown> => {
+  const response = await fetch(
+    `${ROOT}/api/onboarding/process/offers-onboarding-status`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+      },
+      body: JSON.stringify(data),
+    }
+  )
+  return response.json()
+}
+
 export {
   archiveOnboardingProcess,
+  deleteSpacePackage,
   getOnboardingProcessesById,
   getOnboardingsProcessesListByStatus,
+  getServicesList,
   reasignOnboardingProcess,
   saveOnboardingIntro,
   saveOnboardingSpaceInfo,
   saveOnboardingSpacePhotos,
   scheduleOnboardingProcess,
+  updateOffersOnboardingStatus,
   updateOnboardingStatus,
+  updateSpaceOffersRental,
+  updateSpacePackage,
 }

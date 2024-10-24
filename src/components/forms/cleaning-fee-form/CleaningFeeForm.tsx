@@ -8,23 +8,23 @@ import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
 
-interface SpaceRentalLotationFormProps {
-  defaultValues?: SpaceRentalLotationFormType
-  onChange?: (values: SpaceRentalLotationFormType) => void
+interface CleaningFeeFormProps {
+  defaultValues?: CleaningFeeFormType
+  onChange?: (values: CleaningFeeFormType) => void
   disabled?: boolean
 }
 
-export const spaceRentalLotationFormSchema = z.object({
-  lotation: z.string().min(1, 'define-lotation'),
+export const cleaningFeeFormSchema = z.object({
+  cleaning_fee: z.string().optional(),
 })
 
-type SpaceRentalLotationFormType = z.infer<typeof spaceRentalLotationFormSchema>
+export type CleaningFeeFormType = z.infer<typeof cleaningFeeFormSchema>
 
-export default function SpaceRentalLotationForm({
+export default function CleaningFeeForm({
   defaultValues,
   onChange,
   disabled = false,
-}: SpaceRentalLotationFormProps) {
+}: CleaningFeeFormProps) {
   const t = useTranslations()
 
   const {
@@ -32,21 +32,21 @@ export default function SpaceRentalLotationForm({
     getValues,
     watch,
     formState: { isValid, errors },
-  } = useForm<SpaceRentalLotationFormType>({
-    resolver: zodResolver(spaceRentalLotationFormSchema),
+  } = useForm<CleaningFeeFormType>({
+    resolver: zodResolver(cleaningFeeFormSchema),
     defaultValues,
   })
 
-  const lotation = watch('lotation')
+  const cleaning_fee = watch('cleaning_fee')
 
   useEffect(() => {
     if (isValid) {
       onChange?.(getValues())
     }
-  }, [isValid, lotation])
+  }, [isValid, cleaning_fee])
 
   const handleChange =
-    (field: keyof SpaceRentalLotationFormType) =>
+    (field: keyof CleaningFeeFormType) =>
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const value = event.target.value.replace(/[.,]/g, '')
       setValue(field, value, { shouldValidate: true, shouldDirty: true })
@@ -55,30 +55,29 @@ export default function SpaceRentalLotationForm({
   return (
     <OnboardingFormLayout.Main>
       <OnboardingFormLayout.Title>
-        {t('sections.onboarding.rental-form.lotation')}
+        {t('sections.onboarding.rental-form.cleaning-fee')}
       </OnboardingFormLayout.Title>
       <OnboardingFormLayout.Subtitle>
-        {t('sections.onboarding.rental-form.define-lotation')}
+        {t('sections.onboarding.rental-form.define-cleaning-fee')}
       </OnboardingFormLayout.Subtitle>
       <OnboardingFormLayout.Container>
         <TextInput
-          data-testid="lotation"
-          placeholder={t('sections.onboarding.rental-form.lotation')}
-          value={getValues('lotation')}
-          onChange={handleChange('lotation')}
+          data-testid="cleaning_fee"
+          placeholder={t('sections.onboarding.rental-form.cleaning-fee')}
+          value={getValues('cleaning_fee')}
+          onChange={handleChange('cleaning_fee')}
           type="number"
           disabled={disabled}
-          error={
-            errors.lotation?.message
-              ? t(`error-messages.${errors.lotation?.message}`)
-              : undefined
-          }
         />
-        {isValid && (
+        {isValid && !disabled && (
           <OnboardingFormLayout.Info>
-            {t(
-              'sections.onboarding.rental-form.explanation-messages.lotation'
-            ).replace('$1', lotation)}
+            {cleaning_fee
+              ? t(
+                  'sections.onboarding.rental-form.explanation-messages.cleaning-fee'
+                ).replace('$1', cleaning_fee)
+              : t(
+                  'sections.onboarding.rental-form.explanation-messages.cleaning-fee-undefined'
+                )}
           </OnboardingFormLayout.Info>
         )}
       </OnboardingFormLayout.Container>

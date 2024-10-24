@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { ChevronDown, CircleCheck, Info, Minus, Plus } from 'lucide-react'
+import { Check, ChevronDown, Info, Minus, Plus } from 'lucide-react'
 import { ReactNode, useState } from 'react'
 
 interface CustomAccordionProps {
@@ -36,7 +36,7 @@ export default function CustomAccordion({
       >
         <div className="flex items-center gap-2">
           {complete ? (
-            <CircleCheck className="h-4 w-4 text-utility-success-500" />
+            <Check className="h-4 w-4 text-utility-success-500" />
           ) : (
             <Info
               className={cn(

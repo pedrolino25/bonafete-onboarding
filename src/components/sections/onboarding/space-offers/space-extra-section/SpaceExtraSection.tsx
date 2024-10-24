@@ -1,7 +1,7 @@
 'use client'
 
 import CustomAccordion from '@/components/ui/accordion'
-import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 
 interface SpaceExtraSectionProps {
   disabled?: boolean
@@ -11,12 +11,13 @@ export default function SpaceExtraSection({
   disabled,
   open = false,
 }: SpaceExtraSectionProps) {
-  const [opened, setOpened] = useState<boolean>(open)
+  const t = useTranslations()
+
   return (
     <>
       <CustomAccordion
         disabled={disabled}
-        title="Adicionar Extra"
+        title={t('sections.onboarding.add-extra')}
         variant="add"
       >
         <div></div>

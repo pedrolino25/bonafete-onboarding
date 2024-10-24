@@ -8,25 +8,23 @@ import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
 
-interface SpaceRentalMinimumHoursFormProps {
-  defaultValues?: SpaceRentalMinimumHoursFormType
-  onChange?: (values: SpaceRentalMinimumHoursFormType) => void
+interface LotationFormProps {
+  defaultValues?: LotationFormType
+  onChange?: (values: LotationFormType) => void
   disabled?: boolean
 }
 
-export const spaceRentalMinimumHoursFormSchema = z.object({
-  min_hours: z.string().min(1, 'define-min-hours'),
+export const lotationFormSchema = z.object({
+  lotation: z.string().min(1, 'define-lotation'),
 })
 
-type SpaceRentalMinimumHoursFormType = z.infer<
-  typeof spaceRentalMinimumHoursFormSchema
->
+export type LotationFormType = z.infer<typeof lotationFormSchema>
 
-export default function SpaceRentalMinimumHoursForm({
+export default function LotationForm({
   defaultValues,
   onChange,
   disabled = false,
-}: SpaceRentalMinimumHoursFormProps) {
+}: LotationFormProps) {
   const t = useTranslations()
 
   const {
@@ -34,21 +32,21 @@ export default function SpaceRentalMinimumHoursForm({
     getValues,
     watch,
     formState: { isValid, errors },
-  } = useForm<SpaceRentalMinimumHoursFormType>({
-    resolver: zodResolver(spaceRentalMinimumHoursFormSchema),
+  } = useForm<LotationFormType>({
+    resolver: zodResolver(lotationFormSchema),
     defaultValues,
   })
 
-  const min_hours = watch('min_hours')
+  const lotation = watch('lotation')
 
   useEffect(() => {
     if (isValid) {
       onChange?.(getValues())
     }
-  }, [isValid, min_hours])
+  }, [isValid, lotation])
 
   const handleChange =
-    (field: keyof SpaceRentalMinimumHoursFormType) =>
+    (field: keyof LotationFormType) =>
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const value = event.target.value.replace(/[.,]/g, '')
       setValue(field, value, { shouldValidate: true, shouldDirty: true })
@@ -57,30 +55,30 @@ export default function SpaceRentalMinimumHoursForm({
   return (
     <OnboardingFormLayout.Main>
       <OnboardingFormLayout.Title>
-        {t('sections.onboarding.rental-form.min-hours')}
+        {t('sections.onboarding.rental-form.lotation')}
       </OnboardingFormLayout.Title>
       <OnboardingFormLayout.Subtitle>
-        {t('sections.onboarding.rental-form.define-min-hours')}
+        {t('sections.onboarding.rental-form.define-lotation')}
       </OnboardingFormLayout.Subtitle>
       <OnboardingFormLayout.Container>
         <TextInput
-          data-testid="min_hours"
-          placeholder={t('sections.onboarding.rental-form.min-hours')}
-          value={getValues('min_hours')}
-          onChange={handleChange('min_hours')}
+          data-testid="lotation"
+          placeholder={t('sections.onboarding.rental-form.lotation')}
+          value={getValues('lotation')}
+          onChange={handleChange('lotation')}
           type="number"
           disabled={disabled}
           error={
-            errors.min_hours?.message
-              ? t(`error-messages.${errors.min_hours?.message}`)
+            errors.lotation?.message
+              ? t(`error-messages.${errors.lotation?.message}`)
               : undefined
           }
         />
         {isValid && (
           <OnboardingFormLayout.Info>
             {t(
-              'sections.onboarding.rental-form.explanation-messages.min-hours'
-            ).replace('$1', min_hours)}
+              'sections.onboarding.rental-form.explanation-messages.lotation'
+            ).replace('$1', lotation)}
           </OnboardingFormLayout.Info>
         )}
       </OnboardingFormLayout.Container>

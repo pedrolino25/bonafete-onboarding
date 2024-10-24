@@ -4,7 +4,10 @@ import { SidebarLayout, SidebarLink } from '@/components/layouts/sidebar'
 import { Navbar } from '@/components/navigation/Navbar'
 import OnboardingIntro from '@/components/sections/onboarding/intro/IntroSection'
 import { Button } from '@/components/ui/button'
-import { getOnboardingProcessesById } from '@/services/api/onboarding-processes'
+import {
+  getOnboardingProcessesById,
+  OnboardingProcessItemResponse,
+} from '@/services/api/onboarding-processes'
 import {
   LocalityListItemResponse,
   PostalCodesListItemResponse,
@@ -64,6 +67,113 @@ export default function OnboardingSection({
     },
   })
 
+  const isAnyPendingSection = (values: OnboardingProcessItemResponse) => {
+    if (
+      (values.fase1 !== OnboardingFaseStatus.Completed &&
+        values.fase1 !== OnboardingFaseStatus.Incomplete) ||
+      (values.fase2 !== OnboardingFaseStatus.Completed &&
+        values.fase2 !== OnboardingFaseStatus.Incomplete) ||
+      (values.fase3 !== OnboardingFaseStatus.Completed &&
+        values.fase3 !== OnboardingFaseStatus.Incomplete) ||
+      (values.fase4 !== OnboardingFaseStatus.Completed &&
+        values.fase4 !== OnboardingFaseStatus.Incomplete) ||
+      (values.fase5 !== OnboardingFaseStatus.Completed &&
+        values.fase5 !== OnboardingFaseStatus.Incomplete)
+    ) {
+      return true
+    }
+    return false
+  }
+
+  const getSection = (values: OnboardingProcessItemResponse) => {
+    if (
+      values.fase1 === OnboardingFaseStatus.Completed ||
+      (values.fase1 === OnboardingFaseStatus.Incomplete &&
+        isAnyPendingSection(values))
+    ) {
+      if (
+        values.fase2 === OnboardingFaseStatus.Completed ||
+        (values.fase2 === OnboardingFaseStatus.Incomplete &&
+          isAnyPendingSection(values))
+      ) {
+        if (
+          values.fase3 === OnboardingFaseStatus.Completed ||
+          (values.fase3 === OnboardingFaseStatus.Incomplete &&
+            isAnyPendingSection(values))
+        ) {
+          if (
+            values.fase4 === OnboardingFaseStatus.Completed ||
+            (values.fase4 === OnboardingFaseStatus.Incomplete &&
+              isAnyPendingSection(values))
+          ) {
+            if (
+              values.fase5 === OnboardingFaseStatus.Completed ||
+              (values.fase5 === OnboardingFaseStatus.Incomplete &&
+                isAnyPendingSection(values))
+            ) {
+              return {
+                value: OnboardingSections.HostInfo,
+                label: t(
+                  `sections.onboarding.navigation.${OnboardingSections.HostInfo}`
+                ),
+                disabled: false,
+                complete: true,
+              }
+            } else {
+              return {
+                value: OnboardingSections.HostInfo,
+                label: t(
+                  `sections.onboarding.navigation.${OnboardingSections.HostInfo}`
+                ),
+                disabled: false,
+                complete: true,
+              }
+            }
+          } else {
+            return {
+              value: OnboardingSections.Offers,
+              label: t(
+                `sections.onboarding.navigation.${OnboardingSections.Offers}`
+              ),
+              disabled: false,
+              complete: false,
+              incomplete:
+                data && data.fase4 === OnboardingFaseStatus.Incomplete,
+            }
+          }
+        } else {
+          return {
+            value: OnboardingSections.Photos,
+            label: t(
+              `sections.onboarding.navigation.${OnboardingSections.Photos}`
+            ),
+            disabled: false,
+            complete: false,
+            incomplete: data && data.fase3 === OnboardingFaseStatus.Incomplete,
+          }
+        }
+      } else {
+        return {
+          value: OnboardingSections.SpaceInfo,
+          label: t(
+            `sections.onboarding.navigation.${OnboardingSections.SpaceInfo}`
+          ),
+          disabled: false,
+          complete: false,
+          incomplete: data && data.fase2 === OnboardingFaseStatus.Incomplete,
+        }
+      }
+    } else {
+      return {
+        value: OnboardingSections.Intro,
+        label: t('sections.onboarding.navigation.intro'),
+        disabled: false,
+        complete: false,
+        incomplete: data && data.fase1 === OnboardingFaseStatus.Incomplete,
+      }
+    }
+  }
+
   useEffect(() => {
     if (data) {
       setSections([
@@ -108,69 +218,7 @@ export default function OnboardingSection({
           incomplete: data && data.fase5 === OnboardingFaseStatus.Incomplete,
         },
       ])
-      setSection(
-        data && data.fase5 === OnboardingFaseStatus.Completed
-          ? {
-              value: OnboardingSections.HostInfo,
-              label: t(
-                `sections.onboarding.navigation.${OnboardingSections.HostInfo}`
-              ),
-              disabled: false,
-              complete: true,
-            }
-          : data && data.fase4 === OnboardingFaseStatus.Completed
-          ? {
-              value: OnboardingSections.HostInfo,
-              label: t(
-                `sections.onboarding.navigation.${OnboardingSections.HostInfo}`
-              ),
-              disabled: false,
-              complete: true,
-              incomplete:
-                data && data.fase5 === OnboardingFaseStatus.Incomplete,
-            }
-          : data && data.fase3 === OnboardingFaseStatus.Completed
-          ? {
-              value: OnboardingSections.Offers,
-              label: t(
-                `sections.onboarding.navigation.${OnboardingSections.Offers}`
-              ),
-              disabled: false,
-              complete: false,
-              incomplete:
-                data && data.fase4 === OnboardingFaseStatus.Incomplete,
-            }
-          : data && data.fase2 === OnboardingFaseStatus.Completed
-          ? {
-              value: OnboardingSections.Photos,
-              label: t(
-                `sections.onboarding.navigation.${OnboardingSections.Photos}`
-              ),
-              disabled: false,
-              complete: false,
-              incomplete:
-                data && data.fase3 === OnboardingFaseStatus.Incomplete,
-            }
-          : data && data.fase1 === OnboardingFaseStatus.Completed
-          ? {
-              value: OnboardingSections.SpaceInfo,
-              label: t(
-                `sections.onboarding.navigation.${OnboardingSections.SpaceInfo}`
-              ),
-              disabled: false,
-              complete: false,
-              incomplete:
-                data && data.fase2 === OnboardingFaseStatus.Incomplete,
-            }
-          : {
-              value: OnboardingSections.Intro,
-              label: t('sections.onboarding.navigation.intro'),
-              disabled: false,
-              complete: false,
-              incomplete:
-                data && data.fase1 === OnboardingFaseStatus.Incomplete,
-            }
-      )
+      setSection(getSection(data))
     }
   }, [data])
 

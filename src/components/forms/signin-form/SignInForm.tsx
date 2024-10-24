@@ -28,11 +28,19 @@ export default function SignInForm() {
 
   const {
     handleSubmit,
-    register,
+    getValues,
+    setValue,
     formState: { errors },
   } = useForm<SignInFormType>({
     resolver: zodResolver(signInFormSchema),
   })
+
+  const handleChange =
+    (field: keyof SignInFormType) =>
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value
+      setValue(field, value, { shouldValidate: true, shouldDirty: true })
+    }
 
   const onSubmit = async (values: SignInFormType) => {
     setErrorMessage(undefined)
@@ -56,13 +64,15 @@ export default function SignInForm() {
       >
         <TextInput
           placeholder={t('signin.email')}
-          {...register('email')}
+          value={getValues('email')}
+          onChange={handleChange('email')}
           error={errors.email?.message}
         />
         <TextInput
           placeholder={t('signin.password')}
           type="password"
-          {...register('password')}
+          value={getValues('password')}
+          onChange={handleChange('password')}
           error={errors.password?.message}
         />
         {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}

@@ -1,25 +1,47 @@
 'use client'
 
+import SpacePackageForm, {
+  SpacePackageFormType,
+} from '@/components/forms/space-package-form/SpacePackageForm'
 import CustomAccordion from '@/components/ui/accordion'
-import { useState } from 'react'
+import { OnboardingProcessItemResponse } from '@/services/api/onboarding-processes'
+import { useTranslations } from 'next-intl'
 
 interface SpacePackageSectionProps {
+  onboardingInfo: OnboardingProcessItemResponse
+  defaultValues?: SpacePackageFormType
+  completed?: boolean
+  refetch: () => void
   disabled?: boolean
-  open?: boolean
+  title?: string
 }
 export default function SpacePackageSection({
+  onboardingInfo,
+  defaultValues,
+  completed,
+  refetch,
   disabled,
-  open = false,
+  title,
 }: SpacePackageSectionProps) {
-  const [opened, setOpened] = useState<boolean>(open)
+  const t = useTranslations()
+
   return (
     <>
       <CustomAccordion
         disabled={disabled}
-        title="Adicionar Pacote de Festa"
+        title={
+          title
+            ? t('sections.onboarding.package')?.replace('$1', title)
+            : t('sections.onboarding.add-package')
+        }
         variant="add"
+        complete={completed}
       >
-        <div></div>
+        <SpacePackageForm
+          onboardingInfo={onboardingInfo}
+          defaultValues={defaultValues}
+          refetch={refetch}
+        />
       </CustomAccordion>
     </>
   )

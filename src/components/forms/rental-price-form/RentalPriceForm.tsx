@@ -20,9 +20,9 @@ import FlexiblePriceForm, {
   flexiblePriceFormSchema,
 } from './flexible-price-form/FlexiblePriceForm'
 
-interface SpaceRentalPriceFormProps {
-  defaultValues?: SpaceRentalPriceFormType
-  onChange?: (values: SpaceRentalPriceFormType) => void
+interface RentalPriceFormProps {
+  defaultValues?: RentalPriceFormType
+  onChange?: (values: RentalPriceFormType) => void
   disabled?: boolean
   info?: CustomPriceFormInfoProps
   resetFormValues?: boolean
@@ -36,7 +36,7 @@ const optionSchema = z.object({
   disabled: z.any().optional(),
 })
 
-export const spaceRentalPriceFormSchema = z
+export const rentalPriceFormSchema = z
   .object({
     price_model: z.array(optionSchema).min(1),
     fixed_price_form: fixedPriceFormSchema.optional(),
@@ -51,15 +51,15 @@ export const spaceRentalPriceFormSchema = z
     )
   })
 
-type SpaceRentalPriceFormType = z.infer<typeof spaceRentalPriceFormSchema>
+export type RentalPriceFormType = z.infer<typeof rentalPriceFormSchema>
 
-export default function SpaceRentalPriceForm({
+export default function RentalPriceForm({
   defaultValues,
   onChange,
   disabled = false,
   info,
   resetFormValues,
-}: SpaceRentalPriceFormProps) {
+}: RentalPriceFormProps) {
   const t = useTranslations()
 
   const {
@@ -68,15 +68,15 @@ export default function SpaceRentalPriceForm({
     watch,
     reset,
     formState: { isValid, errors },
-  } = useForm<SpaceRentalPriceFormType>({
-    resolver: zodResolver(spaceRentalPriceFormSchema),
+  } = useForm<RentalPriceFormType>({
+    resolver: zodResolver(rentalPriceFormSchema),
     defaultValues,
   })
 
   const price_model = watch('price_model')
-  const showFixed = price_model?.[0]?.value === 'fixed'
-  const showFlexible = price_model?.[0]?.value === 'flexible'
-  const showCustom = price_model?.[0]?.value === 'custom'
+  const showFixed = price_model?.[0]?.value === 'hourly-fixed'
+  const showFlexible = price_model?.[0]?.value === 'hourly-flexible'
+  const showCustom = price_model?.[0]?.value === 'hourly-custom'
 
   const fixed_price_form = watch('fixed_price_form')
   const flexible_price_form = watch('flexible_price_form')
@@ -102,7 +102,7 @@ export default function SpaceRentalPriceForm({
   ])
 
   const handleSelectChange =
-    (field: keyof SpaceRentalPriceFormType) => (option: Option[]) => {
+    (field: keyof RentalPriceFormType) => (option: Option[]) => {
       setValue(field, option, { shouldValidate: true, shouldDirty: true })
       if (field === 'fixed_price_form') {
         setValue('flexible_price_form', undefined, {

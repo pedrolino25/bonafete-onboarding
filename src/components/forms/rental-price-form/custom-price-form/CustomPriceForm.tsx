@@ -84,7 +84,7 @@ export const customPriceFormSchema = z
     )
   })
 
-type CustomPriceFormType = z.infer<typeof customPriceFormSchema>
+export type CustomPriceFormType = z.infer<typeof customPriceFormSchema>
 
 export default function CustomPriceForm({
   defaultValues,

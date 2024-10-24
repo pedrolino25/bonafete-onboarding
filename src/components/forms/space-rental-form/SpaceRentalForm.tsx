@@ -4,33 +4,43 @@ import { SelectInput } from '@/components/inputs/select-input/select-input'
 import { OnboardingFormLayout } from '@/components/layouts/onboarding-form'
 import { Button } from '@/components/ui/button'
 import { Option } from '@/components/ui/select'
-import { BUSINESS_MODEL_OPTIONS } from '@/lib/utils/consts'
+import { toast } from '@/lib/hooks/use-toast'
+import { BUSINESS_MODEL_OPTIONS, SpaceBusinessModel } from '@/lib/utils/consts'
+import {
+  CancelationPolicy,
+  OnboardingProcessItemResponse,
+  SpacePrice,
+  SpaceSchedule,
+  updateSpaceOffersRental,
+  UpdateSpaceOffersRentalParameters,
+} from '@/services/api/onboarding-processes'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
-import SpaceCancelationPolicyForm, {
-  spaceCancelationPolicyFormSchema,
-} from './space-cancelation-policy-form/SpaceCancelationPolicyForm'
-import SpaceRentalCleaningFeeForm, {
-  spaceRentalCleaningFeeFormSchema,
-} from './space-cleaning-fee-form/SpaceRentalCleaningFeeForm'
-import SpaceRentalLotationForm, {
-  spaceRentalLotationFormSchema,
-} from './space-rental-lotation-form/SpaceRentalLotationForm'
-import SpaceRentalMinimumHoursForm, {
-  spaceRentalMinimumHoursFormSchema,
-} from './space-rental-min-hours-form/SpaceRentalMinimumHoursForm'
-import SpaceRentalPriceForm, {
-  spaceRentalPriceFormSchema,
-} from './space-rental-price-form/SpaceRentalPriceForm'
-import SpaceRentalScheduleForm, {
-  spaceRentalScheduleFormSchema,
-} from './space-rental-schedule-form/SpaceRentalScheduleForm'
+import CancelationPolicyForm, {
+  cancelationPolicyFormSchema,
+} from '../cancelation-policy-form/CancelationPolicyForm'
+import CleaningFeeForm, {
+  cleaningFeeFormSchema,
+} from '../cleaning-fee-form/CleaningFeeForm'
+import LotationForm, { lotationFormSchema } from '../lotation-form/LotationForm'
+import MinimumHoursForm, {
+  minimumHoursFormSchema,
+} from '../minimum-hours-form/MinimumHoursForm'
+import RentalPriceForm, {
+  rentalPriceFormSchema,
+  RentalPriceFormType,
+} from '../rental-price-form/RentalPriceForm'
+import ScheduleForm, { scheduleFormSchema } from '../schedule-form/ScheduleForm'
 
 interface SpaceRentalFormProps {
   defaultValues?: SpaceRentalFormType
+  onboardingInfo: OnboardingProcessItemResponse
+  completed?: boolean
+  refetch: () => void
 }
 
 const optionSchema = z.object({
@@ -44,12 +54,12 @@ const optionSchema = z.object({
 const spaceRentalFormSchema = z
   .object({
     business_model: z.array(optionSchema).min(1),
-    lotation_form: spaceRentalLotationFormSchema,
-    min_hours_form: spaceRentalMinimumHoursFormSchema.optional(),
-    schedule_form: spaceRentalScheduleFormSchema.optional(),
-    price_form: spaceRentalPriceFormSchema.optional(),
-    cleaning_fee_form: spaceRentalCleaningFeeFormSchema.optional(),
-    cancellation_policy_form: spaceCancelationPolicyFormSchema,
+    lotation_form: lotationFormSchema.optional(),
+    min_hours_form: minimumHoursFormSchema.optional(),
+    schedule_form: scheduleFormSchema.optional(),
+    price_form: rentalPriceFormSchema,
+    cleaning_fee_form: cleaningFeeFormSchema.optional(),
+    cancellation_policy_form: cancelationPolicyFormSchema,
   })
   .refine((data) => {
     if (
@@ -57,11 +67,10 @@ const spaceRentalFormSchema = z
       data.business_model[0] &&
       data.business_model[0].value
     ) {
-      if (data.business_model[0].value === 'packages') {
+      if (data.business_model[0].value === SpaceBusinessModel.OnlyPackages) {
         return !!(
-          data.lotation_form?.lotation &&
-          data.min_hours_form?.min_hours &&
-          data.price_form?.price_model &&
+          data.price_form?.price_model?.[0]?.value &&
+          data.cancellation_policy_form?.base_refund &&
           (data.price_form?.fixed_price_form?.price ||
             data.price_form?.flexible_price_form?.base_price ||
             data.price_form?.custom_price_form?.price_1)
@@ -71,7 +80,8 @@ const spaceRentalFormSchema = z
           data.lotation_form?.lotation &&
           data.min_hours_form?.min_hours &&
           data.schedule_form?.friday_from &&
-          data.price_form?.price_model &&
+          data.price_form?.price_model?.[0]?.value &&
+          data.cancellation_policy_form?.base_refund &&
           (data.price_form?.fixed_price_form?.price ||
             data.price_form?.flexible_price_form?.base_price ||
             data.price_form?.custom_price_form?.price_1)
@@ -84,14 +94,19 @@ const spaceRentalFormSchema = z
 type SpaceRentalFormType = z.infer<typeof spaceRentalFormSchema>
 
 export default function SpaceRentalForm({
+  onboardingInfo,
   defaultValues,
+  refetch,
 }: SpaceRentalFormProps) {
   const t = useTranslations()
   const [resetFormValues, setResetFormValues] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const {
+    handleSubmit,
     setValue,
     watch,
-    formState: { isValid },
+    reset,
+    formState: { isValid, isDirty },
   } = useForm<SpaceRentalFormType>({
     resolver: zodResolver(spaceRentalFormSchema),
     defaultValues,
@@ -104,7 +119,8 @@ export default function SpaceRentalForm({
   const price_form = watch('price_form')
 
   const requireFullConfiguration =
-    business_model?.length > 0 && business_model?.[0]?.value !== 'packages'
+    business_model?.length > 0 &&
+    business_model?.[0]?.value !== SpaceBusinessModel.OnlyPackages
 
   const disableLotationForm = !business_model || business_model?.length === 0
 
@@ -114,25 +130,273 @@ export default function SpaceRentalForm({
 
   const disablePriceForm =
     (!schedule_form && requireFullConfiguration) ||
-    (!requireFullConfiguration && !lotation_form)
+    !business_model ||
+    business_model?.length === 0
 
   const disableCleaningFeeForm = !price_form || !price_form?.price_model
 
   const handleSelectChange =
     (field: keyof SpaceRentalFormType) => (option: Option[]) => {
       setValue(field, option, { shouldValidate: true, shouldDirty: true })
-      if (field === 'business_model' && option[0].value === 'packages') {
+      if (
+        field === 'business_model' &&
+        option[0].value === SpaceBusinessModel.OnlyPackages
+      ) {
         setValue('schedule_form', undefined, {
           shouldValidate: true,
           shouldDirty: true,
         })
-        setValue('price_form', undefined, {
+        setValue('price_form', {} as RentalPriceFormType, {
           shouldValidate: true,
           shouldDirty: true,
         })
         setResetFormValues(true)
       }
     }
+
+  const updateSpaceOffersRentalMutation = useMutation({
+    mutationFn: updateSpaceOffersRental,
+    onSuccess: () => {
+      refetch()
+      setIsLoading(false)
+      toast({
+        variant: 'success',
+        title: t('success'),
+        description: t('success-messages.submit'),
+      })
+    },
+    onError: () => {
+      refetch()
+      setIsLoading(false)
+      toast({
+        variant: 'destructive',
+        title: t('error'),
+        description: t('error-messages.submit'),
+      })
+    },
+  })
+
+  const getCancelationPolicyObject = (
+    values: SpaceRentalFormType
+  ): CancelationPolicy => {
+    return {
+      afterConfimation: parseInt(values.cancellation_policy_form.base_refund),
+      period: parseInt(values.cancellation_policy_form.late_cancellation_days),
+      afterPeriod: parseInt(
+        values.cancellation_policy_form.late_cancellation_refund
+      ),
+      space: { id: onboardingInfo.space.space_id },
+      createdAt: new Date(),
+    } as CancelationPolicy
+  }
+
+  const getPricesObject = (values: SpaceRentalFormType): SpacePrice[] => {
+    const prices: SpacePrice[] = []
+    if (values.price_form.price_model[0].value === 'hourly-custom') {
+      const custom_price = values.price_form.custom_price_form
+
+      if (
+        custom_price?.time_from_1 &&
+        custom_price?.time_to_1 &&
+        custom_price?.price_1
+      ) {
+        prices.push({
+          type: 'hourly-custom',
+          amount: parseInt(custom_price?.price_1 || '0'),
+          timeStart: custom_price?.time_from_1[0]?.value,
+          timeEnd: custom_price?.time_to_1[0]?.value,
+          space: { id: onboardingInfo.space.space_id },
+          createdAt: new Date(),
+        } as SpacePrice)
+      }
+      if (
+        custom_price?.time_from_2 &&
+        custom_price?.time_to_2 &&
+        custom_price?.price_2
+      ) {
+        prices.push({
+          type: 'hourly-custom',
+          amount: parseInt(custom_price?.price_2 || '0'),
+          timeStart: custom_price?.time_from_2[0]?.value,
+          timeEnd: custom_price?.time_to_2[0]?.value,
+          space: { id: onboardingInfo.space.space_id },
+          createdAt: new Date(),
+        } as SpacePrice)
+      }
+      if (
+        custom_price?.time_from_3 &&
+        custom_price?.time_to_3 &&
+        custom_price?.price_3
+      ) {
+        prices.push({
+          type: 'hourly-custom',
+          amount: parseInt(custom_price?.price_3 || '0'),
+          timeStart: custom_price?.time_from_3[0]?.value,
+          timeEnd: custom_price?.time_to_3[0]?.value,
+          space: { id: onboardingInfo.space.space_id },
+          createdAt: new Date(),
+        } as SpacePrice)
+      }
+      if (
+        custom_price?.time_from_4 &&
+        custom_price?.time_to_4 &&
+        custom_price?.price_4
+      ) {
+        prices.push({
+          type: 'hourly-custom',
+          amount: parseInt(custom_price?.price_4 || '0'),
+          timeStart: custom_price?.time_from_4[0]?.value,
+          timeEnd: custom_price?.time_to_4[0]?.value,
+          space: { id: onboardingInfo.space.space_id },
+          createdAt: new Date(),
+        } as SpacePrice)
+      }
+      if (
+        custom_price?.time_from_5 &&
+        custom_price?.time_to_5 &&
+        custom_price?.price_5
+      ) {
+        prices.push({
+          type: 'hourly-custom',
+          amount: parseInt(custom_price?.price_5 || '0'),
+          timeStart: custom_price?.time_from_5[0]?.value,
+          timeEnd: custom_price?.time_to_5[0]?.value,
+          space: { id: onboardingInfo.space.space_id },
+          createdAt: new Date(),
+        } as SpacePrice)
+      }
+    } else if (values.price_form.price_model[0].value === 'hourly-flexible') {
+      prices.push({
+        type: 'hourly-flexible',
+        amount: parseInt(
+          values.price_form?.flexible_price_form?.base_price || '0'
+        ),
+        amountAfter: parseInt(
+          values.price_form?.flexible_price_form?.price_after || '0'
+        ),
+        duration: parseInt(
+          values.price_form?.flexible_price_form?.time_limit || '0'
+        ),
+        space: { id: onboardingInfo.space.space_id },
+        createdAt: new Date(),
+      } as SpacePrice)
+    } else if (values.price_form.price_model[0].value === 'hourly-fixed') {
+      prices.push({
+        type: 'hourly-fixed',
+        amount: parseInt(values.price_form?.fixed_price_form?.price || '0'),
+        space: { id: onboardingInfo.space.space_id },
+        createdAt: new Date(),
+      } as SpacePrice)
+    }
+
+    if (values.cleaning_fee_form?.cleaning_fee) {
+      prices.push({
+        type: 'cleaning-fee',
+        amount: parseInt(values.cleaning_fee_form?.cleaning_fee || '0'),
+        space: { id: onboardingInfo.space.space_id },
+        createdAt: new Date(),
+      } as SpacePrice)
+    }
+
+    return prices
+  }
+
+  const getSpaceScheduleObject = (
+    values: SpaceRentalFormType
+  ): SpaceSchedule[] => {
+    let schedule: SpaceSchedule[] = []
+    if (values.schedule_form) {
+      schedule = [
+        {
+          weekDay: 'monday',
+          timeStart:
+            values.schedule_form.monday_from[0].value === '--:--'
+              ? 'Fechado'
+              : values.schedule_form.monday_from[0].value,
+          timeEnd: values.schedule_form.monday_to?.[0]?.value || '',
+          space: { id: onboardingInfo.space.space_id },
+          createdAt: new Date(),
+        },
+        {
+          weekDay: 'tuesday',
+          timeStart:
+            values.schedule_form.tuesday_from[0].value === '--:--'
+              ? 'Fechado'
+              : values.schedule_form.tuesday_from[0].value,
+          timeEnd: values.schedule_form.tuesday_to?.[0]?.value || '',
+          space: { id: onboardingInfo.space.space_id },
+          createdAt: new Date(),
+        },
+        {
+          weekDay: 'wednesday',
+          timeStart:
+            values.schedule_form.wednesday_from[0].value === '--:--'
+              ? 'Fechado'
+              : values.schedule_form.wednesday_from[0].value,
+          timeEnd: values.schedule_form.wednesday_to?.[0]?.value || '',
+          space: { id: onboardingInfo.space.space_id },
+          createdAt: new Date(),
+        },
+        {
+          weekDay: 'thursday',
+          timeStart:
+            values.schedule_form.thursday_from[0].value === '--:--'
+              ? 'Fechado'
+              : values.schedule_form.thursday_from[0].value,
+          timeEnd: values.schedule_form.thursday_to?.[0]?.value || '',
+          space: { id: onboardingInfo.space.space_id },
+          createdAt: new Date(),
+        },
+        {
+          weekDay: 'friday',
+          timeStart:
+            values.schedule_form.friday_from[0].value === '--:--'
+              ? 'Fechado'
+              : values.schedule_form.friday_from[0].value,
+          timeEnd: values.schedule_form.friday_to?.[0]?.value || '',
+          space: { id: onboardingInfo.space.space_id },
+          createdAt: new Date(),
+        },
+        {
+          weekDay: 'saturday',
+          timeStart:
+            values.schedule_form.saturday_from[0].value === '--:--'
+              ? 'Fechado'
+              : values.schedule_form.saturday_from[0].value,
+          timeEnd: values.schedule_form.saturday_to?.[0]?.value || '',
+          space: { id: onboardingInfo.space.space_id },
+          createdAt: new Date(),
+        },
+        {
+          weekDay: 'sunday',
+          timeStart:
+            values.schedule_form.sunday_from[0].value === '--:--'
+              ? 'Fechado'
+              : values.schedule_form.sunday_from[0].value,
+          timeEnd: values.schedule_form.sunday_to?.[0]?.value || '',
+          space: { id: onboardingInfo.space.space_id },
+          createdAt: new Date(),
+        },
+      ]
+    }
+    return schedule
+  }
+
+  const onSubmit = (values: SpaceRentalFormType) => {
+    setIsLoading(true)
+    const data = {
+      onboarding_id: onboardingInfo.id,
+      business_model: values.business_model[0].value,
+      lotation: values.lotation_form?.lotation,
+      min_hours: values.min_hours_form?.min_hours,
+      prices: getPricesObject(values),
+      price_modality: values.price_form.price_model[0]?.value,
+      cancellation_policy: getCancelationPolicyObject(values),
+      schedule: getSpaceScheduleObject(values),
+    } as UpdateSpaceOffersRentalParameters
+
+    updateSpaceOffersRentalMutation.mutate(data)
+  }
 
   return (
     <OnboardingFormLayout.Root>
@@ -162,28 +426,32 @@ export default function SpaceRentalForm({
           )}
         </OnboardingFormLayout.Container>
       </div>
-      <SpaceRentalLotationForm
-        disabled={disableLotationForm}
-        defaultValues={defaultValues?.lotation_form}
-        onChange={(value) =>
-          setValue('lotation_form', value, {
-            shouldValidate: true,
-            shouldDirty: true,
-          })
-        }
-      />
-      <SpaceRentalMinimumHoursForm
-        disabled={disableMinHoursForm}
-        defaultValues={defaultValues?.min_hours_form}
-        onChange={(value) =>
-          setValue('min_hours_form', value, {
-            shouldValidate: true,
-            shouldDirty: true,
-          })
-        }
-      />
       {requireFullConfiguration && (
-        <SpaceRentalScheduleForm
+        <LotationForm
+          disabled={disableLotationForm}
+          defaultValues={defaultValues?.lotation_form}
+          onChange={(value) =>
+            setValue('lotation_form', value, {
+              shouldValidate: true,
+              shouldDirty: true,
+            })
+          }
+        />
+      )}
+      {requireFullConfiguration && (
+        <MinimumHoursForm
+          disabled={disableMinHoursForm}
+          defaultValues={defaultValues?.min_hours_form}
+          onChange={(value) =>
+            setValue('min_hours_form', value, {
+              shouldValidate: true,
+              shouldDirty: true,
+            })
+          }
+        />
+      )}
+      {requireFullConfiguration && (
+        <ScheduleForm
           resetFormValues={resetFormValues}
           info={{
             minHours:
@@ -201,7 +469,7 @@ export default function SpaceRentalForm({
           }
         />
       )}
-      <SpaceRentalPriceForm
+      <RentalPriceForm
         resetFormValues={resetFormValues}
         info={{
           minHour: schedule_form?.min_hour || [],
@@ -217,7 +485,7 @@ export default function SpaceRentalForm({
         }
       />
 
-      <SpaceRentalCleaningFeeForm
+      <CleaningFeeForm
         disabled={disableCleaningFeeForm}
         defaultValues={defaultValues?.cleaning_fee_form}
         onChange={(value) =>
@@ -227,7 +495,7 @@ export default function SpaceRentalForm({
           })
         }
       />
-      <SpaceCancelationPolicyForm
+      <CancelationPolicyForm
         disabled={disableCleaningFeeForm}
         defaultValues={defaultValues?.cancellation_policy_form}
         onChange={(value) =>
@@ -237,7 +505,13 @@ export default function SpaceRentalForm({
           })
         }
       />
-      <Button disabled={!isValid}>{t('button-actions.submit')}</Button>
+      <Button
+        disabled={!isValid || isLoading || !isDirty}
+        loading={isLoading}
+        onClick={handleSubmit(onSubmit)}
+      >
+        {t('button-actions.submit')}
+      </Button>
     </OnboardingFormLayout.Root>
   )
 }
