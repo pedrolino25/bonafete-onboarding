@@ -101,11 +101,7 @@ export default function OnboardingSection({
           (values.fase3 === OnboardingFaseStatus.Incomplete &&
             isAnyPendingSection(values))
         ) {
-          if (
-            values.fase4 === OnboardingFaseStatus.Completed ||
-            (values.fase4 === OnboardingFaseStatus.Incomplete &&
-              isAnyPendingSection(values))
-          ) {
+          if (values.fase4 === OnboardingFaseStatus.Completed) {
             if (
               values.fase5 === OnboardingFaseStatus.Completed ||
               (values.fase5 === OnboardingFaseStatus.Incomplete &&
@@ -126,7 +122,7 @@ export default function OnboardingSection({
                   `sections.onboarding.navigation.${OnboardingSections.HostInfo}`
                 ),
                 disabled: false,
-                complete: true,
+                complete: false,
               }
             }
           } else {
@@ -213,7 +209,10 @@ export default function OnboardingSection({
         {
           value: OnboardingSections.HostInfo,
           label: t('sections.onboarding.navigation.host-info'),
-          disabled: data && data.fase5 !== OnboardingFaseStatus.Completed,
+          disabled:
+            data &&
+            data.fase4 !== OnboardingFaseStatus.Completed &&
+            data.fase4 !== OnboardingFaseStatus.Incomplete,
           complete: data && data.fase5 === OnboardingFaseStatus.Completed,
           incomplete: data && data.fase5 === OnboardingFaseStatus.Incomplete,
         },

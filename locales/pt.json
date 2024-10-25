@@ -117,7 +117,8 @@
     "reject": "Rejeitar inscrição",
     "archive": "Arquivar processo",
     "init-process": "Iniciar onboarding",
-    "delete-package": "Eliminar pacote"
+    "delete-package": "Eliminar pacote",
+    "delete-extra": "Eliminar extra"
   },
   "subtitles": {
     "reasign": "Selecione a pessoa que pretende que seja responsável pelo seguimento deste processo",
@@ -125,7 +126,8 @@
     "reject": "Tem a certeza que deseja rejeitar a inscrição?",
     "archive": "Tem a certeza que deseja arquivar o processo?",
     "init-process": "Tem a certeza que deseja iniciar o processo de onboarding?",
-    "delete-package": "Tem a certeza que deseja eliminar o pacote?"
+    "delete-package": "Tem a certeza que deseja eliminar o pacote?",
+    "delete-extra": "Tem a certeza que deseja eliminar o extra?"
   },
   "button-actions": {
     "confirm": "Confirmar",
@@ -149,7 +151,8 @@
     "schedule": "Inscrição agendada com sucesso.",
     "init-process": "Onboarding iniciado com sucesso.",
     "submit": "Dados guardados com sucesso",
-    "delete-package": "Pacote eliminado com sucesso"
+    "delete-package": "Pacote eliminado com sucesso",
+    "delete-extra": "Extra eliminado com sucesso"
   },
   "error-messages": {
     "accept": "Erro inesperado a aceitar inscrição.",
@@ -168,7 +171,8 @@
     "define-lotation": "Defina a lotação máxima do espaço",
     "define-cleaning-fee": "Defina a taxa de limpeza (opcional)",
     "define-min-hours": "Defina o minimo de horas para reserva",
-    "delete-package": "Erro inesperado a eliminar pacote"
+    "delete-package": "Erro inesperado a eliminar pacote",
+    "delete-extra": "Erro inesperado a eliminar pacote"
   },
   "calendar": {
     "today": "Hoje",
@@ -271,11 +275,39 @@
           "pricing": "* Será cobrado um preço base de $1€ $2, $3€ por hora extra e $4€ por pessoa extra"
         }
       },
+      "extra-form": {
+        "extra-title": "Extra",
+        "extra-subtitle": "Indique o nome que identifica o extra",
+        "new-extra": "Adicionar novo extra",
+        "description-title": "Descrição",
+        "description-subtitle": "Descreva sucintamente o extra",
+        "packages-available-title": "Disponível para pacotes",
+        "packages-available-subtitle": "Defina se este extra poderá ser obtido numa reserva que inclua um pacote",
+        "select-packages-available": "Selecione uma opção",
+        "price": "Preço",
+        "pricing-title": "Preço",
+        "pricing-subtitle": "Defina o preço do extra",
+        "select-pricing-model": "Selecione a modalidade de preço",
+        "unit-hourly": "Mínimo de horas",
+        "unit-person": "Mínimo de pessoas",
+        "unit-unit": "Quantidade máxima",
+        "photos-title": "Fotografias",
+        "photos-subtitle": "Escolha até 4 fotografias do extra",
+        "explanation-messages": {
+          "pricing-fixed": "O extra terá um custo fixo de $1€",
+          "pricing-hourly": "O extra terá um custo de $1€ por hora, e estará disponível para reservas de periodo igual ou superior a $2 horas",
+          "pricing-person": "O extra terá um custo de $1€ por pessoa, e estará disponível para reservas a partir de $2 pessoas",
+          "pricing-unit": "O extra terá um custo de $1€ por unidade, e existem $2 unidades disponiveis",
+          "packages-available-yes": "O extra estará disponível para reservas de pacotes",
+          "packages-available-no": "O extra não estará disponível para reservas de pacotes"
+        }
+      },
       "general-config": "Configuração de reserva",
       "add-package": "Adicionar pacote de festa",
       "add-extra": "Adicionar extra",
       "package": "Pacote de festa ($1)",
-      "package-title": "Pacote $1"
+      "package-title": "Pacote $1",
+      "extra": "Extra ($1)"
     }
   },
   "business-model-options": {
@@ -288,7 +320,13 @@
     "hourly-flexible": "Preço fléxivel",
     "hourly-custom": "Preço costumizável",
     "person": "Por pessoa",
-    "hourly": "Por hora"
+    "hourly": "Por hora",
+    "unit": "Por unidade",
+    "fixed": "Fixo"
+  },
+  "packages-available-options": {
+    "yes": "Sim",
+    "no": "Não"
   },
   "week-days": {
     "monday": "Segunda",

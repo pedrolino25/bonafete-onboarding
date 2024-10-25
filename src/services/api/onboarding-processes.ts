@@ -6,6 +6,7 @@ import { CustomPriceFormType } from '@/components/forms/rental-price-form/custom
 import { FixedPriceFormType } from '@/components/forms/rental-price-form/fixed-price-form/FixedPriceForm'
 import { FlexiblePriceFormType } from '@/components/forms/rental-price-form/flexible-price-form/FlexiblePriceForm'
 import { ScheduleFormType } from '@/components/forms/schedule-form/ScheduleForm'
+import { SpaceExtraFormType } from '@/components/forms/space-extra-form/SpaceExtraForm'
 import { SpacePackageFormType } from '@/components/forms/space-package-form/SpacePackageForm'
 import {
   OnboardingFaseStatus,
@@ -165,6 +166,7 @@ export interface OnboardingSpaceInfo {
     custom?: CustomPriceFormType
   }
   packages?: SpacePackageFormType[]
+  extras?: SpaceExtraFormType[]
 }
 
 export interface ApplicationSpaceInfo {
@@ -371,15 +373,49 @@ const getServicesList = async (): Promise<ServiceListItemResponse[]> => {
   return response.json()
 }
 
+export interface ExtraListItemResponse {
+  key: string
+  value: string
+}
+
+const getExtrasList = async (): Promise<ExtraListItemResponse[]> => {
+  const response = await fetch(`${ROOT}/static/extras-list`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+  })
+  return response.json()
+}
+
 interface ServiceListItemProps {
   key: string
   value: string
 }
 
-export const addService = async (
+const addService = async (
   data: ServiceListItemProps
 ): Promise<OnboardingProcessListItemResponse> => {
   const response = await fetch(`${ROOT}/static/services-list`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+    body: JSON.stringify(data),
+  })
+  return response.json()
+}
+
+interface ExtraListItemProps {
+  extra: string
+}
+
+const addExtra = async (
+  data: ExtraListItemProps
+): Promise<OnboardingProcessListItemResponse> => {
+  const response = await fetch(`${ROOT}/static/extras-list`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -459,9 +495,58 @@ const updateOffersOnboardingStatus = async (
   return response.json()
 }
 
+export interface UpdateSpaceExtraParameters {
+  onboarding_id: string
+  id?: string
+  name: string
+  key: string
+  description: string
+  photos: string
+  price_modality: string
+  price: string
+  units?: string
+  packages_available: string
+}
+
+const updateSpaceExtra = async (
+  data: UpdateSpaceExtraParameters
+): Promise<unknown> => {
+  const response = await fetch(`${ROOT}/api/onboarding/process/space-extra`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+    body: JSON.stringify(data),
+  })
+  return response.json()
+}
+
+export interface DeleteSpaceExtraParameters {
+  id: string
+}
+
+const deleteSpaceExtra = async (
+  data: DeleteSpaceExtraParameters
+): Promise<unknown> => {
+  const response = await fetch(`${ROOT}/api/onboarding/process/space-extra`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+    body: JSON.stringify(data),
+  })
+  return response.json()
+}
+
 export {
+  addExtra,
+  addService,
   archiveOnboardingProcess,
+  deleteSpaceExtra,
   deleteSpacePackage,
+  getExtrasList,
   getOnboardingProcessesById,
   getOnboardingsProcessesListByStatus,
   getServicesList,
@@ -472,6 +557,7 @@ export {
   scheduleOnboardingProcess,
   updateOffersOnboardingStatus,
   updateOnboardingStatus,
+  updateSpaceExtra,
   updateSpaceOffersRental,
   updateSpacePackage,
 }

@@ -36,7 +36,7 @@ export const PRICE_MODEL_OPTIONS: Option[] = [
   },
 ]
 
-export const PRICING_MODEL_OPTIONS: Option[] = [
+export const PRICING_MODEL_PACKAGES_OPTIONS: Option[] = [
   {
     value: 'person',
     label: 'price-model-options.person',
@@ -44,6 +44,36 @@ export const PRICING_MODEL_OPTIONS: Option[] = [
   {
     value: 'hourly',
     label: 'price-model-options.hourly',
+  },
+]
+
+export const PRICING_MODEL_EXTRAS_OPTIONS: Option[] = [
+  {
+    value: 'person',
+    label: 'price-model-options.person',
+  },
+  {
+    value: 'hourly',
+    label: 'price-model-options.hourly',
+  },
+  {
+    value: 'fixed',
+    label: 'price-model-options.fixed',
+  },
+  {
+    value: 'unit',
+    label: 'price-model-options.unit',
+  },
+]
+
+export const PACKAGES_AVAILABLE_OPTIONS: Option[] = [
+  {
+    value: 'yes',
+    label: 'packages-available-options.yes',
+  },
+  {
+    value: 'no',
+    label: 'packages-available-options.no',
   },
 ]
 

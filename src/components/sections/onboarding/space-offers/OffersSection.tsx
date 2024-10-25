@@ -140,12 +140,35 @@ export default function SpaceOffersSection({
             />
           )
         })}
-        <SpacePackageSection
-          disabled={!isRentalConfigurationComplete || !allowPackageConfig}
-          onboardingInfo={onboardingInfo}
-          refetch={refetch}
-        />
-        <SpaceExtraSection disabled={!isRentalConfigurationComplete} />
+        {onboardingInfo?.space?.extras?.map((spaceExtra, index) => {
+          return (
+            <SpaceExtraSection
+              title={spaceExtra.extras_form?.extras?.[0]?.label}
+              key={index}
+              defaultValues={spaceExtra}
+              disabled={!isRentalConfigurationComplete || !allowPackageConfig}
+              onboardingInfo={onboardingInfo}
+              refetch={refetch}
+              completed
+            />
+          )
+        })}
+        {(!onboardingInfo?.space?.packages ||
+          onboardingInfo?.space?.packages?.length <= 5) && (
+          <SpacePackageSection
+            disabled={!isRentalConfigurationComplete || !allowPackageConfig}
+            onboardingInfo={onboardingInfo}
+            refetch={refetch}
+          />
+        )}
+        {(!onboardingInfo?.space?.extras ||
+          onboardingInfo?.space?.extras?.length <= 10) && (
+          <SpaceExtraSection
+            disabled={!isRentalConfigurationComplete}
+            onboardingInfo={onboardingInfo}
+            refetch={refetch}
+          />
+        )}
       </div>
     </div>
   )

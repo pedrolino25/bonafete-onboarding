@@ -1,15 +1,27 @@
 'use client'
 
+import SpaceExtraForm, {
+  SpaceExtraFormType,
+} from '@/components/forms/space-extra-form/SpaceExtraForm'
 import CustomAccordion from '@/components/ui/accordion'
+import { OnboardingProcessItemResponse } from '@/services/api/onboarding-processes'
 import { useTranslations } from 'next-intl'
 
 interface SpaceExtraSectionProps {
+  onboardingInfo: OnboardingProcessItemResponse
+  defaultValues?: SpaceExtraFormType
+  completed?: boolean
+  refetch: () => void
   disabled?: boolean
-  open?: boolean
+  title?: string
 }
 export default function SpaceExtraSection({
+  onboardingInfo,
+  defaultValues,
+  completed,
+  refetch,
   disabled,
-  open = false,
+  title,
 }: SpaceExtraSectionProps) {
   const t = useTranslations()
 
@@ -17,10 +29,20 @@ export default function SpaceExtraSection({
     <>
       <CustomAccordion
         disabled={disabled}
-        title={t('sections.onboarding.add-extra')}
+        title={
+          title
+            ? t('sections.onboarding.extra')?.replace('$1', title)
+            : t('sections.onboarding.add-extra')
+        }
         variant="add"
+        complete={completed}
       >
-        <div></div>
+        <SpaceExtraForm
+          key={title}
+          onboardingInfo={onboardingInfo}
+          defaultValues={defaultValues}
+          refetch={refetch}
+        />
       </CustomAccordion>
     </>
   )

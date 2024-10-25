@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/dialog'
 import { Option } from '@/components/ui/select'
 import { toast } from '@/lib/hooks/use-toast'
-import { PRICING_MODEL_OPTIONS } from '@/lib/utils/consts'
+import { PRICING_MODEL_PACKAGES_OPTIONS } from '@/lib/utils/consts'
 import {
   deleteSpacePackage,
   OnboardingProcessItemResponse,
@@ -60,7 +60,6 @@ const spacePackageFormSchema = z.object({
   base_price: z.string().min(1),
   extra_hour_price: z.string().optional(),
   extra_person_price: z.string().optional(),
-  // cleaning_fee: z.string().optional(), // Retrieve from cleaning fee rental
 })
 
 export type SpacePackageFormType = z.infer<typeof spacePackageFormSchema>
@@ -378,7 +377,7 @@ export default function SpacePackageForm({
             placeholder={t(
               'sections.onboarding.package-form.select-pricing-model'
             )}
-            options={PRICING_MODEL_OPTIONS}
+            options={PRICING_MODEL_PACKAGES_OPTIONS}
             value={price_modality}
             onSelect={handleSelectChange('price_modality')}
             useTranslation
