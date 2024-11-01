@@ -141,42 +141,46 @@ export default function ServicesForm({
         {t('sections.onboarding.package-form.services-subtitle')}
       </OnboardingFormLayout.Subtitle>
       <OnboardingFormLayout.Container>
-        <SelectInput
-          required
-          data-testid="services"
-          placeholder={t('table.select-from-list')}
-          options={
-            data?.map((item: { key: string; value: string }) => {
-              return {
-                value: item.key,
-                label: item.value,
+        <div className="grid grid-cols-5 max-sm:grid-cols-1 gap-4">
+          <div className="col-span-3 max-sm:col-span-1">
+            <SelectInput
+              required
+              data-testid="services"
+              placeholder={t('table.select-from-list')}
+              options={
+                data?.map((item: { key: string; value: string }) => {
+                  return {
+                    value: item.key,
+                    label: item.value,
+                  }
+                }) || []
               }
-            }) || []
-          }
-          value={services}
-          onSelect={handleSelectChange('services')}
-          useTranslation
-          multiple
-        />
-        <div className="w-full flex gap-4">
-          <div className="w-full">
-            <TextInput
-              data-testid="new_service"
-              value={new_service}
-              onChange={handleChange('new_service')}
-              placeholder={t('sections.onboarding.package-form.new-service')}
-              hint={
-                'Adicione o serviço caso não esteja disponível para selecionar'
-              }
+              value={services}
+              onSelect={handleSelectChange('services')}
+              useTranslation
+              multiple
             />
           </div>
-          <Button
-            disabled={!new_service || isLoading}
-            loading={isLoading}
-            onClick={handleAddService}
-          >
-            {t('button-actions.add')}
-          </Button>
+          <div className="w-full flex gap-4 col-span-2 max-sm:col-span-1">
+            <div className="w-full">
+              <TextInput
+                data-testid="new_service"
+                value={new_service}
+                onChange={handleChange('new_service')}
+                placeholder={t('sections.onboarding.package-form.new-service')}
+                hint={
+                  'Adicione o serviço caso não esteja disponível para selecionar'
+                }
+              />
+            </div>
+            <Button
+              disabled={!new_service || isLoading}
+              loading={isLoading}
+              onClick={handleAddService}
+            >
+              {t('button-actions.add')}
+            </Button>
+          </div>
         </div>
         {isValid && (
           <OnboardingFormLayout.Info>

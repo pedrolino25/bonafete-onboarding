@@ -505,13 +505,16 @@ export default function SpaceRentalForm({
           })
         }
       />
-      <Button
-        disabled={!isValid || isLoading || !isDirty}
-        loading={isLoading}
-        onClick={handleSubmit(onSubmit)}
-      >
-        {t('button-actions.submit')}
-      </Button>
+      <div className="w-full flex justify-end pt-4">
+        <Button
+          className="px-10"
+          disabled={!isValid || isLoading || !isDirty}
+          loading={isLoading}
+          onClick={handleSubmit(onSubmit)}
+        >
+          {t('button-actions.submit')}
+        </Button>
+      </div>
     </OnboardingFormLayout.Root>
   )
 }

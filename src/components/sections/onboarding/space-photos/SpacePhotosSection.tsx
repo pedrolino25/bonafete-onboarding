@@ -1,5 +1,6 @@
 'use client'
 import { ImageInput } from '@/components/inputs/image-input/image-input'
+import { OnboardingSectionLayout } from '@/components/layouts/onboarding-section'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Button } from '@/components/ui/button'
 import {
@@ -148,13 +149,13 @@ export default function SpacePhotosSection({
       onSubmit={handleSubmit(onSubmit)}
     >
       <div className="w-full border-b pb-4 flex justify-between items-center max-sm:flex-col">
-        <div>
-          <h3 className="text-lg font-semibold text-utility-brand-600">
+        <div className="w-full">
+          <OnboardingSectionLayout.Title>
             {t('sections.onboarding.space-photos-title')}
-          </h3>
-          <p className="text-sm font-light text-utility-gray-500 pt-1 pr-4">
+          </OnboardingSectionLayout.Title>
+          <OnboardingSectionLayout.Subtitle>
             {t('sections.onboarding.space-photos-subtitle')}
-          </p>
+          </OnboardingSectionLayout.Subtitle>
         </div>
         <div className="flex justify-between items-center gap-4 max-sm:justify-end max-sm:items-start max-sm:pt-4 max-sm:w-full">
           {onboardingInfo.fase3 !== OnboardingFaseStatus.Incomplete && (

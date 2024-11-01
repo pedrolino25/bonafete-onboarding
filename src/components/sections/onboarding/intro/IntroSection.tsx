@@ -1,3 +1,4 @@
+import { OnboardingSectionLayout } from '@/components/layouts/onboarding-section'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { toast } from '@/lib/hooks/use-toast'
@@ -91,13 +92,13 @@ export default function OnboardingIntro({
       onSubmit={handleSubmit(onSubmit)}
     >
       <div className="w-full border-b pb-4 flex justify-between items-center max-sm:flex-col">
-        <div>
-          <h3 className="text-lg font-semibold text-utility-brand-600">
+        <div className="w-full">
+          <OnboardingSectionLayout.Title>
             {t('sections.onboarding.introduction-title')}
-          </h3>
-          <p className="text-sm font-light text-utility-gray-500 pt-1 pr-4">
+          </OnboardingSectionLayout.Title>
+          <OnboardingSectionLayout.Subtitle>
             {t('sections.onboarding.introduction-subtitle')}
-          </p>
+          </OnboardingSectionLayout.Subtitle>
         </div>
         <div className="flex justify-between items-center gap-4 max-sm:items-start max-sm:pt-4 max-sm:w-full">
           <Button

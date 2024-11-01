@@ -128,3 +128,16 @@ export const HOURS: Option[] = [
   { value: '22:00+1', label: '22:00+1', disabled: false },
   { value: '23:00+1', label: '23:00+1', disabled: false },
 ]
+
+export enum CompanyType {
+  Individual = 'individual',
+  Company = 'company',
+}
+
+export const COMPANY_TYPE_OPTIONS = [
+  { value: CompanyType.Individual, label: 'company-type-options.individual' },
+  {
+    value: CompanyType.Company,
+    label: 'company-type-options.company',
+  },
+]

@@ -105,6 +105,7 @@
     "set-profile-picture": "Definir como foto de capa",
     "delete-picture": "Eliminar fotografia",
     "drag-grop-image": "Arraste ou clique para adicionar imagens",
+    "drag-grop-file": "Arraste ou clique para selecionar ficheiros",
     "view-photo": "Ver fotografia",
     "submit": "Submeter",
     "validate": "Validar"
@@ -140,7 +141,8 @@
     "update-needed": "Necessita atualização",
     "add": "Adicionar",
     "remove": "Remover",
-    "edit": "Editar"
+    "edit": "Editar",
+    "validate": "Validar"
   },
   "error": "Erro",
   "success": "Sucesso",
@@ -183,6 +185,14 @@
     "onboarding": {
       "title": "Onboarding",
       "subtitle": "Processo de inscrição de anfitriões",
+      "space-package-title": "Pacote de festa",
+      "space-package-subtitle": "Introduza todas as informações do pacote de festa",
+      "space-package-title2": "Pacotes de festa",
+      "space-package-subtitle2": "Adicione os pacotes de festa do anfitrião",
+      "space-extra-title": "Extra",
+      "space-extra-subtitle": "Introduza todas as informações do extra",
+      "space-extra-title2": "Extras",
+      "space-extra-subtitle2": "Adicione os extras do anfitrião",
       "navigation": {
         "intro": "Introdução",
         "space-info": "Informações do espaço",
@@ -195,10 +205,12 @@
       "space-info-title": "Informações do Espaço",
       "space-photos-title": "Fotografias",
       "space-offers-title": "Ofertas",
+      "host-info-title": "Informações do Anfitrião",
       "introduction-subtitle": "Informe o anfitrião sobre a Bonafete. Esclareça sobre o seu funcionamento e regras.",
       "space-info-subtitle": "Introduza todas as informações referentes ao espaço e transversais a qualquer oferta do anfitrião",
       "space-photos-subtitle": "Introduza as fotografias do espaço. Certifique-se de que as fotografias tem a qualidade desejada",
       "space-offers-subtitle": "Introduza todas as ofertas do anfitrião",
+      "host-info-subtitle": "Introduza os dados do anfitrião referentes á entidade beneficiária",
       "form-question-1": "O anfitrião ficou esclarecido em relação ao processo de reserva?",
       "form-question-2": "O anfitrião ficou esclarecido em relação á possibilidade de configuração da politica de cancelamento e reembolso?",
       "form-question-3": "O anfitrião ficou esclarecido em relação ao processamento de pagamentos, reembolsos e repasses?",
@@ -302,6 +314,35 @@
           "packages-available-no": "O extra não estará disponível para reservas de pacotes"
         }
       },
+      "host-info-form": {
+        "first-name": "Primeiro nome",
+        "last-name": "Último nome",
+        "birth-date": "Data de nascimento",
+        "email": "Email",
+        "phone": "Telemóvel",
+        "address": "Morada",
+        "city": "Cidade",
+        "postal-code": "Código postal",
+        "company-type": "Beneficiário",
+        "nif": "Número de identificação fiscal",
+        "company-name": "Nome da empresa",
+        "account-owner": "Nome do titular da conta",
+        "iban": "Número de conta / IBAN",
+        "fiscal-data-title": "Dados fiscais",
+        "fiscal-data-subtitle": "Introduza os dados fiscais. No caso de ser empresa introduza os dados da empresa tal como estão no comprovativo de registo",
+        "representative-title": "Representante",
+        "representative-subtitle": "Introduza os dados do representante legal. No caso de o anfitrião ter uma empresa, o representante legal é o dono da empresa",
+        "account-title": "Dados de conta",
+        "account-subtitle": "Introduza os dados de conta onde serão enviados os fundos relativos aos repasses",
+        "id-proof-title": "Comprovativo de Identidade",
+        "id-proof-subtitle": "Fotografia da frente e do verso do cartão de cidadão, passaporte ou carta de condução. Com os seguintes dados:",
+        "address-proof-title": "Comprovativo de Morada",
+        "address-proof-subtitle": "Uma fotografia do atestado de residência, carta de condução, fatura de serviços (Água, luz, gás) ou carta emitida pelo governo. Com os seguintes dados:",
+        "company-proof-title": "Comprovativo de Empresa",
+        "company-proof-subtitle": "Uma fotografia do registo de empresa com os seguintes dados:",
+        "account-proof-title": "Comprovativo de IBAN",
+        "account-proof-subtitle": "Uma fotografia do comprovativo de IBAN com os seguintes dados:"
+      },
       "general-config": "Configuração de reserva",
       "add-package": "Adicionar pacote de festa",
       "add-extra": "Adicionar extra",
@@ -323,6 +364,10 @@
     "hourly": "Por hora",
     "unit": "Por unidade",
     "fixed": "Fixo"
+  },
+  "company-type-options": {
+    "individual": "Indivíduo",
+    "company": "Empresa"
   },
   "packages-available-options": {
     "yes": "Sim",

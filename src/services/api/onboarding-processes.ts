@@ -132,6 +132,7 @@ export interface OnboardingSpaceConveniences {
 }
 
 export interface OnboardingSpaceInfo {
+  host_id: string
   space_id: string
   max_of_persons?: number
   photos?: string[]
@@ -176,6 +177,28 @@ export interface ApplicationSpaceInfo {
   type: ApplicationSpaceType
 }
 
+interface OnboardingHostInfo {
+  first_name: string
+  last_name: string
+  birth_date: string
+  email: string
+  phone: string
+  address: string
+  city: string
+  postal_code: string
+  nif: string
+  company_type: { value: string; label: string }[]
+  company_name?: string
+  company_phone?: string
+  company_email?: string
+  company_address?: string
+  company_city?: string
+  company_postal_code?: string
+  account_owner: string
+  account_token: string
+  iban: string
+}
+
 export interface OnboardingProcessItemResponse {
   id: string
   status: string
@@ -188,6 +211,7 @@ export interface OnboardingProcessItemResponse {
   created_at: string
   application: ApplicationSpaceInfo
   space: OnboardingSpaceInfo
+  host?: OnboardingHostInfo
 }
 
 const getOnboardingProcessesById = async (
@@ -540,6 +564,44 @@ const deleteSpaceExtra = async (
   return response.json()
 }
 
+export interface UpdateHostInfoParameters {
+  id: string
+  onboarding_id: string
+  first_name: string
+  last_name: string
+  birth_date: string
+  email: string
+  phone: string
+  address: string
+  city: string
+  postal_code: string
+  nif: string
+  company_type: string
+  company_name?: string
+  company_phone?: string
+  company_email?: string
+  company_address?: string
+  company_city?: string
+  company_postal_code?: string
+  account_owner: string
+  account_token: string
+  iban: string
+}
+
+const updateHostInfo = async (
+  data: UpdateHostInfoParameters
+): Promise<unknown> => {
+  const response = await fetch(`${ROOT}/api/onboarding/process/host-info`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+    body: JSON.stringify(data),
+  })
+  return response.json()
+}
+
 export {
   addExtra,
   addService,
@@ -555,6 +617,7 @@ export {
   saveOnboardingSpaceInfo,
   saveOnboardingSpacePhotos,
   scheduleOnboardingProcess,
+  updateHostInfo,
   updateOffersOnboardingStatus,
   updateOnboardingStatus,
   updateSpaceExtra,

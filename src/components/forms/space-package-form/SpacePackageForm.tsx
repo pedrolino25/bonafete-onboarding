@@ -294,42 +294,44 @@ export default function SpacePackageForm({
           {t('sections.onboarding.package-form.min-hours-persons-subtitle')}
         </OnboardingFormLayout.Subtitle>
         <OnboardingFormLayout.Container>
-          <TextInput
-            data-testid="min_hours"
-            value={min_hours}
-            onChange={handleChange('min_hours')}
-            type="number"
-            placeholder={t('sections.onboarding.package-form.min-hours')}
-            fixedEndAdornment={
-              <div className="px-3 pt-2.5 text-sm">
-                <Clock className="h-4 w-4" />
-              </div>
-            }
-          />
-          <TextInput
-            data-testid="min_persons"
-            value={min_persons}
-            onChange={handleChange('min_persons')}
-            type="number"
-            placeholder={t('sections.onboarding.package-form.min-persons')}
-            fixedEndAdornment={
-              <div className="px-3 pt-2.5 text-sm">
-                <UsersRound className="h-4 w-4" />
-              </div>
-            }
-          />
-          <TextInput
-            data-testid="max_persons"
-            value={max_persons}
-            onChange={handleChange('max_persons')}
-            type="number"
-            placeholder={t('sections.onboarding.package-form.max-persons')}
-            fixedEndAdornment={
-              <div className="px-3 pt-2.5 text-sm">
-                <UsersRound className="h-4 w-4" />
-              </div>
-            }
-          />
+          <div className="grid grid-cols-3 max-sm:grid-cols-1 gap-4">
+            <TextInput
+              data-testid="min_hours"
+              value={min_hours}
+              onChange={handleChange('min_hours')}
+              type="number"
+              placeholder={t('sections.onboarding.package-form.min-hours')}
+              fixedEndAdornment={
+                <div className="px-3 pt-2.5 text-sm">
+                  <Clock className="h-4 w-4" />
+                </div>
+              }
+            />
+            <TextInput
+              data-testid="min_persons"
+              value={min_persons}
+              onChange={handleChange('min_persons')}
+              type="number"
+              placeholder={t('sections.onboarding.package-form.min-persons')}
+              fixedEndAdornment={
+                <div className="px-3 pt-2.5 text-sm">
+                  <UsersRound className="h-4 w-4" />
+                </div>
+              }
+            />
+            <TextInput
+              data-testid="max_persons"
+              value={max_persons}
+              onChange={handleChange('max_persons')}
+              type="number"
+              placeholder={t('sections.onboarding.package-form.max-persons')}
+              fixedEndAdornment={
+                <div className="px-3 pt-2.5 text-sm">
+                  <UsersRound className="h-4 w-4" />
+                </div>
+              }
+            />
+          </div>
           {min_hours && min_persons && max_persons && (
             <OnboardingFormLayout.Info>
               {t(
@@ -382,44 +384,48 @@ export default function SpacePackageForm({
             onSelect={handleSelectChange('price_modality')}
             useTranslation
           />
-          <TextInput
-            data-testid="base_price"
-            value={base_price}
-            onChange={handleChange('base_price')}
-            type="number"
-            placeholder={t('sections.onboarding.package-form.base-price')}
-            fixedEndAdornment={
-              <div className="px-3 pt-2.5 text-sm">
-                <Euro className="h-4 w-4" />
-              </div>
-            }
-          />
-          <TextInput
-            data-testid="extra_hour_price"
-            value={extra_hour_price}
-            onChange={handleChange('extra_hour_price')}
-            type="number"
-            placeholder={t('sections.onboarding.package-form.extra-hour-price')}
-            fixedEndAdornment={
-              <div className="px-3 pt-2.5 text-sm">
-                <Euro className="h-4 w-4" />
-              </div>
-            }
-          />
-          <TextInput
-            data-testid="extra_person_price"
-            value={extra_person_price}
-            onChange={handleChange('extra_person_price')}
-            type="number"
-            placeholder={t(
-              'sections.onboarding.package-form.extra-person-price'
-            )}
-            fixedEndAdornment={
-              <div className="px-3 pt-2.5 text-sm">
-                <Euro className="h-4 w-4" />
-              </div>
-            }
-          />
+          <div className="grid grid-cols-3 max-sm:grid-cols-1 gap-4">
+            <TextInput
+              data-testid="base_price"
+              value={base_price}
+              onChange={handleChange('base_price')}
+              type="number"
+              placeholder={t('sections.onboarding.package-form.base-price')}
+              fixedEndAdornment={
+                <div className="px-3 pt-2.5 text-sm">
+                  <Euro className="h-4 w-4" />
+                </div>
+              }
+            />
+            <TextInput
+              data-testid="extra_hour_price"
+              value={extra_hour_price}
+              onChange={handleChange('extra_hour_price')}
+              type="number"
+              placeholder={t(
+                'sections.onboarding.package-form.extra-hour-price'
+              )}
+              fixedEndAdornment={
+                <div className="px-3 pt-2.5 text-sm">
+                  <Euro className="h-4 w-4" />
+                </div>
+              }
+            />
+            <TextInput
+              data-testid="extra_person_price"
+              value={extra_person_price}
+              onChange={handleChange('extra_person_price')}
+              type="number"
+              placeholder={t(
+                'sections.onboarding.package-form.extra-person-price'
+              )}
+              fixedEndAdornment={
+                <div className="px-3 pt-2.5 text-sm">
+                  <Euro className="h-4 w-4" />
+                </div>
+              }
+            />
+          </div>
           {price_modality?.[0]?.value &&
             base_price &&
             extra_hour_price &&
@@ -459,10 +465,10 @@ export default function SpacePackageForm({
         </OnboardingFormLayout.Container>
       </OnboardingFormLayout.Main>
 
-      <div className="w-full flex gap-4">
+      <div className="w-full flex justify-end gap-4">
         {defaultValues && (
           <Button
-            className="w-full"
+            className="px-10"
             disabled={isLoading}
             onClick={handleDelete}
             color="secondary"
@@ -470,9 +476,8 @@ export default function SpacePackageForm({
             {t('button-actions.remove')}
           </Button>
         )}
-
         <Button
-          className="w-full"
+          className="px-10"
           disabled={!isValid || isLoading || !isDirty}
           loading={isLoading}
           onClick={handleSubmit(onSubmit)}

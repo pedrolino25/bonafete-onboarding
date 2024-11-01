@@ -15,13 +15,16 @@ import {
   SpaceTargetListItemResponse,
   SpaceTypeListItemResponse,
 } from '@/services/api/static'
+import { Elements } from '@stripe/react-stripe-js'
+import { loadStripe } from '@stripe/stripe-js'
 import { useQuery } from '@tanstack/react-query'
 import { ChevronLeft } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import HostInfoSection from './host-info/HostInfoSection'
 import SpaceInfoSection from './space-info/SpaceInfoSection'
-import SpaceOffersSection from './space-offers/OffersSection'
+import SpaceOffersSection from './space-offers/SpaceOffersSection'
 import SpacePhotosSection from './space-photos/SpacePhotosSection'
 
 export enum OnboardingFaseStatus {
@@ -53,6 +56,9 @@ export default function OnboardingSection({
   spaceTargetsList,
   postalCodesList,
 }: OnboardingSectionProps) {
+  const stripePromise = loadStripe(
+    process.env.NEXT_PUBLIC_STRIPE_PUBLISH_KEY as string
+  )
   const t = useTranslations()
   const router = useRouter()
   const params = useSearchParams()
@@ -298,7 +304,17 @@ export default function OnboardingSection({
                     refetch={refetch}
                   />
                 )}
-                {section.value === OnboardingSections.HostInfo && <div />}
+                {section.value === OnboardingSections.HostInfo && (
+                  <Elements stripe={stripePromise}>
+                    <HostInfoSection
+                      onboardingInfo={data}
+                      completed={
+                        data && data.fase5 === OnboardingFaseStatus.Completed
+                      }
+                      refetch={refetch}
+                    />
+                  </Elements>
+                )}
               </SidebarLayout.Container>
             </SidebarLayout.Main>
           )}
