@@ -1,5 +1,3 @@
-'use client'
-
 import SpaceExtraForm from '@/components/forms/space-extra-form/SpaceExtraForm'
 import { Navbar } from '@/components/navigation/Navbar'
 import { Button } from '@/components/ui/button'

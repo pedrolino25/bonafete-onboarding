@@ -1,5 +1,3 @@
-'use client'
-
 import SpacePackageForm from '@/components/forms/space-package-form/SpacePackageForm'
 import { Navbar } from '@/components/navigation/Navbar'
 import { Button } from '@/components/ui/button'
