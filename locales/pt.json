@@ -119,7 +119,7 @@
     "archive": "Arquivar processo",
     "init-process": "Iniciar onboarding",
     "delete-package": "Eliminar pacote",
-    "delete-extra": "Eliminar extra"
+    "delete-service": "Eliminar serviço"
   },
   "subtitles": {
     "reasign": "Selecione a pessoa que pretende que seja responsável pelo seguimento deste processo",
@@ -128,7 +128,7 @@
     "archive": "Tem a certeza que deseja arquivar o processo?",
     "init-process": "Tem a certeza que deseja iniciar o processo de onboarding?",
     "delete-package": "Tem a certeza que deseja eliminar o pacote?",
-    "delete-extra": "Tem a certeza que deseja eliminar o extra?"
+    "delete-service": "Tem a certeza que deseja eliminar o serviço?"
   },
   "button-actions": {
     "confirm": "Confirmar",
@@ -154,7 +154,7 @@
     "init-process": "Onboarding iniciado com sucesso.",
     "submit": "Dados guardados com sucesso",
     "delete-package": "Pacote eliminado com sucesso",
-    "delete-extra": "Extra eliminado com sucesso"
+    "delete-service": "Serviço eliminado com sucesso"
   },
   "error-messages": {
     "accept": "Erro inesperado a aceitar inscrição.",
@@ -174,7 +174,7 @@
     "define-cleaning-fee": "Defina a taxa de limpeza (opcional)",
     "define-min-hours": "Defina o minimo de horas para reserva",
     "delete-package": "Erro inesperado a eliminar pacote",
-    "delete-extra": "Erro inesperado a eliminar pacote"
+    "delete-service": "Erro inesperado a eliminar serviço"
   },
   "calendar": {
     "today": "Hoje",
@@ -185,14 +185,14 @@
     "onboarding": {
       "title": "Onboarding",
       "subtitle": "Processo de inscrição de anfitriões",
-      "space-package-title": "Pacote de festa",
-      "space-package-subtitle": "Introduza todas as informações do pacote de festa",
-      "space-package-title2": "Pacotes de festa",
-      "space-package-subtitle2": "Adicione os pacotes de festa do anfitrião",
-      "space-extra-title": "Extra",
-      "space-extra-subtitle": "Introduza todas as informações do extra",
-      "space-extra-title2": "Extras",
-      "space-extra-subtitle2": "Adicione os extras do anfitrião",
+      "space-package-title": "Pacote de serviços",
+      "space-package-subtitle": "Introduza todas as informações do pacote de serviços",
+      "space-package-title2": "Pacotes de serviços",
+      "space-package-subtitle2": "Adicione os pacotes de serviços do anfitrião",
+      "space-service-title": "Serviços",
+      "space-service-subtitle": "Introduza todas as informações do serviço",
+      "space-service-title2": "Serviços",
+      "space-service-subtitle2": "Adicione os serviços do anfitrião",
       "navigation": {
         "intro": "Introdução",
         "space-info": "Informações do espaço",
@@ -287,31 +287,33 @@
           "pricing": "* Será cobrado um preço base de $1€ $2, $3€ por hora extra e $4€ por pessoa extra"
         }
       },
-      "extra-form": {
-        "extra-title": "Extra",
-        "extra-subtitle": "Indique o nome que identifica o extra",
-        "new-extra": "Adicionar novo extra",
+      "services-form": {
+        "service-title": "Serviço",
+        "service-subtitle": "Indique o nome que identifica o serviço",
+        "new-service": "Adicionar novo serviço",
+        "new-service-category": "Categoria",
+        "new-service-info": "Adicione o serviço caso não esteja disponível para selecionar",
         "description-title": "Descrição",
-        "description-subtitle": "Descreva sucintamente o extra",
-        "packages-available-title": "Disponível para pacotes",
-        "packages-available-subtitle": "Defina se este extra poderá ser obtido numa reserva que inclua um pacote",
+        "description-subtitle": "Descreva sucintamente o serviço",
+        "packages-available-title": "Disponível como extra",
+        "packages-available-subtitle": "Defina se este serviço poderá ser obtido como extra ou se apenas está disponivel para pacotes",
         "select-packages-available": "Selecione uma opção",
         "price": "Preço",
         "pricing-title": "Preço",
-        "pricing-subtitle": "Defina o preço do extra",
+        "pricing-subtitle": "Defina o preço do serviço",
         "select-pricing-model": "Selecione a modalidade de preço",
         "unit-hourly": "Mínimo de horas",
         "unit-person": "Mínimo de pessoas",
         "unit-unit": "Quantidade máxima",
         "photos-title": "Fotografias",
-        "photos-subtitle": "Escolha até 4 fotografias do extra",
+        "photos-subtitle": "Escolha até 4 fotografias do serviço",
         "explanation-messages": {
-          "pricing-fixed": "O extra terá um custo fixo de $1€",
-          "pricing-hourly": "O extra terá um custo de $1€ por hora, e estará disponível para reservas de periodo igual ou superior a $2 horas",
-          "pricing-person": "O extra terá um custo de $1€ por pessoa, e estará disponível para reservas a partir de $2 pessoas",
-          "pricing-unit": "O extra terá um custo de $1€ por unidade, e existem $2 unidades disponiveis",
-          "packages-available-yes": "O extra estará disponível para reservas de pacotes",
-          "packages-available-no": "O extra não estará disponível para reservas de pacotes"
+          "pricing-fixed": "O serviço terá um custo fixo de $1€",
+          "pricing-hourly": "O serviço terá um custo de $1€ por hora, e estará disponível para reservas de periodo igual ou superior a $2 horas",
+          "pricing-person": "O serviço terá um custo de $1€ por pessoa, e estará disponível para reservas a partir de $2 pessoas",
+          "pricing-unit": "O serviço terá um custo de $1€ por unidade, e existem $2 unidades disponiveis",
+          "packages-available-true": "O serviço estará disponível apenas para pacotes",
+          "packages-available-false": "O serviço poderá ser reservado como extra"
         }
       },
       "host-info-form": {
@@ -344,11 +346,11 @@
         "account-proof-subtitle": "Uma fotografia do comprovativo de IBAN com os seguintes dados:"
       },
       "general-config": "Configuração de reserva",
-      "add-package": "Adicionar pacote de festa",
-      "add-extra": "Adicionar extra",
-      "package": "Pacote de festa ($1)",
+      "add-package": "Adicionar pacote de serviços",
+      "add-service": "Adicionar serviço",
+      "package": "Pacote de serviços ($1)",
       "package-title": "Pacote $1",
-      "extra": "Extra ($1)"
+      "service": "Serviço ($1)"
     }
   },
   "business-model-options": {
@@ -370,8 +372,8 @@
     "company": "Empresa"
   },
   "packages-available-options": {
-    "yes": "Sim",
-    "no": "Não"
+    "true": "Apenas disponível para pacotes",
+    "false": "Disponível como extra"
   },
   "week-days": {
     "monday": "Segunda",

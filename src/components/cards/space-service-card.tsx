@@ -4,20 +4,20 @@ import { cn } from '@/lib/utils'
 import { Check, Info } from 'lucide-react'
 import { ReactNode } from 'react'
 
-interface ExtraCardProps {
+interface SpaceServiceCardProps {
   disabled?: boolean
   title: string
   children?: ReactNode
   complete?: boolean
   onClick?: () => void
 }
-export default function ExtraCard({
+export default function SpaceServiceCard({
   disabled,
   title,
   children,
   complete = false,
   onClick,
-}: ExtraCardProps) {
+}: SpaceServiceCardProps) {
   return (
     <div
       onClick={onClick}

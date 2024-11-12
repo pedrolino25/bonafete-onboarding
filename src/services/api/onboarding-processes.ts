@@ -6,8 +6,8 @@ import { CustomPriceFormType } from '@/components/forms/rental-price-form/custom
 import { FixedPriceFormType } from '@/components/forms/rental-price-form/fixed-price-form/FixedPriceForm'
 import { FlexiblePriceFormType } from '@/components/forms/rental-price-form/flexible-price-form/FlexiblePriceForm'
 import { ScheduleFormType } from '@/components/forms/schedule-form/ScheduleForm'
-import { SpaceExtraFormType } from '@/components/forms/space-extra-form/SpaceExtraForm'
 import { SpacePackageFormType } from '@/components/forms/space-package-form/SpacePackageForm'
+import { SpaceServiceFormType } from '@/components/forms/space-service-form/SpaceServiceForm'
 import {
   OnboardingFaseStatus,
   OnboardingSections,
@@ -167,7 +167,7 @@ export interface OnboardingSpaceInfo {
     custom?: CustomPriceFormType
   }
   packages?: SpacePackageFormType[]
-  extras?: SpaceExtraFormType[]
+  services?: SpaceServiceFormType[]
 }
 
 export interface ApplicationSpaceInfo {
@@ -382,8 +382,14 @@ const updateSpaceOffersRental = async (
 }
 
 export interface ServiceListItemResponse {
+  id: string
   key: string
   value: string
+  serviceCategory: {
+    id: string
+    key: string
+    value: string
+  }
 }
 
 const getServicesList = async (): Promise<ServiceListItemResponse[]> => {
@@ -397,25 +403,28 @@ const getServicesList = async (): Promise<ServiceListItemResponse[]> => {
   return response.json()
 }
 
-export interface ExtraListItemResponse {
-  key: string
-  value: string
-}
+export function getServicesCategories(
+  items: ServiceListItemResponse[]
+): { value: string; label: string }[] {
+  if (!items || items.length === 0) return []
+  const uniqueCategories = new Map<string, { value: string; label: string }>()
 
-const getExtrasList = async (): Promise<ExtraListItemResponse[]> => {
-  const response = await fetch(`${ROOT}/static/extras-list`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
-    },
+  items.forEach((item) => {
+    const { id, value } = item.serviceCategory
+    if (!uniqueCategories.has(id)) {
+      uniqueCategories.set(id, { value: id, label: value })
+    }
   })
-  return response.json()
+
+  return Array.from(uniqueCategories.values())
 }
 
 interface ServiceListItemProps {
   key: string
   value: string
+  serviceCategory: {
+    id: string
+  }
 }
 
 const addService = async (
@@ -519,23 +528,23 @@ const updateOffersOnboardingStatus = async (
   return response.json()
 }
 
-export interface UpdateSpaceExtraParameters {
+export interface UpdateSpaceServiceParameters {
   onboarding_id: string
   id?: string
   name: string
-  key: string
-  description: string
+  description?: string
   photos: string
   price_modality: string
   price: string
   units?: string
-  packages_available: string
+  packages_only: string
+  service_id: string
 }
 
-const updateSpaceExtra = async (
-  data: UpdateSpaceExtraParameters
+const updateSpaceService = async (
+  data: UpdateSpaceServiceParameters
 ): Promise<unknown> => {
-  const response = await fetch(`${ROOT}/api/onboarding/process/space-extra`, {
+  const response = await fetch(`${ROOT}/api/onboarding/process/space-service`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -546,14 +555,14 @@ const updateSpaceExtra = async (
   return response.json()
 }
 
-export interface DeleteSpaceExtraParameters {
+export interface DeleteSpaceServiceParameters {
   id: string
 }
 
-const deleteSpaceExtra = async (
-  data: DeleteSpaceExtraParameters
+const deleteSpaceService = async (
+  data: DeleteSpaceServiceParameters
 ): Promise<unknown> => {
-  const response = await fetch(`${ROOT}/api/onboarding/process/space-extra`, {
+  const response = await fetch(`${ROOT}/api/onboarding/process/space-service`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
@@ -606,9 +615,8 @@ export {
   addExtra,
   addService,
   archiveOnboardingProcess,
-  deleteSpaceExtra,
   deleteSpacePackage,
-  getExtrasList,
+  deleteSpaceService,
   getOnboardingProcessesById,
   getOnboardingsProcessesListByStatus,
   getServicesList,
@@ -620,7 +628,7 @@ export {
   updateHostInfo,
   updateOffersOnboardingStatus,
   updateOnboardingStatus,
-  updateSpaceExtra,
   updateSpaceOffersRental,
   updateSpacePackage,
+  updateSpaceService,
 }

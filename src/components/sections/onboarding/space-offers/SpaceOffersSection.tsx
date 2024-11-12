@@ -1,5 +1,5 @@
-import ExtraCard from '@/components/cards/extra-card'
 import PackageCard from '@/components/cards/package-card'
+import SpaceServiceCard from '@/components/cards/space-service-card'
 import SpaceRentalForm from '@/components/forms/space-rental-form/SpaceRentalForm'
 import { OnboardingFormLayout } from '@/components/layouts/onboarding-form'
 import { OnboardingSectionLayout } from '@/components/layouts/onboarding-section'
@@ -153,6 +153,44 @@ export default function SpaceOffersSection({
 
         <div className="w-full pt-4 pb-6 border-t">
           <OnboardingFormLayout.Title>
+            {t('sections.onboarding.space-service-title2')}
+          </OnboardingFormLayout.Title>
+          <OnboardingFormLayout.Subtitle>
+            {t('sections.onboarding.space-service-subtitle2')}
+          </OnboardingFormLayout.Subtitle>
+          <div className="w-full grid grid-cols-2 max-sm:grid-cols-1 gap-4 pt-6">
+            {onboardingInfo?.space?.services?.map((spaceService, index) => {
+              return (
+                <SpaceServiceCard
+                  key={index}
+                  complete
+                  onClick={() =>
+                    router.push(
+                      `/manage-process/space-service?onboarding_id=${onboardingInfo.id}&service_id=${spaceService.id}`
+                    )
+                  }
+                  title={spaceService.services_form?.services?.[0]?.label}
+                />
+              )
+            })}
+
+            {(!onboardingInfo?.space?.services ||
+              onboardingInfo?.space?.services?.length <= 10) && (
+              <SpaceServiceCard
+                onClick={() =>
+                  router.push(
+                    `/manage-process/space-service?onboarding_id=${onboardingInfo.id}`
+                  )
+                }
+                title={t('sections.onboarding.add-service')}
+                disabled={!isRentalConfigurationComplete}
+              />
+            )}
+          </div>
+        </div>
+
+        <div className="w-full pt-4 pb-6 border-t">
+          <OnboardingFormLayout.Title>
             {t('sections.onboarding.space-package-title2')}
           </OnboardingFormLayout.Title>
           <OnboardingFormLayout.Subtitle>
@@ -190,44 +228,6 @@ export default function SpaceOffersSection({
                 }
                 title={t('sections.onboarding.add-package')}
                 disabled={!isRentalConfigurationComplete || !allowPackageConfig}
-              />
-            )}
-          </div>
-        </div>
-
-        <div className="w-full pt-4 pb-6 border-t">
-          <OnboardingFormLayout.Title>
-            {t('sections.onboarding.space-extra-title2')}
-          </OnboardingFormLayout.Title>
-          <OnboardingFormLayout.Subtitle>
-            {t('sections.onboarding.space-extra-subtitle2')}
-          </OnboardingFormLayout.Subtitle>
-          <div className="w-full grid grid-cols-2 max-sm:grid-cols-1 gap-4 pt-6">
-            {onboardingInfo?.space?.extras?.map((spaceExtra, index) => {
-              return (
-                <ExtraCard
-                  key={index}
-                  complete
-                  onClick={() =>
-                    router.push(
-                      `/manage-process/space-extra?onboarding_id=${onboardingInfo.id}&extra_id=${spaceExtra.id}`
-                    )
-                  }
-                  title={spaceExtra.extras_form?.extras?.[0]?.label}
-                />
-              )
-            })}
-
-            {(!onboardingInfo?.space?.extras ||
-              onboardingInfo?.space?.extras?.length <= 10) && (
-              <ExtraCard
-                onClick={() =>
-                  router.push(
-                    `/manage-process/space-extra?onboarding_id=${onboardingInfo.id}`
-                  )
-                }
-                title={t('sections.onboarding.add-extra')}
-                disabled={!isRentalConfigurationComplete}
               />
             )}
           </div>

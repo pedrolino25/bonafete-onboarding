@@ -68,12 +68,12 @@ export const PRICING_MODEL_EXTRAS_OPTIONS: Option[] = [
 
 export const PACKAGES_AVAILABLE_OPTIONS: Option[] = [
   {
-    value: 'yes',
-    label: 'packages-available-options.yes',
+    value: 'true',
+    label: 'packages-available-options.true',
   },
   {
-    value: 'no',
-    label: 'packages-available-options.no',
+    value: 'false',
+    label: 'packages-available-options.false',
   },
 ]
 

@@ -9,7 +9,9 @@ import { toast } from '@/lib/hooks/use-toast'
 import { stringToUrl } from '@/lib/utils/functions'
 import {
   addService,
+  getServicesCategories,
   getServicesList,
+  ServiceListItemResponse,
 } from '@/services/api/onboarding-processes'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery } from '@tanstack/react-query'
@@ -34,6 +36,7 @@ const optionSchema = z.object({
 export const servicesFormSchema = z.object({
   services: z.array(optionSchema).min(1),
   new_service: z.string().optional(),
+  new_service_category: z.array(optionSchema).optional(),
 })
 
 export type ServicesFormType = z.infer<typeof servicesFormSchema>
@@ -45,7 +48,7 @@ export default function ServicesForm({
   const t = useTranslations()
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  const { data, refetch } = useQuery({
+  const { data: servicesList, refetch } = useQuery({
     queryKey: ['services-list'],
     queryFn: async () => {
       return await getServicesList()
@@ -64,6 +67,7 @@ export default function ServicesForm({
 
   const services = watch('services')
   const new_service = watch('new_service')
+  const new_service_category = watch('new_service_category')
 
   useEffect(() => {
     if (isValid) {
@@ -123,11 +127,14 @@ export default function ServicesForm({
     }
 
   const handleAddService = () => {
-    if (new_service) {
+    if (new_service && new_service_category) {
       setIsLoading(true)
       addServiceMutation.mutate({
-        key: stringToUrl(new_service),
         value: new_service,
+        key: new_service,
+        serviceCategory: {
+          id: new_service_category[0].value,
+        },
       })
     }
   }
@@ -135,60 +142,61 @@ export default function ServicesForm({
   return (
     <div className="w-full">
       <OnboardingFormLayout.Title>
-        {t('sections.onboarding.package-form.services-title')}
+        {t('sections.onboarding.services-form.service-title')}
       </OnboardingFormLayout.Title>
       <OnboardingFormLayout.Subtitle>
-        {t('sections.onboarding.package-form.services-subtitle')}
+        {t('sections.onboarding.services-form.service-subtitle')}
       </OnboardingFormLayout.Subtitle>
       <OnboardingFormLayout.Container>
-        <div className="grid grid-cols-5 max-sm:grid-cols-1 gap-4">
-          <div className="col-span-3 max-sm:col-span-1">
-            <SelectInput
-              required
-              data-testid="services"
-              placeholder={t('table.select-from-list')}
-              options={
-                data?.map((item: { key: string; value: string }) => {
-                  return {
-                    value: item.key,
-                    label: item.value,
-                  }
-                }) || []
+        <SelectInput
+          required
+          data-testid="services"
+          placeholder={t('table.select-from-list')}
+          options={
+            servicesList?.map((item: ServiceListItemResponse) => {
+              return {
+                value: item.id,
+                label: item.value,
+                info: item.serviceCategory.value,
               }
-              value={services}
-              onSelect={handleSelectChange('services')}
-              useTranslation
-              multiple
-            />
-          </div>
-          <div className="w-full flex gap-4 col-span-2 max-sm:col-span-1">
-            <div className="w-full">
+            }) || []
+          }
+          value={services}
+          onSelect={handleSelectChange('services')}
+        />
+        <div className="w-full flex gap-4">
+          <div className="w-full flex gap-4">
+            <div className="w-1/2">
               <TextInput
                 data-testid="new_service"
                 value={new_service}
                 onChange={handleChange('new_service')}
-                placeholder={t('sections.onboarding.package-form.new-service')}
-                hint={
-                  'Adicione o serviço caso não esteja disponível para selecionar'
-                }
+                placeholder={t('sections.onboarding.services-form.new-service')}
+                hint={t('sections.onboarding.services-form.new-service-info')}
               />
             </div>
-            <Button
-              disabled={!new_service || isLoading}
-              loading={isLoading}
-              onClick={handleAddService}
-            >
-              {t('button-actions.add')}
-            </Button>
+            <div className="w-1/2">
+              <SelectInput
+                data-testid="new_service_category"
+                placeholder={t(
+                  'sections.onboarding.services-form.new-service-category'
+                )}
+                options={
+                  servicesList ? getServicesCategories(servicesList) : []
+                }
+                value={new_service_category || []}
+                onSelect={handleSelectChange('new_service_category')}
+              />
+            </div>
           </div>
+          <Button
+            disabled={!new_service || !new_service_category || isLoading}
+            loading={isLoading}
+            onClick={handleAddService}
+          >
+            {t('button-actions.add')}
+          </Button>
         </div>
-        {isValid && (
-          <OnboardingFormLayout.Info>
-            {t(
-              'sections.onboarding.package-form.explanation-messages.services'
-            )}
-          </OnboardingFormLayout.Info>
-        )}
       </OnboardingFormLayout.Container>
     </div>
   )

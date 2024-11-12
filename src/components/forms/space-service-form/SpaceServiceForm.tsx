@@ -23,9 +23,9 @@ import {
   PRICING_MODEL_EXTRAS_OPTIONS,
 } from '@/lib/utils/consts'
 import {
-  deleteSpaceExtra,
+  deleteSpaceService,
   OnboardingProcessItemResponse,
-  updateSpaceExtra,
+  updateSpaceService,
 } from '@/services/api/onboarding-processes'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
@@ -35,12 +35,12 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { v4 } from 'uuid'
 import z from 'zod'
-import ExtrasForm, { extrasFormSchema } from '../extras-form/ExtrasForm'
+import ServicesForm, { servicesFormSchema } from '../services-form/ServicesForm'
 
 const MAX_PHOTOS = 4
 
-interface SpaceExtraFormProps {
-  defaultValues?: SpaceExtraFormType
+interface SpaceServiceFormProps {
+  defaultValues?: SpaceServiceFormType
   onboardingInfo: OnboardingProcessItemResponse
   completed?: boolean
   refetch: () => void
@@ -61,24 +61,24 @@ const optionSchema = z.object({
   disabled: z.any().optional(),
 })
 
-const spaceExtraFormSchema = z.object({
+const spaceServiceFormSchema = z.object({
   id: z.string().optional(),
-  extras_form: extrasFormSchema,
-  description: z.string().min(12),
+  services_form: servicesFormSchema,
+  description: z.string().min(12).optional(),
   price_modality: z.array(optionSchema).min(1),
   price: z.string().min(1),
   units: z.string().min(1).optional(),
-  packages_available: z.array(optionSchema).min(1),
+  packages_only: z.array(optionSchema).min(1),
   photos: z.array(imageTypeSchema).max(4).optional(),
 })
 
-export type SpaceExtraFormType = z.infer<typeof spaceExtraFormSchema>
+export type SpaceServiceFormType = z.infer<typeof spaceServiceFormSchema>
 
-export default function SpaceExtraForm({
+export default function SpaceServiceForm({
   onboardingInfo,
   defaultValues,
   refetch,
-}: SpaceExtraFormProps) {
+}: SpaceServiceFormProps) {
   const t = useTranslations()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [openDelete, setOpenDelete] = useState<boolean>(false)
@@ -88,39 +88,39 @@ export default function SpaceExtraForm({
     setValue,
     watch,
     formState: { isValid, isDirty },
-  } = useForm<SpaceExtraFormType>({
-    resolver: zodResolver(spaceExtraFormSchema),
+  } = useForm<SpaceServiceFormType>({
+    resolver: zodResolver(spaceServiceFormSchema),
     defaultValues,
   })
 
-  const extra_id = watch('id')
+  const service_id = watch('id')
   const description = watch('description')
   const price_modality = watch('price_modality')
   const price = watch('price')
   const units = watch('units')
-  const packages_available = watch('packages_available')
+  const packages_only = watch('packages_only')
   const photos = watch('photos')
 
   const handleSelectChange =
-    (field: keyof SpaceExtraFormType) => (option: Option[]) => {
+    (field: keyof SpaceServiceFormType) => (option: Option[]) => {
       setValue(field, option, { shouldValidate: true, shouldDirty: true })
     }
 
   const handleChange =
-    (field: keyof SpaceExtraFormType) =>
+    (field: keyof SpaceServiceFormType) =>
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const value = event.target.value.replace(/[.,]/g, '')
       setValue(field, value, { shouldValidate: true, shouldDirty: true })
     }
 
-  const deleteSpaceExtraMutation = useMutation({
-    mutationFn: deleteSpaceExtra,
+  const deleteSpaceServiceMutation = useMutation({
+    mutationFn: deleteSpaceService,
     onSuccess: () => {
       refetch()
       toast({
         variant: 'success',
         title: t('success'),
-        description: t('success-messages.delete-extra'),
+        description: t('success-messages.delete-service'),
       })
     },
     onError: () => {
@@ -128,13 +128,13 @@ export default function SpaceExtraForm({
       toast({
         variant: 'destructive',
         title: t('error'),
-        description: t('error-messages.delete-extra'),
+        description: t('error-messages.delete-service'),
       })
     },
   })
 
-  const updateSpaceExtraMutation = useMutation({
-    mutationFn: updateSpaceExtra,
+  const updateSpaceServiceMutation = useMutation({
+    mutationFn: updateSpaceService,
     onSuccess: () => {
       refetch()
       setIsLoading(false)
@@ -157,7 +157,7 @@ export default function SpaceExtraForm({
     },
   })
 
-  const onSubmit = async (values: SpaceExtraFormType) => {
+  const onSubmit = async (values: SpaceServiceFormType) => {
     setIsLoading(true)
     const pictures = values.photos
       ? await Promise.all(
@@ -167,7 +167,7 @@ export default function SpaceExtraForm({
                 file: photo.file,
                 path: `public/spaces/${
                   onboardingInfo?.space.space_id
-                }/extras/photo_${v4()}.webp`,
+                }/services/photo_${v4()}.webp`,
               })
             } else {
               return photo.path
@@ -176,18 +176,17 @@ export default function SpaceExtraForm({
         )
       : []
 
-    updateSpaceExtraMutation.mutate({
+    updateSpaceServiceMutation.mutate({
       onboarding_id: onboardingInfo?.id,
       id: values.id,
-      name: values.extras_form?.extras?.[0]?.label,
-      key: values.extras_form?.extras?.[0]?.value,
+      name: values.services_form?.services?.[0]?.label,
       description: values.description,
       photos: JSON.stringify(pictures),
       price_modality: values.price_modality?.[0]?.value,
       price: values.price,
       units: values.units,
-      packages_available:
-        values.packages_available?.[0]?.value === 'yes' ? 'true' : 'false',
+      packages_only: values.packages_only?.[0]?.value,
+      service_id: values.services_form?.services?.[0]?.value,
     })
   }
 
@@ -197,10 +196,10 @@ export default function SpaceExtraForm({
 
   return (
     <OnboardingFormLayout.Root>
-      <ExtrasForm
-        defaultValues={defaultValues?.extras_form}
+      <ServicesForm
+        defaultValues={defaultValues?.services_form}
         onChange={(value) =>
-          setValue('extras_form', value, {
+          setValue('services_form', value, {
             shouldValidate: true,
             shouldDirty: true,
           })
@@ -208,17 +207,17 @@ export default function SpaceExtraForm({
       />
       <OnboardingFormLayout.Main>
         <OnboardingFormLayout.Title>
-          {t('sections.onboarding.extra-form.pricing-title')}
+          {t('sections.onboarding.services-form.pricing-title')}
         </OnboardingFormLayout.Title>
         <OnboardingFormLayout.Subtitle>
-          {t('sections.onboarding.extra-form.pricing-subtitle')}
+          {t('sections.onboarding.services-form.pricing-subtitle')}
         </OnboardingFormLayout.Subtitle>
         <OnboardingFormLayout.Container>
           <SelectInput
             required
             data-testid="price_modality"
             placeholder={t(
-              'sections.onboarding.extra-form.select-pricing-model'
+              'sections.onboarding.services-form.select-pricing-model'
             )}
             options={PRICING_MODEL_EXTRAS_OPTIONS}
             value={price_modality}
@@ -234,7 +233,7 @@ export default function SpaceExtraForm({
               onChange={handleChange('units')}
               type="number"
               placeholder={t(
-                `sections.onboarding.extra-form.unit-${price_modality?.[0]?.value}`
+                `sections.onboarding.services-form.unit-${price_modality?.[0]?.value}`
               )}
               fixedEndAdornment={
                 price_modality?.[0]?.value === 'hourly' ? (
@@ -255,7 +254,7 @@ export default function SpaceExtraForm({
             onChange={handleChange('price')}
             type="number"
             disabled={!price_modality || price_modality?.length === 0}
-            placeholder={t('sections.onboarding.extra-form.price')}
+            placeholder={t('sections.onboarding.services-form.price')}
             fixedEndAdornment={
               <div className="px-3 pt-2.5 text-sm">
                 <Euro className="h-4 w-4" />
@@ -267,7 +266,7 @@ export default function SpaceExtraForm({
             (price_modality?.[0]?.value && price && units)) && (
             <OnboardingFormLayout.Info>
               {t(
-                `sections.onboarding.extra-form.explanation-messages.pricing-${price_modality?.[0]?.value}`
+                `sections.onboarding.services-form.explanation-messages.pricing-${price_modality?.[0]?.value}`
               )
                 .replace('$1', price)
                 .replace('$2', units || '')}
@@ -278,117 +277,119 @@ export default function SpaceExtraForm({
 
       <OnboardingFormLayout.Main>
         <OnboardingFormLayout.Title>
-          {t('sections.onboarding.extra-form.packages-available-title')}
+          {t('sections.onboarding.services-form.packages-available-title')}
         </OnboardingFormLayout.Title>
         <OnboardingFormLayout.Subtitle>
-          {t('sections.onboarding.extra-form.packages-available-subtitle')}
+          {t('sections.onboarding.services-form.packages-available-subtitle')}
         </OnboardingFormLayout.Subtitle>
         <OnboardingFormLayout.Container>
           <SelectInput
             required
-            data-testid="packages_available"
+            data-testid="packages_only"
             placeholder={t(
-              'sections.onboarding.extra-form.select-packages-available'
+              'sections.onboarding.services-form.select-packages-available'
             )}
             options={PACKAGES_AVAILABLE_OPTIONS}
-            value={packages_available}
-            onSelect={handleSelectChange('packages_available')}
+            value={packages_only}
+            onSelect={handleSelectChange('packages_only')}
             useTranslation
           />
-          {packages_available?.[0]?.value && (
+          {packages_only?.[0]?.value && (
             <OnboardingFormLayout.Info>
               {t(
-                `sections.onboarding.extra-form.explanation-messages.packages-available-${packages_available?.[0]?.value}`
+                `sections.onboarding.services-form.explanation-messages.packages-available-${packages_only?.[0]?.value}`
               )}
             </OnboardingFormLayout.Info>
           )}
         </OnboardingFormLayout.Container>
       </OnboardingFormLayout.Main>
 
-      <OnboardingFormLayout.Main>
-        <OnboardingFormLayout.Title>
-          {t('sections.onboarding.extra-form.description-title')}
-        </OnboardingFormLayout.Title>
-        <OnboardingFormLayout.Subtitle>
-          {t('sections.onboarding.extra-form.description-subtitle')}
-        </OnboardingFormLayout.Subtitle>
-        <OnboardingFormLayout.Container>
-          <TextEditorInput
-            value={description}
-            onChange={(val) =>
-              setValue('description', val, {
-                shouldValidate: true,
-                shouldDirty: true,
-              })
-            }
-            placeholder={t('columns.description')}
-            required
-          />
-        </OnboardingFormLayout.Container>
-      </OnboardingFormLayout.Main>
-
-      <OnboardingFormLayout.Main>
-        <OnboardingFormLayout.Title>
-          {t('sections.onboarding.extra-form.photos-title')}
-        </OnboardingFormLayout.Title>
-        <OnboardingFormLayout.Subtitle>
-          {t('sections.onboarding.extra-form.photos-subtitle')}
-        </OnboardingFormLayout.Subtitle>
-        <OnboardingFormLayout.Container>
-          <div className="grid grid-cols-2 max-sm:grid-cols-1 gap-6">
-            {photos?.map((item, index) => {
-              return (
-                <Photo
-                  index={index}
-                  src={item.path}
-                  onDeletePhoto={
-                    photos.length > 0
-                      ? (val) => {
-                          setValue(
-                            'photos',
-                            photos.filter(
-                              (__, index) => index !== (val as number)
-                            ),
-                            {
-                              shouldValidate: true,
-                              shouldDirty: true,
-                            }
-                          )
-                        }
-                      : undefined
-                  }
-                />
-              )
-            })}
-            {(!photos || MAX_PHOTOS - photos?.length > 0) && (
-              <ImageInput
-                maxFiles={MAX_PHOTOS - (photos?.length || 0)}
-                onSuccess={(images) => {
-                  setValue(
-                    'photos',
-                    [
-                      ...(photos || []),
-                      ...(images as unknown as ImageFormType[]),
-                    ],
-                    {
-                      shouldValidate: true,
-                      shouldDirty: true,
+      {packages_only?.[0]?.value && packages_only?.[0]?.value === 'false' && (
+        <OnboardingFormLayout.Main>
+          <OnboardingFormLayout.Title>
+            {t('sections.onboarding.services-form.description-title')}
+          </OnboardingFormLayout.Title>
+          <OnboardingFormLayout.Subtitle>
+            {t('sections.onboarding.services-form.description-subtitle')}
+          </OnboardingFormLayout.Subtitle>
+          <OnboardingFormLayout.Container>
+            <TextEditorInput
+              value={description}
+              onChange={(val) =>
+                setValue('description', val, {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                })
+              }
+              placeholder={t('columns.description')}
+              required
+            />
+          </OnboardingFormLayout.Container>
+        </OnboardingFormLayout.Main>
+      )}
+      {packages_only?.[0]?.value && packages_only?.[0]?.value === 'false' && (
+        <OnboardingFormLayout.Main>
+          <OnboardingFormLayout.Title>
+            {t('sections.onboarding.services-form.photos-title')}
+          </OnboardingFormLayout.Title>
+          <OnboardingFormLayout.Subtitle>
+            {t('sections.onboarding.services-form.photos-subtitle')}
+          </OnboardingFormLayout.Subtitle>
+          <OnboardingFormLayout.Container>
+            <div className="grid grid-cols-2 max-sm:grid-cols-1 gap-6">
+              {photos?.map((item, index) => {
+                return (
+                  <Photo
+                    index={index}
+                    src={item.path}
+                    onDeletePhoto={
+                      photos.length > 0
+                        ? (val) => {
+                            setValue(
+                              'photos',
+                              photos.filter(
+                                (__, index) => index !== (val as number)
+                              ),
+                              {
+                                shouldValidate: true,
+                                shouldDirty: true,
+                              }
+                            )
+                          }
+                        : undefined
                     }
-                  )
-                }}
-                onError={() => {
-                  toast({
-                    variant: 'destructive',
-                    title: t('error'),
-                    description: t('error-messages.photos-limite-exceded'),
-                  })
-                }}
-              />
-            )}
-          </div>
-        </OnboardingFormLayout.Container>
-      </OnboardingFormLayout.Main>
-
+                  />
+                )
+              })}
+              {(!photos || MAX_PHOTOS - photos?.length > 0) && (
+                <ImageInput
+                  maxFiles={MAX_PHOTOS - (photos?.length || 0)}
+                  onSuccess={(images) => {
+                    setValue(
+                      'photos',
+                      [
+                        ...(photos || []),
+                        ...(images as unknown as ImageFormType[]),
+                      ],
+                      {
+                        shouldValidate: true,
+                        shouldDirty: true,
+                      }
+                    )
+                  }}
+                  onError={() => {
+                    toast({
+                      variant: 'destructive',
+                      title: t('error'),
+                      description: t('error-messages.photos-limite-exceded'),
+                    })
+                  }}
+                />
+              )}
+            </div>
+          </OnboardingFormLayout.Container>
+        </OnboardingFormLayout.Main>
+      )}
       <div className="w-full flex gap-4">
         {defaultValues && (
           <Button
@@ -413,9 +414,9 @@ export default function SpaceExtraForm({
       <Dialog open={openDelete} onOpenChange={setOpenDelete}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>{t('titles.delete-extra')}</DialogTitle>
+            <DialogTitle>{t('titles.delete-service')}</DialogTitle>
             <DialogDescription className="pt-2 pb-6">
-              {t('subtitles.delete-extra')}
+              {t('subtitles.delete-service')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -431,8 +432,8 @@ export default function SpaceExtraForm({
               loading={isLoading}
               disabled={isLoading}
               onClick={() => {
-                deleteSpaceExtraMutation.mutate({
-                  id: extra_id as string,
+                deleteSpaceServiceMutation.mutate({
+                  id: service_id as string,
                 })
                 setIsLoading(true)
               }}
