@@ -6,7 +6,6 @@ import { OnboardingFormLayout } from '@/components/layouts/onboarding-form'
 import { Button } from '@/components/ui/button'
 import { Option } from '@/components/ui/select'
 import { toast } from '@/lib/hooks/use-toast'
-import { stringToUrl } from '@/lib/utils/functions'
 import {
   addService,
   getServicesCategories,
@@ -82,21 +81,19 @@ export default function ServicesForm({
       if (new_service) {
         setValue(
           'services',
-          services && services?.length > 0
-            ? [
-                ...services,
-                {
-                  value: stringToUrl(new_service),
-                  label: new_service,
-                },
-              ]
-            : [
-                {
-                  value: stringToUrl(new_service),
-                  label: new_service,
-                },
-              ],
-          { shouldValidate: true, shouldDirty: true }
+          (servicesList || [])
+            .filter((item) => item.value === new_service)
+            .map((item) => {
+              return {
+                value: item.id,
+                label: item.value,
+                info: item.serviceCategory.value,
+              }
+            }),
+          {
+            shouldValidate: true,
+            shouldDirty: true,
+          }
         )
         setValue('new_service', '', {
           shouldValidate: true,

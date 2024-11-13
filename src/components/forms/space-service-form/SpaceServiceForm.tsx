@@ -20,7 +20,7 @@ import { toast } from '@/lib/hooks/use-toast'
 import { uploadPictureToS3Bucket } from '@/lib/utils'
 import {
   PACKAGES_AVAILABLE_OPTIONS,
-  PRICING_MODEL_EXTRAS_OPTIONS,
+  PRICING_MODEL_SERVICES_OPTIONS,
 } from '@/lib/utils/consts'
 import {
   deleteSpaceService,
@@ -64,7 +64,7 @@ const optionSchema = z.object({
 const spaceServiceFormSchema = z.object({
   id: z.string().optional(),
   services_form: servicesFormSchema,
-  description: z.string().min(12).optional(),
+  description: z.string().optional(),
   price_modality: z.array(optionSchema).min(1),
   price: z.string().min(1),
   units: z.string().min(1).optional(),
@@ -87,10 +87,13 @@ export default function SpaceServiceForm({
     handleSubmit,
     setValue,
     watch,
-    formState: { isValid, isDirty },
+    formState: { isValid, isDirty, errors },
   } = useForm<SpaceServiceFormType>({
     resolver: zodResolver(spaceServiceFormSchema),
-    defaultValues,
+    defaultValues: {
+      ...defaultValues,
+      description: defaultValues?.description || '',
+    },
   })
 
   const service_id = watch('id')
@@ -179,7 +182,6 @@ export default function SpaceServiceForm({
     updateSpaceServiceMutation.mutate({
       onboarding_id: onboardingInfo?.id,
       id: values.id,
-      name: values.services_form?.services?.[0]?.label,
       description: values.description,
       photos: JSON.stringify(pictures),
       price_modality: values.price_modality?.[0]?.value,
@@ -198,12 +200,12 @@ export default function SpaceServiceForm({
     <OnboardingFormLayout.Root>
       <ServicesForm
         defaultValues={defaultValues?.services_form}
-        onChange={(value) =>
+        onChange={(value) => {
           setValue('services_form', value, {
             shouldValidate: true,
             shouldDirty: true,
           })
-        }
+        }}
       />
       <OnboardingFormLayout.Main>
         <OnboardingFormLayout.Title>
@@ -219,7 +221,7 @@ export default function SpaceServiceForm({
             placeholder={t(
               'sections.onboarding.services-form.select-pricing-model'
             )}
-            options={PRICING_MODEL_EXTRAS_OPTIONS}
+            options={PRICING_MODEL_SERVICES_OPTIONS}
             value={price_modality}
             onSelect={handleSelectChange('price_modality')}
             useTranslation

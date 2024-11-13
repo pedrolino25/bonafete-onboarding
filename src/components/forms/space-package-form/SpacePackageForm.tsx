@@ -15,22 +15,22 @@ import {
 } from '@/components/ui/dialog'
 import { Option } from '@/components/ui/select'
 import { toast } from '@/lib/hooks/use-toast'
-import { PRICING_MODEL_PACKAGES_OPTIONS } from '@/lib/utils/consts'
 import {
   deleteSpacePackage,
+  getSpaceServicesList,
   OnboardingProcessItemResponse,
   SpaceSchedule,
+  SpaceServiceListItemResponse,
   updateSpacePackage,
 } from '@/services/api/onboarding-processes'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation } from '@tanstack/react-query'
-import { Clock, Euro, UsersRound } from 'lucide-react'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { Clock, UsersRound } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
 import ScheduleForm, { scheduleFormSchema } from '../schedule-form/ScheduleForm'
-import ServicesForm, { servicesFormSchema } from '../services-form/ServicesForm'
 
 interface SpacePackageFormProps {
   defaultValues?: SpacePackageFormType
@@ -49,17 +49,13 @@ const optionSchema = z.object({
 
 const spacePackageFormSchema = z.object({
   id: z.string().optional(),
-  name: z.string().optional(),
-  services_form: servicesFormSchema,
+  name: z.string(),
+  services: z.array(optionSchema).min(1),
   description: z.string().min(12),
   schedule_form: scheduleFormSchema,
   min_hours: z.string().min(1),
   min_persons: z.string().min(1),
   max_persons: z.string().min(1),
-  price_modality: z.array(optionSchema).min(1),
-  base_price: z.string().min(1),
-  extra_hour_price: z.string().optional(),
-  extra_person_price: z.string().optional(),
 })
 
 export type SpacePackageFormType = z.infer<typeof spacePackageFormSchema>
@@ -72,6 +68,13 @@ export default function SpacePackageForm({
   const t = useTranslations()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [openDelete, setOpenDelete] = useState<boolean>(false)
+
+  const { data: spaceServicesList } = useQuery({
+    queryKey: ['space-services-list'],
+    queryFn: async () => {
+      return await getSpaceServicesList(onboardingInfo.space.space_id)
+    },
+  })
 
   const getTimeLimit = () => {
     if (onboardingInfo?.space?.prices?.custom?.price_1) {
@@ -103,14 +106,12 @@ export default function SpacePackageForm({
   })
 
   const package_id = watch('id')
+  const services = watch('services')
   const description = watch('description')
   const min_hours = watch('min_hours')
   const min_persons = watch('min_persons')
   const max_persons = watch('max_persons')
-  const price_modality = watch('price_modality')
-  const base_price = watch('base_price')
-  const extra_hour_price = watch('extra_hour_price')
-  const extra_person_price = watch('extra_person_price')
+  const name = watch('name')
 
   const handleSelectChange =
     (field: keyof SpacePackageFormType) => (option: Option[]) => {
@@ -254,19 +255,19 @@ export default function SpacePackageForm({
     const data = {
       onboarding_id: onboardingInfo.id,
       id: values.id,
-      name:
-        values.name || `${(onboardingInfo?.space?.packages || [])?.length + 1}`,
-      services: values.services_form.services?.map((item) => item.label),
-      services_keys: values.services_form.services?.map((item) => item.value),
+      name: values.name,
+      services: values.services?.map((item) => {
+        return {
+          spaceService: {
+            id: item.value,
+          },
+        }
+      }),
       description: values.description,
       schedule: getSpaceScheduleObject(values),
       min_hours: values.min_hours,
       min_persons: values.min_persons,
       max_persons: values.max_persons,
-      price_modality: values.price_modality?.[0]?.value,
-      base_price: values.base_price,
-      extra_hour_price: values.extra_hour_price,
-      extra_person_price: values.extra_person_price,
     }
     updateSpacePackageMutation.mutate(data)
   }
@@ -277,15 +278,51 @@ export default function SpacePackageForm({
 
   return (
     <OnboardingFormLayout.Root>
-      <ServicesForm
-        defaultValues={defaultValues?.services_form}
-        onChange={(value) =>
-          setValue('services_form', value, {
-            shouldValidate: true,
-            shouldDirty: true,
-          })
-        }
-      />
+      <div className="w-full">
+        <OnboardingFormLayout.Title>
+          {t('sections.onboarding.package-form.name-title')}
+        </OnboardingFormLayout.Title>
+        <OnboardingFormLayout.Subtitle>
+          {t('sections.onboarding.package-form.name-subtitle')}
+        </OnboardingFormLayout.Subtitle>
+        <OnboardingFormLayout.Container>
+          <TextInput
+            data-testid="name"
+            value={name}
+            onChange={handleChange('name')}
+            placeholder={t('sections.onboarding.package-form.name')}
+          />
+        </OnboardingFormLayout.Container>
+      </div>
+
+      <OnboardingFormLayout.Main>
+        <OnboardingFormLayout.Title>
+          {t('sections.onboarding.package-form.services-title')}
+        </OnboardingFormLayout.Title>
+        <OnboardingFormLayout.Subtitle>
+          {t('sections.onboarding.package-form.services-subtitle')}
+        </OnboardingFormLayout.Subtitle>
+        <OnboardingFormLayout.Container>
+          <SelectInput
+            required
+            data-testid="services"
+            placeholder={t('table.select-from-list')}
+            options={
+              spaceServicesList?.map((item: SpaceServiceListItemResponse) => {
+                return {
+                  value: item.id,
+                  label: item.service.value,
+                  info: item.service.serviceCategory.value,
+                }
+              }) || []
+            }
+            value={services}
+            onSelect={handleSelectChange('services')}
+            multiple
+          />
+        </OnboardingFormLayout.Container>
+      </OnboardingFormLayout.Main>
+
       <OnboardingFormLayout.Main>
         <OnboardingFormLayout.Title>
           {t('sections.onboarding.package-form.min-hours-persons-title')}
@@ -365,84 +402,6 @@ export default function SpacePackageForm({
           })
         }
       />
-      <OnboardingFormLayout.Main>
-        <OnboardingFormLayout.Title>
-          {t('sections.onboarding.package-form.pricing-title')}
-        </OnboardingFormLayout.Title>
-        <OnboardingFormLayout.Subtitle>
-          {t('sections.onboarding.package-form.pricing-subtitle')}
-        </OnboardingFormLayout.Subtitle>
-        <OnboardingFormLayout.Container>
-          <SelectInput
-            required
-            data-testid="price_modality"
-            placeholder={t(
-              'sections.onboarding.package-form.select-pricing-model'
-            )}
-            options={PRICING_MODEL_PACKAGES_OPTIONS}
-            value={price_modality}
-            onSelect={handleSelectChange('price_modality')}
-            useTranslation
-          />
-          <div className="grid grid-cols-3 max-sm:grid-cols-1 gap-4">
-            <TextInput
-              data-testid="base_price"
-              value={base_price}
-              onChange={handleChange('base_price')}
-              type="number"
-              placeholder={t('sections.onboarding.package-form.base-price')}
-              fixedEndAdornment={
-                <div className="px-3 pt-2.5 text-sm">
-                  <Euro className="h-4 w-4" />
-                </div>
-              }
-            />
-            <TextInput
-              data-testid="extra_hour_price"
-              value={extra_hour_price}
-              onChange={handleChange('extra_hour_price')}
-              type="number"
-              placeholder={t(
-                'sections.onboarding.package-form.extra-hour-price'
-              )}
-              fixedEndAdornment={
-                <div className="px-3 pt-2.5 text-sm">
-                  <Euro className="h-4 w-4" />
-                </div>
-              }
-            />
-            <TextInput
-              data-testid="extra_person_price"
-              value={extra_person_price}
-              onChange={handleChange('extra_person_price')}
-              type="number"
-              placeholder={t(
-                'sections.onboarding.package-form.extra-person-price'
-              )}
-              fixedEndAdornment={
-                <div className="px-3 pt-2.5 text-sm">
-                  <Euro className="h-4 w-4" />
-                </div>
-              }
-            />
-          </div>
-          {price_modality?.[0]?.value &&
-            base_price &&
-            extra_hour_price &&
-            extra_person_price && (
-              <OnboardingFormLayout.Info>
-                {t(
-                  'sections.onboarding.package-form.explanation-messages.pricing'
-                )
-                  .replace('$1', base_price)
-                  .replace('$2', t(price_modality?.[0]?.label)?.toLowerCase())
-                  .replace('$3', extra_hour_price)
-                  .replace('$4', extra_person_price)}
-              </OnboardingFormLayout.Info>
-            )}
-        </OnboardingFormLayout.Container>
-      </OnboardingFormLayout.Main>
-
       <OnboardingFormLayout.Main>
         <OnboardingFormLayout.Title>
           {t('sections.onboarding.package-form.description-title')}

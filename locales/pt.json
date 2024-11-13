@@ -106,6 +106,8 @@
     "delete-picture": "Eliminar fotografia",
     "drag-grop-image": "Arraste ou clique para adicionar imagens",
     "drag-grop-file": "Arraste ou clique para selecionar ficheiros",
+    "drag-grop-file-loading": "A enviar documento...",
+    "drag-grop-file-complete": "Documento enviado",
     "view-photo": "Ver fotografia",
     "submit": "Submeter",
     "validate": "Validar"
@@ -263,8 +265,11 @@
         }
       },
       "package-form": {
+        "name": "Ex: Pacote 1",
+        "name-title": "Nome",
+        "name-subtitle": "Defina o nome do pacote",
         "services-title": "Serviços",
-        "services-subtitle": "Define os serviços que compõem o pacote",
+        "services-subtitle": "Defina os serviços que compõem o pacote",
         "description-title": "Descrição",
         "description-subtitle": "Descreva sucintamente tudo o que está incluído no pacote",
         "schedule-title": "Horário",

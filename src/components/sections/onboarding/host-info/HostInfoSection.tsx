@@ -81,6 +81,7 @@ export default function HostInfoSection({
   refetch,
 }: HostInfoSectionProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false)
+
   const t = useTranslations()
   const stripe = useStripe()
 
@@ -464,10 +465,32 @@ export default function HostInfoSection({
           </p>
         </div>
         <div className="col-span-3">
-          <FileInput label="Frente do documento" disabled />
+          <FileInput
+            label="Frente do documento"
+            complete={onboardingInfo?.host?.requirements?.identity_proof?.front}
+            info={{
+              account_id: onboardingInfo.host?.account_id as string,
+              person_id: onboardingInfo.host?.person_id as string,
+              verification_type: 'document',
+              file_type: 'front',
+              is_company: getValues().company_type?.[0]?.value === 'company',
+            }}
+            onSuccess={() => refetch?.()}
+          />
         </div>
         <div className="col-span-3">
-          <FileInput label="Verso do documento" disabled />
+          <FileInput
+            label="Verso do documento"
+            complete={onboardingInfo?.host?.requirements?.identity_proof?.back}
+            info={{
+              account_id: onboardingInfo.host?.account_id as string,
+              person_id: onboardingInfo.host?.person_id as string,
+              verification_type: 'document',
+              file_type: 'back',
+              is_company: getValues().company_type?.[0]?.value === 'company',
+            }}
+            onSuccess={() => refetch?.()}
+          />
         </div>
       </div>
       <div className="w-9/12 max-w-[700px] max-sm:w-full grid grid-cols-6 gap-4 pt-4 pl-6 max-sm:pl-0 pb-6 border-b">
@@ -490,38 +513,61 @@ export default function HostInfoSection({
           </p>
         </div>
         <div className="col-span-6">
-          <FileInput disabled />
+          <FileInput
+            complete={onboardingInfo?.host?.requirements?.address_proof}
+            info={{
+              account_id: onboardingInfo.host?.account_id as string,
+              person_id: onboardingInfo.host?.person_id as string,
+              verification_type: 'additional_document',
+              file_type: 'front',
+              is_company: getValues().company_type?.[0]?.value === 'company',
+            }}
+            onSuccess={() => refetch?.()}
+          />
         </div>
       </div>
 
-      <div className="w-9/12 max-w-[700px] max-sm:w-full grid grid-cols-6 gap-4 pt-4 pl-6 max-sm:pl-0 pb-6 border-b">
-        <div className="col-span-6 pb-4">
-          <OnboardingFormLayout.Title>
-            {t('sections.onboarding.host-info-form.company-proof-title')}
-          </OnboardingFormLayout.Title>
-          <OnboardingFormLayout.Subtitle>
-            {t('sections.onboarding.host-info-form.company-proof-subtitle')}
-          </OnboardingFormLayout.Subtitle>
-          <p>
+      {getValues().company_type?.[0]?.value === 'company' && (
+        <div className="w-9/12 max-w-[700px] max-sm:w-full grid grid-cols-6 gap-4 pt-4 pl-6 max-sm:pl-0 pb-6 border-b">
+          <div className="col-span-6 pb-4">
+            <OnboardingFormLayout.Title>
+              {t('sections.onboarding.host-info-form.company-proof-title')}
+            </OnboardingFormLayout.Title>
             <OnboardingFormLayout.Subtitle>
-              • Empresa: Rua 15 de outubro, lisboa 2770-146
+              {t('sections.onboarding.host-info-form.company-proof-subtitle')}
             </OnboardingFormLayout.Subtitle>
-          </p>
-          <p>
-            <OnboardingFormLayout.Subtitle>
-              • Representante: Pedro Silva
-            </OnboardingFormLayout.Subtitle>
-          </p>
-          <p>
-            <OnboardingFormLayout.Subtitle>
-              • Endereço: Rua 15 de outubro, lisboa 2770-146
-            </OnboardingFormLayout.Subtitle>
-          </p>
+            <p>
+              <OnboardingFormLayout.Subtitle>
+                • Empresa: Rua 15 de outubro, lisboa 2770-146
+              </OnboardingFormLayout.Subtitle>
+            </p>
+            <p>
+              <OnboardingFormLayout.Subtitle>
+                • Representante: Pedro Silva
+              </OnboardingFormLayout.Subtitle>
+            </p>
+            <p>
+              <OnboardingFormLayout.Subtitle>
+                • Endereço: Rua 15 de outubro, lisboa 2770-146
+              </OnboardingFormLayout.Subtitle>
+            </p>
+          </div>
+          <div className="col-span-6">
+            <FileInput
+              complete={onboardingInfo?.host?.requirements?.company_proof}
+              info={{
+                account_id: onboardingInfo.host?.account_id as string,
+                person_id: onboardingInfo.host?.person_id as string,
+                verification_type: 'company_registration',
+                file_type: 'front',
+                is_company: getValues().company_type?.[0]?.value === 'company',
+              }}
+              onSuccess={() => refetch?.()}
+            />
+          </div>
         </div>
-        <div className="col-span-6">
-          <FileInput disabled />
-        </div>
-      </div>
+      )}
+
       <div className="w-9/12 max-w-[700px] max-sm:w-full grid grid-cols-6 gap-4 pt-4 pl-6 max-sm:pl-0 pb-6">
         <div className="col-span-6 pb-4">
           <OnboardingFormLayout.Title>
@@ -544,7 +590,17 @@ export default function HostInfoSection({
           </p>
         </div>
         <div className="col-span-6">
-          <FileInput disabled />
+          <FileInput
+            complete={onboardingInfo?.host?.requirements?.iban_proof}
+            info={{
+              account_id: onboardingInfo.host?.account_id as string,
+              person_id: onboardingInfo.host?.person_id as string,
+              verification_type: 'iban',
+              file_type: 'front',
+              is_company: getValues().company_type?.[0]?.value === 'company',
+            }}
+            onSuccess={() => refetch?.()}
+          />
         </div>
       </div>
     </form>

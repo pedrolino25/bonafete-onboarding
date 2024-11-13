@@ -196,7 +196,18 @@ interface OnboardingHostInfo {
   company_postal_code?: string
   account_owner: string
   account_token: string
+  account_id?: string
+  person_id?: string
   iban: string
+  requirements: {
+    identity_proof: {
+      front: boolean
+      back: boolean
+    }
+    address_proof: boolean
+    company_proof: boolean
+    iban_proof: boolean
+  }
 }
 
 export interface OnboardingProcessItemResponse {
@@ -403,6 +414,33 @@ const getServicesList = async (): Promise<ServiceListItemResponse[]> => {
   return response.json()
 }
 
+export interface SpaceServiceListItemResponse {
+  id: string
+  service: {
+    id: string
+    key: string
+    value: string
+    serviceCategory: {
+      id: string
+      key: string
+      value: string
+    }
+  }
+}
+
+const getSpaceServicesList = async (
+  space_id: string
+): Promise<SpaceServiceListItemResponse[]> => {
+  const response = await fetch(`${ROOT}/space-services-list?id=${space_id}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+  })
+  return response.json()
+}
+
 export function getServicesCategories(
   items: ServiceListItemResponse[]
 ): { value: string; label: string }[] {
@@ -462,16 +500,13 @@ const addExtra = async (
 export interface UpdateSpacePackageParameters {
   onboarding_id: string
   id?: string
-  services: string[]
+  name: string
+  services: { spaceService: { id: string } }[]
   description: string
   schedule: SpaceSchedule[]
   min_hours: string
   min_persons: string
   max_persons: string
-  price_modality: string
-  base_price: string
-  extra_hour_price?: string
-  extra_person_price?: string
 }
 
 const updateSpacePackage = async (
@@ -531,7 +566,6 @@ const updateOffersOnboardingStatus = async (
 export interface UpdateSpaceServiceParameters {
   onboarding_id: string
   id?: string
-  name: string
   description?: string
   photos: string
   price_modality: string
@@ -611,6 +645,34 @@ const updateHostInfo = async (
   return response.json()
 }
 
+const uploadStripeDocument = async (data: FormData): Promise<unknown> => {
+  const response = await fetch(`${ROOT}/api/upload-stripe-documents`, {
+    method: 'POST',
+    headers: {
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+    body: data,
+  })
+  return response.json()
+}
+
+export interface UpdateIbanDocumentParameters {
+  account_id: string
+}
+const updateIbanDocument = async (
+  data: UpdateIbanDocumentParameters
+): Promise<unknown> => {
+  const response = await fetch(`${ROOT}/api/update-iban-document`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+    body: JSON.stringify(data),
+  })
+  return response.json()
+}
+
 export {
   addExtra,
   addService,
@@ -620,15 +682,18 @@ export {
   getOnboardingProcessesById,
   getOnboardingsProcessesListByStatus,
   getServicesList,
+  getSpaceServicesList,
   reasignOnboardingProcess,
   saveOnboardingIntro,
   saveOnboardingSpaceInfo,
   saveOnboardingSpacePhotos,
   scheduleOnboardingProcess,
   updateHostInfo,
+  updateIbanDocument,
   updateOffersOnboardingStatus,
   updateOnboardingStatus,
   updateSpaceOffersRental,
   updateSpacePackage,
   updateSpaceService,
+  uploadStripeDocument,
 }
