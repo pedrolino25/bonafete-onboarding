@@ -11,16 +11,17 @@ import { COMPANY_TYPE_OPTIONS, CompanyType } from '@/lib/utils/consts'
 import {
   OnboardingProcessItemResponse,
   updateHostInfo,
+  updateOnboardingStatus,
 } from '@/services/api/onboarding-processes'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useStripe } from '@stripe/react-stripe-js'
 import { useMutation } from '@tanstack/react-query'
-import { Info, Save, Send } from 'lucide-react'
+import { Info, Send } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useState } from 'react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
-import { OnboardingFaseStatus } from '../OnboardingSection'
+import { OnboardingFaseStatus, OnboardingSections } from '../OnboardingSection'
 
 const optionSchema = z.object({
   value: z.string().min(1, 'Value is required'),
@@ -80,10 +81,16 @@ export default function HostInfoSection({
   onboardingInfo,
   refetch,
 }: HostInfoSectionProps) {
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-
   const t = useTranslations()
   const stripe = useStripe()
+
+  const isComplete =
+    onboardingInfo?.host?.requirements?.identity_proof?.front &&
+    onboardingInfo?.host?.requirements?.identity_proof?.back &&
+    onboardingInfo?.host?.requirements?.address_proof &&
+    onboardingInfo?.host?.requirements?.iban_proof &&
+    (onboardingInfo?.host?.requirements?.company_proof ||
+      onboardingInfo?.host?.company_type?.[0]?.value === CompanyType.Individual)
 
   const {
     handleSubmit,
@@ -136,7 +143,6 @@ export default function HostInfoSection({
   const updateHostInfoMutation = useMutation({
     mutationFn: updateHostInfo,
     onSuccess: () => {
-      setIsLoading(false)
       refetch?.()
       toast({
         variant: 'success',
@@ -145,7 +151,6 @@ export default function HostInfoSection({
       })
     },
     onError: () => {
-      setIsLoading(false)
       toast({
         variant: 'destructive',
         title: t('error'),
@@ -154,8 +159,14 @@ export default function HostInfoSection({
     },
   })
 
+  const updateOnboardingStatusMutation = useMutation({
+    mutationFn: updateOnboardingStatus,
+    onSuccess: () => {
+      refetch?.()
+    },
+  })
+
   const onSubmit = (values: HostInfoFormType) => {
-    setIsLoading(true)
     updateHostInfoMutation.mutate({
       ...values,
       company_type: values.company_type?.[0]?.value,
@@ -163,6 +174,19 @@ export default function HostInfoSection({
     })
   }
 
+  useEffect(() => {
+    if (
+      isComplete &&
+      !updateOnboardingStatusMutation.isPending &&
+      onboardingInfo.fase5 !== OnboardingFaseStatus.Incomplete
+    ) {
+      updateOnboardingStatusMutation.mutate({
+        onboarding_id: onboardingInfo.id,
+        flow: OnboardingSections.HostInfo,
+        status: OnboardingFaseStatus.Completed,
+      })
+    }
+  }, [isComplete])
   return (
     <form
       className="w-full max-sm:border-t max-sm:px-1 py-4"
@@ -178,28 +202,38 @@ export default function HostInfoSection({
           </OnboardingSectionLayout.Subtitle>
         </div>
         <div className="flex justify-between items-center gap-4 max-sm:justify-end max-sm:items-start max-sm:pt-4 max-sm:w-full">
-          {onboardingInfo.fase2 === OnboardingFaseStatus.Completed && (
+          {onboardingInfo.fase5 === OnboardingFaseStatus.Completed && (
             <Button
               startAdornment={<Info className="h-4 w-4" />}
               color="secondary"
               variant="fill"
+              onClick={() =>
+                updateOnboardingStatusMutation.mutate({
+                  onboarding_id: onboardingInfo.id,
+                  flow: OnboardingSections.HostInfo,
+                  status: OnboardingFaseStatus.Incomplete,
+                })
+              }
             >
               {t('button-actions.update-needed')}
             </Button>
           )}
-          {!isValid ? (
-            <Button
-              onClick={() => onSubmit(getValues())}
-              color="secondary"
-              startAdornment={<Save className="h-4 w-4" />}
-            >
-              {t('button-actions.save')}
-            </Button>
-          ) : (
-            <Button type="submit" startAdornment={<Send className="h-4 w-4" />}>
-              {t('button-actions.submit')}
-            </Button>
-          )}
+          {isComplete &&
+            onboardingInfo.fase5 !== OnboardingFaseStatus.Completed && (
+              <Button
+                type="submit"
+                startAdornment={<Send className="h-4 w-4" />}
+                onClick={() =>
+                  updateOnboardingStatusMutation.mutate({
+                    onboarding_id: onboardingInfo.id,
+                    flow: OnboardingSections.HostInfo,
+                    status: OnboardingFaseStatus.Completed,
+                  })
+                }
+              >
+                {t('button-actions.submit')}
+              </Button>
+            )}
         </div>
       </div>
 
