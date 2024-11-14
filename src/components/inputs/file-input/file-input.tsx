@@ -11,7 +11,7 @@ import { v4 } from 'uuid'
 
 interface FileInputInfoProps {
   account_id: string
-  person_id: string
+  person_id?: string
   verification_type: string
   file_type: string
   is_company: boolean
@@ -48,7 +48,7 @@ export function FileInput({
       const formData = new FormData()
       formData.append('file', files[0])
       formData.append('account_id', info.account_id)
-      formData.append('person_id', info.person_id)
+      formData.append('person_id', info.person_id || '')
       formData.append('verification_type', info.verification_type)
       formData.append('file_type', info.file_type)
       formData.append('is_company', info.is_company.toString())
