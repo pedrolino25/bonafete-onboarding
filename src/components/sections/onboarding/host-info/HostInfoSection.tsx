@@ -19,7 +19,7 @@ import { useMutation } from '@tanstack/react-query'
 import { Info, Send } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
 import { OnboardingFaseStatus, OnboardingSections } from '../OnboardingSection'
@@ -85,6 +85,7 @@ export default function HostInfoSection({
   const t = useTranslations()
   const router = useRouter()
   const stripe = useStripe()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const isVerificationComplete =
     onboardingInfo?.host?.requirements?.identity_proof?.front &&
@@ -102,7 +103,6 @@ export default function HostInfoSection({
     onboardingInfo.fase4 === OnboardingFaseStatus.Completed &&
     onboardingInfo.fase5 === OnboardingFaseStatus.Completed
 
-  console.log(isComplete)
   const {
     handleSubmit,
     getValues,
@@ -154,6 +154,7 @@ export default function HostInfoSection({
   const updateHostInfoMutation = useMutation({
     mutationFn: updateHostInfo,
     onSuccess: () => {
+      setIsLoading(false)
       refetch?.()
       toast({
         variant: 'success',
@@ -162,6 +163,7 @@ export default function HostInfoSection({
       })
     },
     onError: () => {
+      setIsLoading(false)
       toast({
         variant: 'destructive',
         title: t('error'),
@@ -178,6 +180,7 @@ export default function HostInfoSection({
   })
 
   const onSubmit = (values: HostInfoFormType) => {
+    setIsLoading(true)
     updateHostInfoMutation.mutate({
       ...values,
       company_type: values.company_type?.[0]?.value,
@@ -199,6 +202,7 @@ export default function HostInfoSection({
       })
     }
   }, [isVerificationComplete])
+
   return (
     <form
       className="w-full max-sm:border-t max-sm:px-1 py-4"
@@ -488,9 +492,8 @@ export default function HostInfoSection({
         <div className="col-span-6 w-full flex justify-end pt-4">
           <Button
             className="px-10"
-            disabled={!isValid || !isDirty}
-            // disabled={!isValid || isLoading || !isDirty}
-            // loading={isLoading}
+            disabled={!isValid || isLoading || !isDirty}
+            loading={isLoading}
             onClick={handleSubmit(onSubmit)}
           >
             {t('button-actions.submit')}
