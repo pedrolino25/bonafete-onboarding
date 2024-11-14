@@ -12,11 +12,11 @@ export interface S3File {
   path: string
 }
 export async function uploadPictureToS3Bucket(file: S3File): Promise<string> {
-  await uploadData({
+  const data = await uploadData({
     path: file.path,
     data: file.file,
   }).result
-  return `${process.env.NEXT_PUBLIC_AWS_STORAGE_BUCKET_URL}/${file.path}`
+  return `${process.env.NEXT_PUBLIC_AWS_STORAGE_BUCKET_URL}/${data.path}`
 }
 
 export async function urlToFile(imageUrl: string, fileName: string) {
