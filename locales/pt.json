@@ -144,7 +144,8 @@
     "add": "Adicionar",
     "remove": "Remover",
     "edit": "Editar",
-    "validate": "Validar"
+    "validate": "Validar",
+    "complete": "Finalizar"
   },
   "error": "Erro",
   "success": "Sucesso",

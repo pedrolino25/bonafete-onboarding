@@ -22,6 +22,8 @@ const buttonVariants = cva(
         destructive:
           'text-utility-error-700 shadow-xs bg-transparent hover:bg-utility-error-50 active:bg-transparent active:shadow-error-md disabled:bg-utility-gray-100 disabled:!bg-white border-utility-error-300 disabled:!border-utility-gray-200 disabled:!text-utility-gray-400',
         link: 'text-utility-gray-700 bg-transparent disabled:bg-utility-gray-100 disabled:!bg-white disabled:!text-utility-gray-400 font-medium disabled:font-medium',
+        success:
+          'text-utility-success-700 shadow-xs bg-transparent hover:bg-utility-success-50 active:bg-transparent active:shadow-success-md disabled:bg-utility-gray-100 disabled:!bg-utility-gray-100 border-utility-success-300 disabled:!border-utility-gray-200 disabled:!text-utility-gray-400',
       },
       size: {
         xs: 'h-8 px-3 py-2 font-medium text-sm',
@@ -43,6 +45,12 @@ const buttonVariants = cva(
         variant: 'fill',
         class:
           '!bg-utility-brand-600 hover:!bg-utility-brand-700 active:!bg-utility-brand-600',
+      },
+      {
+        color: 'success',
+        variant: 'fill',
+        class:
+          '!bg-utility-success-600 hover:!bg-utility-success-700 active:!bg-utility-success-600',
       },
       {
         color: 'primary',
@@ -83,7 +91,7 @@ const buttonVariants = cva(
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
-  color?: 'primary' | 'secondary' | 'destructive' | 'link'
+  color?: 'primary' | 'secondary' | 'destructive' | 'link' | 'success'
   asChild?: boolean
   startAdornment?: React.ReactNode
   endAdornment?: React.ReactNode

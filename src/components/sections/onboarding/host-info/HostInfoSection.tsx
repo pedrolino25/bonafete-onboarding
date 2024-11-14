@@ -18,6 +18,7 @@ import { useStripe } from '@stripe/react-stripe-js'
 import { useMutation } from '@tanstack/react-query'
 import { Info, Send } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
@@ -82,9 +83,10 @@ export default function HostInfoSection({
   refetch,
 }: HostInfoSectionProps) {
   const t = useTranslations()
+  const router = useRouter()
   const stripe = useStripe()
 
-  const isComplete =
+  const isVerificationComplete =
     onboardingInfo?.host?.requirements?.identity_proof?.front &&
     onboardingInfo?.host?.requirements?.identity_proof?.back &&
     onboardingInfo?.host?.requirements?.address_proof &&
@@ -92,6 +94,15 @@ export default function HostInfoSection({
     (onboardingInfo?.host?.requirements?.company_proof ||
       onboardingInfo?.host?.company_type?.[0]?.value === CompanyType.Individual)
 
+  const isComplete =
+    isVerificationComplete &&
+    onboardingInfo.fase1 === OnboardingFaseStatus.Completed &&
+    onboardingInfo.fase2 === OnboardingFaseStatus.Completed &&
+    onboardingInfo.fase3 === OnboardingFaseStatus.Completed &&
+    onboardingInfo.fase4 === OnboardingFaseStatus.Completed &&
+    onboardingInfo.fase5 === OnboardingFaseStatus.Completed
+
+  console.log(isComplete)
   const {
     handleSubmit,
     getValues,
@@ -176,9 +187,10 @@ export default function HostInfoSection({
 
   useEffect(() => {
     if (
-      isComplete &&
+      isVerificationComplete &&
       !updateOnboardingStatusMutation.isPending &&
-      onboardingInfo.fase5 !== OnboardingFaseStatus.Incomplete
+      onboardingInfo.fase5 !== OnboardingFaseStatus.Incomplete &&
+      onboardingInfo.fase5 !== OnboardingFaseStatus.Completed
     ) {
       updateOnboardingStatusMutation.mutate({
         onboarding_id: onboardingInfo.id,
@@ -186,7 +198,7 @@ export default function HostInfoSection({
         status: OnboardingFaseStatus.Completed,
       })
     }
-  }, [isComplete])
+  }, [isVerificationComplete])
   return (
     <form
       className="w-full max-sm:border-t max-sm:px-1 py-4"
@@ -218,22 +230,29 @@ export default function HostInfoSection({
               {t('button-actions.update-needed')}
             </Button>
           )}
-          {isComplete &&
-            onboardingInfo.fase5 !== OnboardingFaseStatus.Completed && (
-              <Button
-                type="submit"
-                startAdornment={<Send className="h-4 w-4" />}
-                onClick={() =>
-                  updateOnboardingStatusMutation.mutate({
-                    onboarding_id: onboardingInfo.id,
-                    flow: OnboardingSections.HostInfo,
-                    status: OnboardingFaseStatus.Completed,
-                  })
-                }
-              >
-                {t('button-actions.submit')}
-              </Button>
-            )}
+          {isComplete && (
+            <Button
+              onClick={() => router.push('/processes/completed')}
+              startAdornment={<Send className="h-4 w-4" />}
+              color="success"
+            >
+              {t('button-actions.complete')}
+            </Button>
+          )}
+          {!isComplete && isVerificationComplete && (
+            <Button
+              startAdornment={<Send className="h-4 w-4" />}
+              onClick={() =>
+                updateOnboardingStatusMutation.mutate({
+                  onboarding_id: onboardingInfo.id,
+                  flow: OnboardingSections.HostInfo,
+                  status: OnboardingFaseStatus.Completed,
+                })
+              }
+            >
+              {t('button-actions.submit')}
+            </Button>
+          )}
         </div>
       </div>
 
