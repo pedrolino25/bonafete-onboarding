@@ -127,10 +127,22 @@ export default function SpaceOffersSection({
             onboardingInfo={onboardingInfo}
             refetch={refetch}
             defaultValues={{
-              business_model: onboardingInfo?.space?.business_model || [],
+              business_model: onboardingInfo?.space?.business_model
+                ? onboardingInfo?.space?.business_model
+                : onboardingInfo?.application.type?.id
+                ? [
+                    {
+                      value: onboardingInfo?.application.business_model,
+                      label: `business-model-options.${onboardingInfo?.application.business_model}`,
+                    },
+                  ]
+                : [],
               lotation_form: onboardingInfo?.space?.lotation?.lotation
                 ? onboardingInfo?.space?.lotation
-                : undefined,
+                : {
+                    lotation:
+                      onboardingInfo?.application.max_of_persons?.toString(),
+                  },
               min_hours_form: onboardingInfo?.space?.min_hours?.min_hours
                 ? onboardingInfo?.space?.min_hours
                 : undefined,

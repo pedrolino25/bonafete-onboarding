@@ -175,6 +175,7 @@ export interface ApplicationSpaceInfo {
   photos: string[]
   targets: ApplicationSpaceTarget[]
   type: ApplicationSpaceType
+  business_model: string
 }
 
 interface OnboardingHostInfo {
