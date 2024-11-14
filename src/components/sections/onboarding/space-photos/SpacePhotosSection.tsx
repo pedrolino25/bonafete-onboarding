@@ -55,6 +55,7 @@ export default function SpacePhotosSection({
 }: SpacePhotosSectionProps) {
   const t = useTranslations()
   const [viewPhotos, setViewPhotos] = useState<boolean>()
+  const [isLoading, setLoading] = useState<boolean>(false)
 
   const {
     handleSubmit,
@@ -66,24 +67,26 @@ export default function SpacePhotosSection({
     resolver: zodResolver(spacePhotosFormSchema),
     defaultValues: {
       photos:
-        onboardingInfo.space?.photos?.map((item) => {
-          return {
-            path: item,
-            file: undefined,
-          }
-        }) ||
-        onboardingInfo.application.photos?.map((item) => {
-          return {
-            path: item,
-            file: undefined,
-          }
-        }),
+        (onboardingInfo.space?.photos || []).length > 0
+          ? onboardingInfo.space?.photos?.map((item) => {
+              return {
+                path: item,
+                file: undefined,
+              }
+            })
+          : (onboardingInfo.application.photos || [])?.map((item) => {
+              return {
+                path: item,
+                file: undefined,
+              }
+            }),
     },
   })
 
   const saveOnboardingSpacePhotosMutation = useMutation({
     mutationFn: saveOnboardingSpacePhotos,
     onSuccess: () => {
+      setLoading(false)
       refetch?.()
       toast({
         variant: 'success',
@@ -92,6 +95,7 @@ export default function SpacePhotosSection({
       })
     },
     onError: () => {
+      setLoading(false)
       toast({
         variant: 'destructive',
         title: t('error'),
@@ -120,6 +124,7 @@ export default function SpacePhotosSection({
   })
 
   const onSubmit = async (values: SpacePhotosFormType) => {
+    setLoading(true)
     const pictures = await Promise.all(
       values.photos.map(async (photo, index) => {
         if (photo.file) {
@@ -178,12 +183,8 @@ export default function SpacePhotosSection({
           )}
           <Button
             type="submit"
-            disabled={
-              !isValid ||
-              (completed && !isDirty) ||
-              saveOnboardingSpacePhotosMutation.isPending
-            }
-            loading={saveOnboardingSpacePhotosMutation.isPending}
+            disabled={!isValid || (completed && !isDirty) || isLoading}
+            loading={isLoading}
             startAdornment={<Send className="h-4 w-4" />}
           >
             {t('button-actions.submit')}
