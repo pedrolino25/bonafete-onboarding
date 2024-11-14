@@ -102,7 +102,14 @@ export default function SpacePackageForm({
     formState: { isValid, isDirty },
   } = useForm<SpacePackageFormType>({
     resolver: zodResolver(spacePackageFormSchema),
-    defaultValues,
+    defaultValues: {
+      ...defaultValues,
+      max_persons:
+        defaultValues?.max_persons ||
+        onboardingInfo?.space?.lotation?.lotation?.toString(),
+      schedule_form:
+        defaultValues?.schedule_form || onboardingInfo?.space?.schedule,
+    },
   })
 
   const package_id = watch('id')
@@ -112,6 +119,7 @@ export default function SpacePackageForm({
   const min_persons = watch('min_persons')
   const max_persons = watch('max_persons')
   const name = watch('name')
+  const schedule_form = watch('schedule_form')
 
   const handleSelectChange =
     (field: keyof SpacePackageFormType) => (option: Option[]) => {
@@ -391,8 +399,9 @@ export default function SpacePackageForm({
                 end: timeLimit.end,
               }
             : undefined,
+          addUnavailable: true,
         }}
-        defaultValues={defaultValues?.schedule_form}
+        defaultValues={defaultValues?.schedule_form || schedule_form}
         title={t('sections.onboarding.package-form.schedule-title')}
         subtitle={t('sections.onboarding.package-form.schedule-subtitle')}
         onChange={(value) =>

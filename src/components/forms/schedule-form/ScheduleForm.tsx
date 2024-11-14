@@ -17,6 +17,7 @@ export interface CustomScheduleFormInfoProps {
     start: Option[]
     end: Option[]
   }
+  addUnavailable?: boolean
 }
 
 interface ScheduleFormProps {
@@ -130,7 +131,11 @@ export default function ScheduleForm({
       const toIndex = HOURS.findIndex(
         (option) => option.label === info?.limits?.end[0].label
       )
-      return HOURS.slice(fromIndex, toIndex + 1)
+      const hours = HOURS.slice(fromIndex, toIndex + 1)
+      const unavailable = info?.addUnavailable
+        ? [{ value: '--:--', label: 'Indisponível' }].concat(hours)
+        : hours
+      return unavailable
     } else {
       return HOURS
     }
