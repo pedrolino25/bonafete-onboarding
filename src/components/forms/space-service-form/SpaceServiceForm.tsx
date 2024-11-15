@@ -392,10 +392,11 @@ export default function SpaceServiceForm({
           </OnboardingFormLayout.Container>
         </OnboardingFormLayout.Main>
       )}
-      <div className="w-full flex gap-4">
+
+      <div className="w-full flex justify-end gap-4">
         {defaultValues && (
           <Button
-            className="w-full"
+            className="px-10"
             disabled={isLoading}
             onClick={handleDelete}
             color="secondary"
@@ -405,7 +406,7 @@ export default function SpaceServiceForm({
         )}
 
         <Button
-          className="w-full"
+          className="px-10"
           disabled={!isValid || isLoading || !isDirty}
           loading={isLoading}
           onClick={handleSubmit(onSubmit)}

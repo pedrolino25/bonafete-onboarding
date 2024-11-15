@@ -404,7 +404,12 @@ export default function ApplicationsListSection({
                       type === ApplicationStatus.New
                         ? ['application_accept', 'application_reject']
                         : type === ApplicationStatus.Accepted
-                        ? ['schedule', 'reasign', 'application_reject']
+                        ? [
+                            'schedule',
+                            'space_register',
+                            'reasign',
+                            'application_reject',
+                          ]
                         : type === ApplicationStatus.Rejected
                         ? ['application_accept', 'schedule']
                         : type === ApplicationStatus.Scheduled
@@ -533,7 +538,6 @@ export default function ApplicationsListSection({
   const startOnboardingProcessMutation = useMutation({
     mutationFn: startOnboardingProcess,
     onSuccess: (response: OnboardingProcessListItemResponse) => {
-      refresh()
       toast({
         variant: 'success',
         title: t('success'),
@@ -544,7 +548,6 @@ export default function ApplicationsListSection({
       }
     },
     onError: () => {
-      refresh()
       toast({
         variant: 'destructive',
         title: t('error'),

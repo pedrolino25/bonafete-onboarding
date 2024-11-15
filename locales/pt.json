@@ -145,7 +145,8 @@
     "remove": "Remover",
     "edit": "Editar",
     "validate": "Validar",
-    "complete": "Finalizar"
+    "complete": "Finalizar",
+    "create": "Criar"
   },
   "error": "Erro",
   "success": "Sucesso",
@@ -296,9 +297,10 @@
       "services-form": {
         "service-title": "Serviço",
         "service-subtitle": "Indique o nome que identifica o serviço",
-        "new-service": "Adicionar novo serviço",
+        "new-service-title": "Criar serviço",
+        "new-service-subtitle": "Escolha um nome que se aplicaria a um conjunto de serviços distintos por pequenos detalhes",
+        "new-service": "Nome do serviço",
         "new-service-category": "Categoria",
-        "new-service-info": "Adicione o serviço caso não esteja disponível para selecionar",
         "description-title": "Descrição",
         "description-subtitle": "Descreva sucintamente o serviço",
         "packages-available-title": "Disponível como extra",

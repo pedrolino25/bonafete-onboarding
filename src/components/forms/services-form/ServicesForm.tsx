@@ -4,6 +4,14 @@ import { SelectInput } from '@/components/inputs/select-input/select-input'
 import { TextInput } from '@/components/inputs/text-input/text-input'
 import { OnboardingFormLayout } from '@/components/layouts/onboarding-form'
 import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { Option } from '@/components/ui/select'
 import { toast } from '@/lib/hooks/use-toast'
 import {
@@ -14,6 +22,7 @@ import {
 } from '@/services/api/onboarding-processes'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery } from '@tanstack/react-query'
+import { Plus } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -46,6 +55,7 @@ export default function ServicesForm({
 }: ServicesFormProps) {
   const t = useTranslations()
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [openAddService, setOpenAddService] = useState<boolean>(false)
 
   const { data: servicesList, refetch } = useQuery({
     queryKey: ['services-list'],
@@ -77,11 +87,11 @@ export default function ServicesForm({
   const addServiceMutation = useMutation({
     mutationFn: addService,
     onSuccess: async () => {
-      await refetch()
-      if (new_service) {
+      const services = await refetch()
+      if (new_service && services?.data) {
         setValue(
           'services',
-          (servicesList || [])
+          (services.data || [])
             .filter((item) => item.value === new_service)
             .map((item) => {
               return {
@@ -101,6 +111,7 @@ export default function ServicesForm({
         })
       }
       setIsLoading(false)
+      setOpenAddService(false)
     },
     onError: () => {
       toast({
@@ -145,34 +156,50 @@ export default function ServicesForm({
         {t('sections.onboarding.services-form.service-subtitle')}
       </OnboardingFormLayout.Subtitle>
       <OnboardingFormLayout.Container>
-        <SelectInput
-          required
-          data-testid="services"
-          placeholder={t('table.select-from-list')}
-          options={
-            servicesList?.map((item: ServiceListItemResponse) => {
-              return {
-                value: item.id,
-                label: item.value,
-                info: item.serviceCategory.value,
-              }
-            }) || []
-          }
-          value={services}
-          onSelect={handleSelectChange('services')}
-        />
-        <div className="w-full flex gap-4">
-          <div className="w-full flex gap-4">
-            <div className="w-1/2">
+        <div className="w-full flex gap-2">
+          <SelectInput
+            required
+            data-testid="services"
+            placeholder={t('table.select-from-list')}
+            options={
+              servicesList?.map((item: ServiceListItemResponse) => {
+                return {
+                  value: item.id,
+                  label: item.value,
+                  info: item.serviceCategory.value,
+                }
+              }) || []
+            }
+            value={services}
+            onSelect={handleSelectChange('services')}
+          />
+          <Button
+            className="px-3"
+            endAdornment={<Plus className="w-4 h-4" />}
+            onClick={() => setOpenAddService(true)}
+            color="secondary"
+          >
+            {t('button-actions.create')}
+          </Button>
+        </div>
+
+        <Dialog open={openAddService} onOpenChange={setOpenAddService}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>
+                {t('sections.onboarding.services-form.new-service-title')}
+              </DialogTitle>
+              <DialogDescription className="pt-2 pb-6">
+                {t('sections.onboarding.services-form.new-service-subtitle')}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="w-full flex flex-col gap-4">
               <TextInput
                 data-testid="new_service"
                 value={new_service}
                 onChange={handleChange('new_service')}
                 placeholder={t('sections.onboarding.services-form.new-service')}
-                hint={t('sections.onboarding.services-form.new-service-info')}
               />
-            </div>
-            <div className="w-1/2">
               <SelectInput
                 data-testid="new_service_category"
                 placeholder={t(
@@ -185,15 +212,24 @@ export default function ServicesForm({
                 onSelect={handleSelectChange('new_service_category')}
               />
             </div>
-          </div>
-          <Button
-            disabled={!new_service || !new_service_category || isLoading}
-            loading={isLoading}
-            onClick={handleAddService}
-          >
-            {t('button-actions.add')}
-          </Button>
-        </div>
+            <DialogFooter>
+              <Button
+                color="secondary"
+                disabled={isLoading}
+                onClick={() => setOpenAddService(false)}
+              >
+                {t('button-actions.cancel')}
+              </Button>
+              <Button
+                disabled={!new_service || !new_service_category || isLoading}
+                loading={isLoading}
+                onClick={handleAddService}
+              >
+                {t('button-actions.add')}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </OnboardingFormLayout.Container>
     </div>
   )

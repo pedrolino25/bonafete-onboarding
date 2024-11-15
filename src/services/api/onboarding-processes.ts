@@ -674,6 +674,29 @@ const updateIbanDocument = async (
   return response.json()
 }
 
+export enum HostStatus {
+  Completed = 'completed',
+  Pending = 'pending',
+}
+
+export interface UpdateHostStatusParameters {
+  host_id: string
+  status: HostStatus
+}
+const updateHostStatus = async (
+  data: UpdateHostStatusParameters
+): Promise<unknown> => {
+  const response = await fetch(`${ROOT}/api/update-host-status`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+    body: JSON.stringify(data),
+  })
+  return response.json()
+}
+
 export {
   addExtra,
   addService,
@@ -690,6 +713,7 @@ export {
   saveOnboardingSpacePhotos,
   scheduleOnboardingProcess,
   updateHostInfo,
+  updateHostStatus,
   updateIbanDocument,
   updateOffersOnboardingStatus,
   updateOnboardingStatus,

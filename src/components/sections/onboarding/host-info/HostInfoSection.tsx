@@ -9,8 +9,10 @@ import { Option } from '@/components/ui/select'
 import { toast } from '@/lib/hooks/use-toast'
 import { COMPANY_TYPE_OPTIONS, CompanyType } from '@/lib/utils/consts'
 import {
+  HostStatus,
   OnboardingProcessItemResponse,
   updateHostInfo,
+  updateHostStatus,
   updateOnboardingStatus,
 } from '@/services/api/onboarding-processes'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -179,6 +181,13 @@ export default function HostInfoSection({
     },
   })
 
+  const updateHostStatusMutation = useMutation({
+    mutationFn: updateHostStatus,
+    onSuccess: () => {
+      router.push('/processes/completed')
+    },
+  })
+
   const onSubmit = (values: HostInfoFormType) => {
     setIsLoading(true)
     updateHostInfoMutation.mutate({
@@ -236,9 +245,14 @@ export default function HostInfoSection({
           )}
           {isComplete && (
             <Button
-              onClick={() => router.push('/processes/completed')}
               startAdornment={<Send className="h-4 w-4" />}
               color="success"
+              onClick={() =>
+                updateHostStatusMutation.mutate({
+                  host_id: onboardingInfo.space.host_id,
+                  status: HostStatus.Pending,
+                })
+              }
             >
               {t('button-actions.complete')}
             </Button>
@@ -269,7 +283,7 @@ export default function HostInfoSection({
             {t('sections.onboarding.host-info-form.fiscal-data-subtitle')}
           </OnboardingFormLayout.Subtitle>
         </div>
-        <div className="col-span-3">
+        <div className="col-span-3 max-sm:col-span-6">
           <SelectInput
             data-testid="company_type"
             label={t('sections.onboarding.host-info-form.company-type')}
@@ -280,7 +294,7 @@ export default function HostInfoSection({
             useTranslation
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-3 max-sm:col-span-6">
           <TextInput
             data-testid="nif"
             label={t('sections.onboarding.host-info-form.nif')}
@@ -303,7 +317,7 @@ export default function HostInfoSection({
                 onChange={handleChange('company_name')}
               />
             </div>
-            <div className="col-span-3">
+            <div className="col-span-3 max-sm:col-span-6">
               <TextInput
                 data-testid="company_phone"
                 label={t('sections.onboarding.host-info-form.phone')}
@@ -313,7 +327,7 @@ export default function HostInfoSection({
                 type="number"
               />
             </div>
-            <div className="col-span-3">
+            <div className="col-span-3 max-sm:col-span-6">
               <TextInput
                 data-testid="company_email"
                 label={t('sections.onboarding.host-info-form.email')}
@@ -331,7 +345,7 @@ export default function HostInfoSection({
                 onChange={handleChange('company_address')}
               />
             </div>
-            <div className="col-span-4">
+            <div className="col-span-4 max-sm:col-span-6">
               <TextInput
                 data-testid="company_city"
                 label={t('sections.onboarding.host-info-form.city')}
@@ -340,7 +354,7 @@ export default function HostInfoSection({
                 onChange={handleChange('company_city')}
               />
             </div>
-            <div className="col-span-2">
+            <div className="col-span-2 max-sm:col-span-6">
               <TextInput
                 data-testid="company_postal_code"
                 label={t('sections.onboarding.host-info-form.postal-code')}
@@ -364,7 +378,7 @@ export default function HostInfoSection({
             {t('sections.onboarding.host-info-form.representative-subtitle')}
           </OnboardingFormLayout.Subtitle>
         </div>
-        <div className="col-span-3">
+        <div className="col-span-3 max-sm:col-span-6">
           <TextInput
             data-testid="first_name"
             label={t('sections.onboarding.host-info-form.first-name')}
@@ -373,7 +387,7 @@ export default function HostInfoSection({
             onChange={handleChange('first_name')}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-3 max-sm:col-span-6">
           <TextInput
             data-testid="last_name"
             label={t('sections.onboarding.host-info-form.last-name')}
@@ -382,7 +396,7 @@ export default function HostInfoSection({
             onChange={handleChange('last_name')}
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-2 max-sm:col-span-6">
           <TextInput
             data-testid="birth_date"
             label={t('sections.onboarding.host-info-form.birth-date')}
@@ -392,7 +406,7 @@ export default function HostInfoSection({
             type="date"
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-2 max-sm:col-span-6">
           <TextInput
             data-testid="email"
             label={t('sections.onboarding.host-info-form.email')}
@@ -401,7 +415,7 @@ export default function HostInfoSection({
             onChange={handleChange('email')}
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-2 max-sm:col-span-6">
           <TextInput
             data-testid="phone"
             label={t('sections.onboarding.host-info-form.phone')}
@@ -420,7 +434,7 @@ export default function HostInfoSection({
             onChange={handleChange('address')}
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-4 max-sm:col-span-6">
           <TextInput
             data-testid="city"
             label={t('sections.onboarding.host-info-form.city')}
@@ -429,7 +443,7 @@ export default function HostInfoSection({
             onChange={handleChange('city')}
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-2 max-sm:col-span-6">
           <TextInput
             data-testid="postal_code"
             label={t('sections.onboarding.host-info-form.postal-code')}
@@ -520,7 +534,7 @@ export default function HostInfoSection({
             </OnboardingFormLayout.Subtitle>
           </p>
         </div>
-        <div className="col-span-3">
+        <div className="col-span-3 max-sm:col-span-6">
           <FileInput
             label="Frente do documento"
             complete={onboardingInfo?.host?.requirements?.identity_proof?.front}
@@ -534,7 +548,7 @@ export default function HostInfoSection({
             onSuccess={() => refetch?.()}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-3 max-sm:col-span-6">
           <FileInput
             label="Verso do documento"
             complete={onboardingInfo?.host?.requirements?.identity_proof?.back}
