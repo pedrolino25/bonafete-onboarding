@@ -8,7 +8,7 @@ import { toast } from '@/lib/hooks/use-toast'
 import { BUSINESS_MODEL_OPTIONS, SpaceBusinessModel } from '@/lib/utils/consts'
 import {
   CancelationPolicy,
-  OnboardingProcessItemResponse,
+  OnboardingSpaceInfo,
   SpacePrice,
   SpaceSchedule,
   updateSpaceOffersRental,
@@ -35,13 +35,6 @@ import RentalPriceForm, {
   RentalPriceFormType,
 } from '../rental-price-form/RentalPriceForm'
 import ScheduleForm, { scheduleFormSchema } from '../schedule-form/ScheduleForm'
-
-interface SpaceRentalFormProps {
-  defaultValues?: SpaceRentalFormType
-  onboardingInfo: OnboardingProcessItemResponse
-  completed?: boolean
-  refetch: () => void
-}
 
 const optionSchema = z.object({
   value: z.string().min(1, 'Value is required'),
@@ -91,10 +84,17 @@ const spaceRentalFormSchema = z
     return false
   })
 
-type SpaceRentalFormType = z.infer<typeof spaceRentalFormSchema>
+export type SpaceRentalFormType = z.infer<typeof spaceRentalFormSchema>
+
+interface SpaceRentalFormProps {
+  defaultValues?: SpaceRentalFormType
+  spaceInfo: OnboardingSpaceInfo
+  completed?: boolean
+  refetch: () => void
+}
 
 export default function SpaceRentalForm({
-  onboardingInfo,
+  spaceInfo,
   defaultValues,
   refetch,
 }: SpaceRentalFormProps) {
@@ -112,6 +112,7 @@ export default function SpaceRentalForm({
     defaultValues,
   })
 
+  console.log(defaultValues)
   const business_model = watch('business_model')
   const lotation_form = watch('lotation_form')
   const min_hours_form = watch('min_hours_form')
@@ -185,7 +186,7 @@ export default function SpaceRentalForm({
       afterPeriod: parseInt(
         values.cancellation_policy_form.late_cancellation_refund
       ),
-      space: { id: onboardingInfo.space.space_id },
+      space: { id: spaceInfo.space_id },
       createdAt: new Date(),
     } as CancelationPolicy
   }
@@ -205,7 +206,7 @@ export default function SpaceRentalForm({
           amount: parseInt(custom_price?.price_1 || '0'),
           timeStart: custom_price?.time_from_1[0]?.value,
           timeEnd: custom_price?.time_to_1[0]?.value,
-          space: { id: onboardingInfo.space.space_id },
+          space: { id: spaceInfo.space_id },
           createdAt: new Date(),
         } as SpacePrice)
       }
@@ -219,7 +220,7 @@ export default function SpaceRentalForm({
           amount: parseInt(custom_price?.price_2 || '0'),
           timeStart: custom_price?.time_from_2[0]?.value,
           timeEnd: custom_price?.time_to_2[0]?.value,
-          space: { id: onboardingInfo.space.space_id },
+          space: { id: spaceInfo.space_id },
           createdAt: new Date(),
         } as SpacePrice)
       }
@@ -233,7 +234,7 @@ export default function SpaceRentalForm({
           amount: parseInt(custom_price?.price_3 || '0'),
           timeStart: custom_price?.time_from_3[0]?.value,
           timeEnd: custom_price?.time_to_3[0]?.value,
-          space: { id: onboardingInfo.space.space_id },
+          space: { id: spaceInfo.space_id },
           createdAt: new Date(),
         } as SpacePrice)
       }
@@ -247,7 +248,7 @@ export default function SpaceRentalForm({
           amount: parseInt(custom_price?.price_4 || '0'),
           timeStart: custom_price?.time_from_4[0]?.value,
           timeEnd: custom_price?.time_to_4[0]?.value,
-          space: { id: onboardingInfo.space.space_id },
+          space: { id: spaceInfo.space_id },
           createdAt: new Date(),
         } as SpacePrice)
       }
@@ -261,7 +262,7 @@ export default function SpaceRentalForm({
           amount: parseInt(custom_price?.price_5 || '0'),
           timeStart: custom_price?.time_from_5[0]?.value,
           timeEnd: custom_price?.time_to_5[0]?.value,
-          space: { id: onboardingInfo.space.space_id },
+          space: { id: spaceInfo.space_id },
           createdAt: new Date(),
         } as SpacePrice)
       }
@@ -277,14 +278,14 @@ export default function SpaceRentalForm({
         duration: parseInt(
           values.price_form?.flexible_price_form?.time_limit || '0'
         ),
-        space: { id: onboardingInfo.space.space_id },
+        space: { id: spaceInfo.space_id },
         createdAt: new Date(),
       } as SpacePrice)
     } else if (values.price_form.price_model[0].value === 'hourly-fixed') {
       prices.push({
         type: 'hourly-fixed',
         amount: parseInt(values.price_form?.fixed_price_form?.price || '0'),
-        space: { id: onboardingInfo.space.space_id },
+        space: { id: spaceInfo.space_id },
         createdAt: new Date(),
       } as SpacePrice)
     }
@@ -293,7 +294,7 @@ export default function SpaceRentalForm({
       prices.push({
         type: 'cleaning-fee',
         amount: parseInt(values.cleaning_fee_form?.cleaning_fee || '0'),
-        space: { id: onboardingInfo.space.space_id },
+        space: { id: spaceInfo.space_id },
         createdAt: new Date(),
       } as SpacePrice)
     }
@@ -314,7 +315,7 @@ export default function SpaceRentalForm({
               ? 'Fechado'
               : values.schedule_form.monday_from[0].value,
           timeEnd: values.schedule_form.monday_to?.[0]?.value || '',
-          space: { id: onboardingInfo.space.space_id },
+          space: { id: spaceInfo.space_id },
           createdAt: new Date(),
         },
         {
@@ -324,7 +325,7 @@ export default function SpaceRentalForm({
               ? 'Fechado'
               : values.schedule_form.tuesday_from[0].value,
           timeEnd: values.schedule_form.tuesday_to?.[0]?.value || '',
-          space: { id: onboardingInfo.space.space_id },
+          space: { id: spaceInfo.space_id },
           createdAt: new Date(),
         },
         {
@@ -334,7 +335,7 @@ export default function SpaceRentalForm({
               ? 'Fechado'
               : values.schedule_form.wednesday_from[0].value,
           timeEnd: values.schedule_form.wednesday_to?.[0]?.value || '',
-          space: { id: onboardingInfo.space.space_id },
+          space: { id: spaceInfo.space_id },
           createdAt: new Date(),
         },
         {
@@ -344,7 +345,7 @@ export default function SpaceRentalForm({
               ? 'Fechado'
               : values.schedule_form.thursday_from[0].value,
           timeEnd: values.schedule_form.thursday_to?.[0]?.value || '',
-          space: { id: onboardingInfo.space.space_id },
+          space: { id: spaceInfo.space_id },
           createdAt: new Date(),
         },
         {
@@ -354,7 +355,7 @@ export default function SpaceRentalForm({
               ? 'Fechado'
               : values.schedule_form.friday_from[0].value,
           timeEnd: values.schedule_form.friday_to?.[0]?.value || '',
-          space: { id: onboardingInfo.space.space_id },
+          space: { id: spaceInfo.space_id },
           createdAt: new Date(),
         },
         {
@@ -364,7 +365,7 @@ export default function SpaceRentalForm({
               ? 'Fechado'
               : values.schedule_form.saturday_from[0].value,
           timeEnd: values.schedule_form.saturday_to?.[0]?.value || '',
-          space: { id: onboardingInfo.space.space_id },
+          space: { id: spaceInfo.space_id },
           createdAt: new Date(),
         },
         {
@@ -374,7 +375,7 @@ export default function SpaceRentalForm({
               ? 'Fechado'
               : values.schedule_form.sunday_from[0].value,
           timeEnd: values.schedule_form.sunday_to?.[0]?.value || '',
-          space: { id: onboardingInfo.space.space_id },
+          space: { id: spaceInfo.space_id },
           createdAt: new Date(),
         },
       ]
@@ -385,7 +386,7 @@ export default function SpaceRentalForm({
   const onSubmit = (values: SpaceRentalFormType) => {
     setIsLoading(true)
     const data = {
-      onboarding_id: onboardingInfo.id,
+      space_id: spaceInfo.space_id,
       business_model: values.business_model[0].value,
       lotation: values.lotation_form?.lotation,
       min_hours: values.min_hours_form?.min_hours,

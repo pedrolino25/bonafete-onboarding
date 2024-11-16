@@ -2,7 +2,7 @@
 import SpacePackageForm from '@/components/forms/space-package-form/SpacePackageForm'
 import { Navbar } from '@/components/navigation/Navbar'
 import { Button } from '@/components/ui/button'
-import { getOnboardingProcessesById } from '@/services/api/onboarding-processes'
+import { getOnboardingSpaceById } from '@/services/api/onboarding-processes'
 import { useQuery } from '@tanstack/react-query'
 import { ChevronLeft } from 'lucide-react'
 import { useTranslations } from 'next-intl'
@@ -12,19 +12,17 @@ export default function SpacePackageSection() {
   const t = useTranslations()
   const router = useRouter()
   const params = useSearchParams()
-  const onboarding_id = params.get('onboarding_id') as string
+  const space_id = params.get('space_id') as string
   const package_id = params.get('package_id') as string
 
   const { data } = useQuery({
-    queryKey: ['onboarding-process', onboarding_id],
+    queryKey: ['space', space_id],
     queryFn: async () => {
-      return await getOnboardingProcessesById(onboarding_id)
+      return await getOnboardingSpaceById(space_id)
     },
   })
 
-  const spacePackage = data?.space?.packages?.find(
-    (item) => item.id === package_id
-  )
+  const spacePackage = data?.packages?.find((item) => item.id === package_id)
 
   return (
     <main>
@@ -60,7 +58,7 @@ export default function SpacePackageSection() {
             </div>
             <div className="m-auto max-w-[800px] max-sm:w-full flex flex-col gap-4 pt-8 pb-12">
               <SpacePackageForm
-                onboardingInfo={data}
+                spaceInfo={data}
                 defaultValues={spacePackage}
                 refetch={() => router.back()}
               />

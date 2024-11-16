@@ -24,7 +24,7 @@ import {
 } from '@/lib/utils/consts'
 import {
   deleteSpaceService,
-  OnboardingProcessItemResponse,
+  OnboardingSpaceInfo,
   updateSpaceService,
 } from '@/services/api/onboarding-processes'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -41,7 +41,7 @@ const MAX_PHOTOS = 4
 
 interface SpaceServiceFormProps {
   defaultValues?: SpaceServiceFormType
-  onboardingInfo: OnboardingProcessItemResponse
+  spaceInfo: OnboardingSpaceInfo
   completed?: boolean
   refetch: () => void
 }
@@ -75,7 +75,7 @@ const spaceServiceFormSchema = z.object({
 export type SpaceServiceFormType = z.infer<typeof spaceServiceFormSchema>
 
 export default function SpaceServiceForm({
-  onboardingInfo,
+  spaceInfo,
   defaultValues,
   refetch,
 }: SpaceServiceFormProps) {
@@ -169,7 +169,7 @@ export default function SpaceServiceForm({
               return await uploadPictureToS3Bucket({
                 file: photo.file,
                 path: `public/spaces/${
-                  onboardingInfo?.space.space_id
+                  spaceInfo?.space_id
                 }/services/photo_${v4()}.webp`,
               })
             } else {
@@ -180,7 +180,7 @@ export default function SpaceServiceForm({
       : []
 
     updateSpaceServiceMutation.mutate({
-      onboarding_id: onboardingInfo?.id,
+      space_id: spaceInfo?.space_id,
       id: values.id,
       description: values.description,
       photos: JSON.stringify(pictures),

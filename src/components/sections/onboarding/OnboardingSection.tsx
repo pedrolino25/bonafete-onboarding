@@ -1,12 +1,16 @@
 'use client'
 
+import { SpaceRentalFormType } from '@/components/forms/space-rental-form/SpaceRentalForm'
 import { SidebarLayout, SidebarLink } from '@/components/layouts/sidebar'
 import { Navbar } from '@/components/navigation/Navbar'
 import OnboardingIntro from '@/components/sections/onboarding/intro/IntroSection'
 import { Button } from '@/components/ui/button'
+import { Option } from '@/components/ui/select'
+import { toast } from '@/lib/hooks/use-toast'
 import {
   getOnboardingProcessesById,
   OnboardingProcessItemResponse,
+  updateOnboardingStatus,
 } from '@/services/api/onboarding-processes'
 import {
   LocalityListItemResponse,
@@ -17,15 +21,19 @@ import {
 } from '@/services/api/static'
 import { Elements } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { ChevronLeft } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import HostInfoSection from './host-info/HostInfoSection'
-import SpaceInfoSection from './space-info/SpaceInfoSection'
+import SpaceInfoSection, {
+  SpaceInfoFormType,
+} from './space-info/SpaceInfoSection'
 import SpaceOffersSection from './space-offers/SpaceOffersSection'
-import SpacePhotosSection from './space-photos/SpacePhotosSection'
+import SpacePhotosSection, {
+  SpacePhotosFormType,
+} from './space-photos/SpacePhotosSection'
 
 export enum OnboardingFaseStatus {
   Init = 'init',
@@ -72,6 +80,19 @@ export default function OnboardingSection({
       return await getOnboardingProcessesById(id)
     },
   })
+
+  const [conveniencesOptions] = useState<Option[]>(
+    conveniencesList.conveniences
+      .concat(conveniencesList.equipement)
+      .concat(conveniencesList.accessibility)
+      ?.map((option) => {
+        return {
+          label: option.label,
+          value: option.id,
+          disabled: option.id === '17',
+        }
+      }) as Option[]
+  )
 
   const isAnyPendingSection = (values: OnboardingProcessItemResponse) => {
     if (
@@ -231,6 +252,25 @@ export default function OnboardingSection({
     setSection(link)
   }
 
+  const updateOnboardingStatusMutation = useMutation({
+    mutationFn: updateOnboardingStatus,
+    onSuccess: () => {
+      refetch?.()
+      toast({
+        variant: 'success',
+        title: t('success'),
+        description: t('success-messages.submit'),
+      })
+    },
+    onError: () => {
+      toast({
+        variant: 'destructive',
+        title: t('error'),
+        description: t('error-messages.submit'),
+      })
+    },
+  })
+
   return (
     <main>
       <Navbar
@@ -274,21 +314,121 @@ export default function OnboardingSection({
                 )}
                 {section.value === OnboardingSections.SpaceInfo && (
                   <SpaceInfoSection
-                    onboardingInfo={data}
+                    onboardingId={data.id}
+                    spaceInfo={data.space}
                     localitiesList={localitiesList}
                     conveniencesList={conveniencesList}
                     spaceTypesList={spaceTypesList}
                     spaceTargetsList={spaceTargetsList}
                     postalCodesList={postalCodesList}
+                    defaultValues={
+                      {
+                        type: data.space?.type
+                          ? [
+                              {
+                                label: data.space.type.label,
+                                value: data.space.type.id,
+                              },
+                            ]
+                          : [
+                              {
+                                label: data.application?.type.label,
+                                value: data.application?.type.id,
+                              },
+                            ],
+                        targets:
+                          data.space?.targets && data.space.targets.length > 0
+                            ? data.space?.targets?.map((item) => {
+                                return {
+                                  label: item.label,
+                                  value: item.id,
+                                }
+                              })
+                            : data.application?.targets?.map((item) => {
+                                return {
+                                  label: item.label,
+                                  value: item.id,
+                                }
+                              }),
+                        conveniences:
+                          data.space?.conveniences &&
+                          data.space.conveniences.length > 0
+                            ? data.space?.conveniences?.map((item) => {
+                                return {
+                                  label: item.label,
+                                  value: item.id,
+                                  disabled: item.id === '17',
+                                }
+                              })
+                            : conveniencesOptions?.filter(
+                                (item) => item.value === '17'
+                              ),
+                        title: data.space?.title,
+                        tour: data.space?.tour,
+                        description: data.space?.description,
+                        allow_pets: data.space?.allow_pets,
+                        allow_alcool: data.space?.allow_alcool,
+                        allow_smoking: data.space?.allow_smoking,
+                        allow_high_sound: data.space?.allow_high_sound,
+                        has_security_cameras: 'false',
+                        rules: data.space?.rules,
+                        valid_url: data.space.title ? 'unique' : '',
+                        street: data.space?.street,
+                        postal: data.space?.postal,
+                        locality: data.space?.locality,
+                        city: data.space?.city,
+                        latitude: data.space?.latitude?.toString(),
+                        longitude: data.space?.longitude?.toString(),
+                      } as SpaceInfoFormType
+                    }
                     completed={
                       data && data.fase2 === OnboardingFaseStatus.Completed
                     }
                     refetch={refetch}
+                    showUpdateOnboardingStatus={
+                      data.fase2 === OnboardingFaseStatus.Completed
+                    }
+                    onUpdateOnboardingStatus={() => {
+                      updateOnboardingStatusMutation.mutate({
+                        onboarding_id: data.id,
+                        flow: OnboardingSections.SpaceInfo,
+                        status: OnboardingFaseStatus.Incomplete,
+                      })
+                    }}
                   />
                 )}
                 {section.value === OnboardingSections.Photos && (
                   <SpacePhotosSection
-                    onboardingInfo={data}
+                    onboardingId={data.id}
+                    spaceInfo={data.space}
+                    showUpdateOnboardingStatus={
+                      data.fase3 !== OnboardingFaseStatus.Incomplete
+                    }
+                    onUpdateOnboardingStatus={() => {
+                      updateOnboardingStatusMutation.mutate({
+                        onboarding_id: data.id,
+                        flow: OnboardingSections.Photos,
+                        status: OnboardingFaseStatus.Incomplete,
+                      })
+                    }}
+                    defaultValues={
+                      {
+                        photos:
+                          (data.space?.photos || []).length > 0
+                            ? data.space?.photos?.map((item) => {
+                                return {
+                                  path: item,
+                                  file: undefined,
+                                }
+                              })
+                            : (data.application.photos || [])?.map((item) => {
+                                return {
+                                  path: item,
+                                  file: undefined,
+                                }
+                              }),
+                      } as SpacePhotosFormType
+                    }
                     completed={
                       data && data.fase3 === OnboardingFaseStatus.Completed
                     }
@@ -297,7 +437,55 @@ export default function OnboardingSection({
                 )}
                 {section.value === OnboardingSections.Offers && (
                   <SpaceOffersSection
-                    onboardingInfo={data}
+                    onboardingId={data.id}
+                    spaceInfo={data.space}
+                    showUpdateOnboardingStatus={
+                      data.fase4 !== OnboardingFaseStatus.Incomplete
+                    }
+                    onUpdateOnboardingStatus={() => {
+                      updateOnboardingStatusMutation.mutate({
+                        onboarding_id: data.id,
+                        flow: OnboardingSections.Offers,
+                        status: OnboardingFaseStatus.Incomplete,
+                      })
+                    }}
+                    defaultValues={
+                      {
+                        business_model: data?.space?.business_model
+                          ? data?.space?.business_model
+                          : data?.application.type?.id
+                          ? [
+                              {
+                                value: data?.application.business_model,
+                                label: `business-model-options.${data?.application.business_model}`,
+                              },
+                            ]
+                          : [],
+                        lotation_form: data?.space?.lotation?.lotation
+                          ? data?.space?.lotation
+                          : {
+                              lotation:
+                                data?.application.max_of_persons?.toString(),
+                            },
+                        min_hours_form: data?.space?.min_hours?.min_hours
+                          ? data?.space?.min_hours
+                          : undefined,
+                        schedule_form: data?.space?.schedule,
+                        cancellation_policy_form: data?.space
+                          ?.cancellation_policy || {
+                          base_refund: '50',
+                          late_cancellation_days: '2',
+                          late_cancellation_refund: '0',
+                        },
+                        price_form: {
+                          price_model: data?.space?.prices?.priceModel || [],
+                          fixed_price_form: data?.space?.prices?.fixed,
+                          flexible_price_form: data?.space?.prices?.flexible,
+                          custom_price_form: data?.space?.prices?.custom,
+                          cleaning_fee_form: data?.space?.prices?.cleaningFee,
+                        },
+                      } as SpaceRentalFormType
+                    }
                     completed={
                       data && data.fase4 === OnboardingFaseStatus.Completed
                     }

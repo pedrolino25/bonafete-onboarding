@@ -10,9 +10,8 @@ import { Option } from '@/components/ui/select'
 import { toast } from '@/lib/hooks/use-toast'
 import { cn, splitCommaGetFirst } from '@/lib/utils'
 import {
-  OnboardingProcessItemResponse,
+  OnboardingSpaceInfo,
   saveOnboardingSpaceInfo,
-  updateOnboardingStatus,
 } from '@/services/api/onboarding-processes'
 import { verifySpaceTitle } from '@/services/api/spaces'
 import {
@@ -29,7 +28,6 @@ import {
   CircleX,
   Info,
   LoaderCircle,
-  Save,
   Search,
   Send,
 } from 'lucide-react'
@@ -37,7 +35,6 @@ import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
-import { OnboardingFaseStatus, OnboardingSections } from '../OnboardingSection'
 
 const optionSchema = z.object({
   value: z.string().min(1, 'Value is required'),
@@ -69,27 +66,35 @@ const spaceInfoFormSchema = z.object({
   longitude: z.string(),
 })
 
-type SpaceInfoFormType = z.infer<typeof spaceInfoFormSchema>
+export type SpaceInfoFormType = z.infer<typeof spaceInfoFormSchema>
 
 interface SpaceInfoSectionProps {
-  onboardingInfo: OnboardingProcessItemResponse
+  spaceInfo: OnboardingSpaceInfo
   localitiesList: LocalityListItemResponse[]
   conveniencesList: SpaceConvenienceResponse
   spaceTypesList: SpaceTypeListItemResponse[]
   spaceTargetsList: SpaceTargetListItemResponse[]
   postalCodesList: PostalCodesListItemResponse[]
+  onboardingId?: string
+  defaultValues?: SpaceInfoFormType
   completed?: boolean
+  showUpdateOnboardingStatus?: boolean
+  onUpdateOnboardingStatus?: () => void
   refetch: () => void
 }
 
 export default function SpaceInfoSection({
-  onboardingInfo,
+  spaceInfo,
   localitiesList,
   postalCodesList,
   conveniencesList,
   spaceTypesList,
   spaceTargetsList,
+  onboardingId,
+  defaultValues,
   completed,
+  showUpdateOnboardingStatus,
+  onUpdateOnboardingStatus,
   refetch,
 }: SpaceInfoSectionProps) {
   const t = useTranslations()
@@ -129,66 +134,11 @@ export default function SpaceInfoSection({
     handleSubmit,
     setValue,
     getValues,
-    formState: { isValid, isDirty, errors },
+    formState: { isValid, isDirty },
   } = useForm<SpaceInfoFormType>({
     mode: 'onChange',
     resolver: zodResolver(spaceInfoFormSchema),
-    defaultValues: {
-      type: onboardingInfo.space?.type
-        ? [
-            {
-              label: onboardingInfo.space.type.label,
-              value: onboardingInfo.space.type.id,
-            },
-          ]
-        : [
-            {
-              label: onboardingInfo.application?.type.label,
-              value: onboardingInfo.application?.type.id,
-            },
-          ],
-      targets:
-        onboardingInfo.space?.targets && onboardingInfo.space.targets.length > 0
-          ? onboardingInfo.space?.targets?.map((item) => {
-              return {
-                label: item.label,
-                value: item.id,
-              }
-            })
-          : onboardingInfo.application?.targets?.map((item) => {
-              return {
-                label: item.label,
-                value: item.id,
-              }
-            }),
-      conveniences:
-        onboardingInfo.space?.conveniences &&
-        onboardingInfo.space.conveniences.length > 0
-          ? onboardingInfo.space?.conveniences?.map((item) => {
-              return {
-                label: item.label,
-                value: item.id,
-                disabled: item.id === '17',
-              }
-            })
-          : conveniencesOptions?.filter((item) => item.value === '17'),
-      title: onboardingInfo.space?.title,
-      tour: onboardingInfo.space?.tour,
-      description: onboardingInfo.space?.description,
-      allow_pets: onboardingInfo.space?.allow_pets,
-      allow_alcool: onboardingInfo.space?.allow_alcool,
-      allow_smoking: onboardingInfo.space?.allow_smoking,
-      allow_high_sound: onboardingInfo.space?.allow_high_sound,
-      has_security_cameras: 'false',
-      rules: onboardingInfo.space?.rules,
-      valid_url: onboardingInfo.space.title ? 'unique' : '',
-      street: onboardingInfo.space?.street,
-      postal: onboardingInfo.space?.postal,
-      locality: onboardingInfo.space?.locality,
-      city: onboardingInfo.space?.city,
-      latitude: onboardingInfo.space?.latitude?.toString(),
-      longitude: onboardingInfo.space?.longitude?.toString(),
-    },
+    defaultValues,
   })
 
   const {
@@ -198,10 +148,7 @@ export default function SpaceInfoSection({
   } = useQuery({
     queryKey: ['space-name', getValues().title],
     queryFn: async () => {
-      return await verifySpaceTitle(
-        getValues().title,
-        onboardingInfo.space?.space_id
-      )
+      return await verifySpaceTitle(getValues().title, spaceInfo?.space_id)
     },
     enabled: false,
   })
@@ -225,32 +172,14 @@ export default function SpaceInfoSection({
     },
   })
 
-  const updateOnboardingStatusMutation = useMutation({
-    mutationFn: updateOnboardingStatus,
-    onSuccess: () => {
-      refetch?.()
-      toast({
-        variant: 'success',
-        title: t('success'),
-        description: t('success-messages.submit'),
-      })
-    },
-    onError: () => {
-      toast({
-        variant: 'destructive',
-        title: t('error'),
-        description: t('error-messages.submit'),
-      })
-    },
-  })
-
   const [lastVerification, setLastVerification] = useState<string>(
-    onboardingInfo.space?.title || ''
+    spaceInfo?.title || ''
   )
 
   const onSubmit = (values: SpaceInfoFormType) => {
     saveOnboardingSpaceInfoMutation.mutate({
-      onboarding_id: onboardingInfo.id || '',
+      space_id: spaceInfo.space_id,
+      onboarding_id: onboardingId,
       type:
         values.type?.map((item) => {
           return {
@@ -359,51 +288,29 @@ export default function SpaceInfoSection({
           </OnboardingSectionLayout.Subtitle>
         </div>
         <div className="flex justify-between items-center gap-4 max-sm:justify-end max-sm:items-start max-sm:pt-4 max-sm:w-full">
-          {onboardingInfo.fase2 === OnboardingFaseStatus.Completed && (
+          {showUpdateOnboardingStatus && (
             <Button
               startAdornment={<Info className="h-4 w-4" />}
               color="secondary"
               variant="fill"
-              onClick={() =>
-                updateOnboardingStatusMutation.mutate({
-                  onboarding_id: onboardingInfo.id,
-                  flow: OnboardingSections.SpaceInfo,
-                  status: OnboardingFaseStatus.Incomplete,
-                })
-              }
+              onClick={() => onUpdateOnboardingStatus?.()}
             >
               {t('button-actions.update-needed')}
             </Button>
           )}
-          {!isValid ? (
-            <Button
-              onClick={() => onSubmit(getValues())}
-              color="secondary"
-              disabled={
-                !isDirty ||
-                saveOnboardingSpaceInfoMutation.isPending ||
-                lastVerification !== getValues().title
-              }
-              loading={saveOnboardingSpaceInfoMutation.isPending}
-              startAdornment={<Save className="h-4 w-4" />}
-            >
-              {t('button-actions.save')}
-            </Button>
-          ) : (
-            <Button
-              type="submit"
-              disabled={
-                !isValid ||
-                (completed && !isDirty) ||
-                saveOnboardingSpaceInfoMutation.isPending ||
-                lastVerification !== getValues().title
-              }
-              loading={saveOnboardingSpaceInfoMutation.isPending}
-              startAdornment={<Send className="h-4 w-4" />}
-            >
-              {t('button-actions.submit')}
-            </Button>
-          )}
+          <Button
+            type="submit"
+            disabled={
+              !isValid ||
+              (completed && !isDirty) ||
+              saveOnboardingSpaceInfoMutation.isPending ||
+              lastVerification !== getValues().title
+            }
+            loading={saveOnboardingSpaceInfoMutation.isPending}
+            startAdornment={<Send className="h-4 w-4" />}
+          >
+            {t('button-actions.submit')}
+          </Button>
         </div>
       </div>
       <div className="w-9/12 max-w-[700px] max-sm:w-full flex flex-col gap-8 pt-8 pl-6 max-sm:pl-0 pb-12">

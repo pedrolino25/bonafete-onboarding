@@ -12,9 +12,8 @@ import {
 import { toast } from '@/lib/hooks/use-toast'
 import { uploadPictureToS3Bucket, urlToFile } from '@/lib/utils'
 import {
-  OnboardingProcessItemResponse,
+  OnboardingSpaceInfo,
   saveOnboardingSpacePhotos,
-  updateOnboardingStatus,
 } from '@/services/api/onboarding-processes'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
@@ -24,7 +23,6 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
-import { OnboardingFaseStatus, OnboardingSections } from '../OnboardingSection'
 import Photo from './space-photo/SpacePhoto'
 
 const MAX_PHOTOS = 10
@@ -40,18 +38,26 @@ const spacePhotosFormSchema = z.object({
   photos: z.array(imageTypeSchema).min(5).max(10),
 })
 
-type SpacePhotosFormType = z.infer<typeof spacePhotosFormSchema>
+export type SpacePhotosFormType = z.infer<typeof spacePhotosFormSchema>
 
 interface SpacePhotosSectionProps {
-  onboardingInfo: OnboardingProcessItemResponse
+  spaceInfo: OnboardingSpaceInfo
+  onboardingId?: string
   completed?: boolean
+  defaultValues?: SpacePhotosFormType
+  showUpdateOnboardingStatus?: boolean
   refetch: () => void
+  onUpdateOnboardingStatus?: () => void
 }
 
 export default function SpacePhotosSection({
-  onboardingInfo,
+  onboardingId,
+  spaceInfo,
   completed,
+  defaultValues,
+  showUpdateOnboardingStatus,
   refetch,
+  onUpdateOnboardingStatus,
 }: SpacePhotosSectionProps) {
   const t = useTranslations()
   const [viewPhotos, setViewPhotos] = useState<boolean>()
@@ -61,26 +67,11 @@ export default function SpacePhotosSection({
     handleSubmit,
     setValue,
     getValues,
-    formState: { isValid, isDirty, errors },
+    formState: { isValid, isDirty },
   } = useForm<SpacePhotosFormType>({
     mode: 'onChange',
     resolver: zodResolver(spacePhotosFormSchema),
-    defaultValues: {
-      photos:
-        (onboardingInfo.space?.photos || []).length > 0
-          ? onboardingInfo.space?.photos?.map((item) => {
-              return {
-                path: item,
-                file: undefined,
-              }
-            })
-          : (onboardingInfo.application.photos || [])?.map((item) => {
-              return {
-                path: item,
-                file: undefined,
-              }
-            }),
-    },
+    defaultValues,
   })
 
   const saveOnboardingSpacePhotosMutation = useMutation({
@@ -104,25 +95,6 @@ export default function SpacePhotosSection({
     },
   })
 
-  const updateOnboardingStatusMutation = useMutation({
-    mutationFn: updateOnboardingStatus,
-    onSuccess: () => {
-      refetch?.()
-      toast({
-        variant: 'success',
-        title: t('success'),
-        description: t('success-messages.submit'),
-      })
-    },
-    onError: () => {
-      toast({
-        variant: 'destructive',
-        title: t('error'),
-        description: t('error-messages.submit'),
-      })
-    },
-  })
-
   const onSubmit = async (values: SpacePhotosFormType) => {
     setLoading(true)
     const pictures = await Promise.all(
@@ -130,12 +102,12 @@ export default function SpacePhotosSection({
         if (photo.file) {
           return await uploadPictureToS3Bucket({
             file: photo.file,
-            path: `public/spaces/${onboardingInfo?.space.space_id}/photo_${index}.webp`,
+            path: `public/spaces/${spaceInfo?.space_id}/photo_${index}.webp`,
           })
         } else if (photo.path.includes('/applications/')) {
           return await uploadPictureToS3Bucket({
             file: await urlToFile(photo.path, 'file'),
-            path: `public/spaces/${onboardingInfo?.space.space_id}/photo_${index}.webp`,
+            path: `public/spaces/${spaceInfo?.space_id}/photo_${index}.webp`,
           })
         } else {
           return photo.path
@@ -144,7 +116,8 @@ export default function SpacePhotosSection({
     )
     saveOnboardingSpacePhotosMutation.mutate({
       photos: pictures,
-      onboarding_id: onboardingInfo.id,
+      onboarding_id: onboardingId,
+      space_id: spaceInfo.space_id,
     })
   }
 
@@ -163,20 +136,14 @@ export default function SpacePhotosSection({
           </OnboardingSectionLayout.Subtitle>
         </div>
         <div className="flex justify-between items-center gap-4 max-sm:justify-end max-sm:items-start max-sm:pt-4 max-sm:w-full">
-          {onboardingInfo.fase3 !== OnboardingFaseStatus.Incomplete && (
+          {showUpdateOnboardingStatus && (
             <Button
               disabled={!isValid || saveOnboardingSpacePhotosMutation.isPending}
               loading={saveOnboardingSpacePhotosMutation.isPending}
               startAdornment={<Info className="h-4 w-4" />}
               color="secondary"
               variant="fill"
-              onClick={() =>
-                updateOnboardingStatusMutation.mutate({
-                  onboarding_id: onboardingInfo.id,
-                  flow: OnboardingSections.Photos,
-                  status: OnboardingFaseStatus.Incomplete,
-                })
-              }
+              onClick={() => onUpdateOnboardingStatus?.()}
             >
               {t('button-actions.update-needed')}
             </Button>

@@ -35,7 +35,7 @@ const getApplicationsListByStatus = async (
   status: ApplicationStatus
 ): Promise<ApplicationsListItemResponse[]> => {
   const response = await fetch(
-    `${ROOT}/api/onboarding/applications-list?status=${status}`,
+    `${ROOT}/api/onboarding/application/list?status=${status}`,
     {
       method: 'GET',
       headers: {

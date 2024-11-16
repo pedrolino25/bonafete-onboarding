@@ -18,7 +18,7 @@ import { toast } from '@/lib/hooks/use-toast'
 import {
   deleteSpacePackage,
   getSpaceServicesList,
-  OnboardingProcessItemResponse,
+  OnboardingSpaceInfo,
   SpaceSchedule,
   SpaceServiceListItemResponse,
   updateSpacePackage,
@@ -34,7 +34,7 @@ import ScheduleForm, { scheduleFormSchema } from '../schedule-form/ScheduleForm'
 
 interface SpacePackageFormProps {
   defaultValues?: SpacePackageFormType
-  onboardingInfo: OnboardingProcessItemResponse
+  spaceInfo: OnboardingSpaceInfo
   completed?: boolean
   refetch: () => void
 }
@@ -61,7 +61,7 @@ const spacePackageFormSchema = z.object({
 export type SpacePackageFormType = z.infer<typeof spacePackageFormSchema>
 
 export default function SpacePackageForm({
-  onboardingInfo,
+  spaceInfo,
   defaultValues,
   refetch,
 }: SpacePackageFormProps) {
@@ -72,18 +72,18 @@ export default function SpacePackageForm({
   const { data: spaceServicesList } = useQuery({
     queryKey: ['space-services-list'],
     queryFn: async () => {
-      return await getSpaceServicesList(onboardingInfo.space.space_id)
+      return await getSpaceServicesList(spaceInfo.space_id)
     },
   })
 
   const getTimeLimit = () => {
-    if (onboardingInfo?.space?.prices?.custom?.price_1) {
-      const start = onboardingInfo?.space?.prices?.custom?.time_from_1
+    if (spaceInfo?.prices?.custom?.price_1) {
+      const start = spaceInfo?.prices?.custom?.time_from_1
       const end =
-        onboardingInfo?.space?.prices?.custom?.time_to_5 ||
-        onboardingInfo?.space?.prices?.custom?.time_to_4 ||
-        onboardingInfo?.space?.prices?.custom?.time_to_3 ||
-        onboardingInfo?.space?.prices?.custom?.time_to_2
+        spaceInfo?.prices?.custom?.time_to_5 ||
+        spaceInfo?.prices?.custom?.time_to_4 ||
+        spaceInfo?.prices?.custom?.time_to_3 ||
+        spaceInfo?.prices?.custom?.time_to_2
       return {
         start,
         end,
@@ -105,10 +105,8 @@ export default function SpacePackageForm({
     defaultValues: {
       ...defaultValues,
       max_persons:
-        defaultValues?.max_persons ||
-        onboardingInfo?.space?.lotation?.lotation?.toString(),
-      schedule_form:
-        defaultValues?.schedule_form || onboardingInfo?.space?.schedule,
+        defaultValues?.max_persons || spaceInfo?.lotation?.lotation?.toString(),
+      schedule_form: defaultValues?.schedule_form || spaceInfo?.schedule,
     },
   })
 
@@ -146,7 +144,7 @@ export default function SpacePackageForm({
               ? 'Fechado'
               : values.schedule_form.monday_from[0].value,
           timeEnd: values.schedule_form.monday_to?.[0]?.value || '',
-          space: { id: onboardingInfo.space.space_id },
+          space: { id: spaceInfo.space_id },
           createdAt: new Date(),
         },
         {
@@ -156,7 +154,7 @@ export default function SpacePackageForm({
               ? 'Fechado'
               : values.schedule_form.tuesday_from[0].value,
           timeEnd: values.schedule_form.tuesday_to?.[0]?.value || '',
-          space: { id: onboardingInfo.space.space_id },
+          space: { id: spaceInfo.space_id },
           createdAt: new Date(),
         },
         {
@@ -166,7 +164,7 @@ export default function SpacePackageForm({
               ? 'Fechado'
               : values.schedule_form.wednesday_from[0].value,
           timeEnd: values.schedule_form.wednesday_to?.[0]?.value || '',
-          space: { id: onboardingInfo.space.space_id },
+          space: { id: spaceInfo.space_id },
           createdAt: new Date(),
         },
         {
@@ -176,7 +174,7 @@ export default function SpacePackageForm({
               ? 'Fechado'
               : values.schedule_form.thursday_from[0].value,
           timeEnd: values.schedule_form.thursday_to?.[0]?.value || '',
-          space: { id: onboardingInfo.space.space_id },
+          space: { id: spaceInfo.space_id },
           createdAt: new Date(),
         },
         {
@@ -186,7 +184,7 @@ export default function SpacePackageForm({
               ? 'Fechado'
               : values.schedule_form.friday_from[0].value,
           timeEnd: values.schedule_form.friday_to?.[0]?.value || '',
-          space: { id: onboardingInfo.space.space_id },
+          space: { id: spaceInfo.space_id },
           createdAt: new Date(),
         },
         {
@@ -196,7 +194,7 @@ export default function SpacePackageForm({
               ? 'Fechado'
               : values.schedule_form.saturday_from[0].value,
           timeEnd: values.schedule_form.saturday_to?.[0]?.value || '',
-          space: { id: onboardingInfo.space.space_id },
+          space: { id: spaceInfo.space_id },
           createdAt: new Date(),
         },
         {
@@ -206,7 +204,7 @@ export default function SpacePackageForm({
               ? 'Fechado'
               : values.schedule_form.sunday_from[0].value,
           timeEnd: values.schedule_form.sunday_to?.[0]?.value || '',
-          space: { id: onboardingInfo.space.space_id },
+          space: { id: spaceInfo.space_id },
           createdAt: new Date(),
         },
       ]
@@ -259,25 +257,27 @@ export default function SpacePackageForm({
   })
 
   const onSubmit = (values: SpacePackageFormType) => {
-    setIsLoading(true)
-    const data = {
-      onboarding_id: onboardingInfo.id,
-      id: values.id,
-      name: values.name,
-      services: values.services?.map((item) => {
-        return {
-          spaceService: {
-            id: item.value,
-          },
-        }
-      }),
-      description: values.description,
-      schedule: getSpaceScheduleObject(values),
-      min_hours: values.min_hours,
-      min_persons: values.min_persons,
-      max_persons: values.max_persons,
+    if (spaceInfo.space_id) {
+      setIsLoading(true)
+      const data = {
+        space_id: spaceInfo.space_id,
+        id: values.id,
+        name: values.name,
+        services: values.services?.map((item) => {
+          return {
+            spaceService: {
+              id: item.value,
+            },
+          }
+        }),
+        description: values.description,
+        schedule: getSpaceScheduleObject(values),
+        min_hours: values.min_hours,
+        min_persons: values.min_persons,
+        max_persons: values.max_persons,
+      }
+      updateSpacePackageMutation.mutate(data)
     }
-    updateSpacePackageMutation.mutate(data)
   }
 
   const handleDelete = () => {

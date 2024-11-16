@@ -46,16 +46,13 @@ export enum ApplicationOnboardingStatus {
 const getOnboardingsProcessesListByStatus = async (
   status: ApplicationOnboardingStatus
 ): Promise<OnboardingProcessListItemResponse[]> => {
-  const response = await fetch(
-    `${ROOT}/api/onboarding/processes-list?status=${status}`,
-    {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
-      },
-    }
-  )
+  const response = await fetch(`${ROOT}/api/onboarding/list?status=${status}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+  })
   return response.json()
 }
 
@@ -66,7 +63,7 @@ interface ArchiveOnboardingProcessProps {
 const archiveOnboardingProcess = async (
   data: ArchiveOnboardingProcessProps
 ): Promise<OnboardingProcessListItemResponse> => {
-  const response = await fetch(`${ROOT}/api/onboarding/process/archive`, {
+  const response = await fetch(`${ROOT}/api/onboarding/archive`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -85,7 +82,7 @@ interface ReasignOnboardingProcessProps {
 const reasignOnboardingProcess = async (
   data: ReasignOnboardingProcessProps
 ): Promise<OnboardingProcessListItemResponse> => {
-  const response = await fetch(`${ROOT}/api/onboarding/process/reasign`, {
+  const response = await fetch(`${ROOT}/api/onboarding/reasign`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -104,7 +101,7 @@ interface ScheduleOnboardingProcessProps {
 const scheduleOnboardingProcess = async (
   data: ScheduleOnboardingProcessProps
 ): Promise<OnboardingProcessListItemResponse> => {
-  const response = await fetch(`${ROOT}/api/onboarding/process/schedule`, {
+  const response = await fetch(`${ROOT}/api/onboarding/schedule`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -229,7 +226,20 @@ export interface OnboardingProcessItemResponse {
 const getOnboardingProcessesById = async (
   id: string
 ): Promise<OnboardingProcessItemResponse> => {
-  const response = await fetch(`${ROOT}/api/onboarding/process?id=${id}`, {
+  const response = await fetch(`${ROOT}/api/onboarding?id=${id}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+  })
+  return response.json()
+}
+
+const getOnboardingSpaceById = async (
+  id: string
+): Promise<OnboardingSpaceInfo> => {
+  const response = await fetch(`${ROOT}/api/onboarding/space?id=${id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -246,7 +256,7 @@ interface SaveOnboardingIntroProps {
 const saveOnboardingIntro = async (
   data: SaveOnboardingIntroProps
 ): Promise<unknown> => {
-  const response = await fetch(`${ROOT}/api/onboarding/process/intro`, {
+  const response = await fetch(`${ROOT}/api/onboarding/intro`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -263,7 +273,8 @@ export interface ListItem {
 }
 
 export interface SaveOnboardingSpaceInfoProps {
-  onboarding_id: string
+  space_id: string
+  onboarding_id?: string
   type?: ListItem
   targets?: ListItem[]
   conveniences?: ListItem[]
@@ -288,7 +299,7 @@ export interface SaveOnboardingSpaceInfoProps {
 const saveOnboardingSpaceInfo = async (
   data: SaveOnboardingSpaceInfoProps
 ): Promise<unknown> => {
-  const response = await fetch(`${ROOT}/api/onboarding/process/space-info`, {
+  const response = await fetch(`${ROOT}/api/onboarding/space-info`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -300,14 +311,15 @@ const saveOnboardingSpaceInfo = async (
 }
 
 export interface SaveOnboardingSpacePhotosProps {
-  onboarding_id: string
+  space_id: string
+  onboarding_id?: string
   photos?: string[]
 }
 
 const saveOnboardingSpacePhotos = async (
   data: SaveOnboardingSpacePhotosProps
 ): Promise<unknown> => {
-  const response = await fetch(`${ROOT}/api/onboarding/process/space-photos`, {
+  const response = await fetch(`${ROOT}/api/onboarding/space-photos`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -328,7 +340,7 @@ const updateOnboardingStatus = async (
   data: UpdateOnboardingStatusProps
 ): Promise<unknown> => {
   const response = await fetch(
-    `${ROOT}/api/onboarding/process/update-onboarding-status`,
+    `${ROOT}/api/onboarding/update-onboarding-status`,
     {
       method: 'PUT',
       headers: {
@@ -369,7 +381,7 @@ export interface CancelationPolicy {
 }
 
 export interface UpdateSpaceOffersRentalParameters {
-  onboarding_id: string
+  space_id: string
   business_model: string
   prices: SpacePrice[]
   price_modality: string
@@ -382,7 +394,7 @@ export interface UpdateSpaceOffersRentalParameters {
 const updateSpaceOffersRental = async (
   data: UpdateSpaceOffersRentalParameters
 ): Promise<unknown> => {
-  const response = await fetch(`${ROOT}/api/onboarding/process/space-rental`, {
+  const response = await fetch(`${ROOT}/api/onboarding/space-rental`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -499,7 +511,7 @@ const addExtra = async (
 }
 
 export interface UpdateSpacePackageParameters {
-  onboarding_id: string
+  space_id: string
   id?: string
   name: string
   services: { spaceService: { id: string } }[]
@@ -513,7 +525,7 @@ export interface UpdateSpacePackageParameters {
 const updateSpacePackage = async (
   data: UpdateSpacePackageParameters
 ): Promise<unknown> => {
-  const response = await fetch(`${ROOT}/api/onboarding/process/space-package`, {
+  const response = await fetch(`${ROOT}/api/onboarding/space-package`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -531,7 +543,7 @@ export interface DeleteSpacePackageParameters {
 const deleteSpacePackage = async (
   data: DeleteSpacePackageParameters
 ): Promise<unknown> => {
-  const response = await fetch(`${ROOT}/api/onboarding/process/space-package`, {
+  const response = await fetch(`${ROOT}/api/onboarding/space-package`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
@@ -551,7 +563,7 @@ const updateOffersOnboardingStatus = async (
   data: UpdateOffersOnboardingStatusParameters
 ): Promise<unknown> => {
   const response = await fetch(
-    `${ROOT}/api/onboarding/process/offers-onboarding-status`,
+    `${ROOT}/api/onboarding/offers-onboarding-status`,
     {
       method: 'PUT',
       headers: {
@@ -565,7 +577,7 @@ const updateOffersOnboardingStatus = async (
 }
 
 export interface UpdateSpaceServiceParameters {
-  onboarding_id: string
+  space_id: string
   id?: string
   description?: string
   photos: string
@@ -579,7 +591,7 @@ export interface UpdateSpaceServiceParameters {
 const updateSpaceService = async (
   data: UpdateSpaceServiceParameters
 ): Promise<unknown> => {
-  const response = await fetch(`${ROOT}/api/onboarding/process/space-service`, {
+  const response = await fetch(`${ROOT}/api/onboarding/space-service`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -597,7 +609,7 @@ export interface DeleteSpaceServiceParameters {
 const deleteSpaceService = async (
   data: DeleteSpaceServiceParameters
 ): Promise<unknown> => {
-  const response = await fetch(`${ROOT}/api/onboarding/process/space-service`, {
+  const response = await fetch(`${ROOT}/api/onboarding/space-service`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
@@ -635,7 +647,7 @@ export interface UpdateHostInfoParameters {
 const updateHostInfo = async (
   data: UpdateHostInfoParameters
 ): Promise<unknown> => {
-  const response = await fetch(`${ROOT}/api/onboarding/process/host-info`, {
+  const response = await fetch(`${ROOT}/api/onboarding/host-info`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -704,6 +716,7 @@ export {
   deleteSpacePackage,
   deleteSpaceService,
   getOnboardingProcessesById,
+  getOnboardingSpaceById,
   getOnboardingsProcessesListByStatus,
   getServicesList,
   getSpaceServicesList,

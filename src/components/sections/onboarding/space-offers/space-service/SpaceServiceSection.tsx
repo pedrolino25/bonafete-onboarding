@@ -2,7 +2,7 @@
 import SpaceServiceForm from '@/components/forms/space-service-form/SpaceServiceForm'
 import { Navbar } from '@/components/navigation/Navbar'
 import { Button } from '@/components/ui/button'
-import { getOnboardingProcessesById } from '@/services/api/onboarding-processes'
+import { getOnboardingSpaceById } from '@/services/api/onboarding-processes'
 import { useQuery } from '@tanstack/react-query'
 import { ChevronLeft } from 'lucide-react'
 import { useTranslations } from 'next-intl'
@@ -12,19 +12,17 @@ export default function SpaceServiceSection() {
   const t = useTranslations()
   const router = useRouter()
   const params = useSearchParams()
-  const onboarding_id = params.get('onboarding_id') as string
+  const space_id = params.get('space_id') as string
   const service_id = params.get('service_id') as string
 
   const { data } = useQuery({
-    queryKey: ['onboarding-process', onboarding_id],
+    queryKey: ['space', space_id],
     queryFn: async () => {
-      return await getOnboardingProcessesById(onboarding_id)
+      return await getOnboardingSpaceById(space_id)
     },
   })
 
-  const spaceExtra = data?.space?.services?.find(
-    (item) => item.id === service_id
-  )
+  const spaceExtra = data?.services?.find((item) => item.id === service_id)
 
   return (
     <main>
@@ -57,7 +55,7 @@ export default function SpaceServiceSection() {
             </div>
             <div className="m-auto max-w-[800px] max-sm:w-full flex flex-col gap-4 pt-8 pb-12">
               <SpaceServiceForm
-                onboardingInfo={data}
+                spaceInfo={data}
                 defaultValues={spaceExtra}
                 refetch={() => router.back()}
               />
