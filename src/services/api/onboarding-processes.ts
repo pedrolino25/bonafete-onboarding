@@ -563,7 +563,7 @@ const updateOffersOnboardingStatus = async (
   data: UpdateOffersOnboardingStatusParameters
 ): Promise<unknown> => {
   const response = await fetch(
-    `${ROOT}/api/onboarding/offers-onboarding-status`,
+    `${ROOT}/api/onboarding/update-offers-onboarding-status`,
     {
       method: 'PUT',
       headers: {
@@ -659,13 +659,16 @@ const updateHostInfo = async (
 }
 
 const uploadStripeDocument = async (data: FormData): Promise<unknown> => {
-  const response = await fetch(`${ROOT}/api/upload-stripe-documents`, {
-    method: 'POST',
-    headers: {
-      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
-    },
-    body: data,
-  })
+  const response = await fetch(
+    `${ROOT}/api/onboarding/upload-stripe-documents`,
+    {
+      method: 'POST',
+      headers: {
+        Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+      },
+      body: data,
+    }
+  )
   return response.json()
 }
 
@@ -675,7 +678,7 @@ export interface UpdateIbanDocumentParameters {
 const updateIbanDocument = async (
   data: UpdateIbanDocumentParameters
 ): Promise<unknown> => {
-  const response = await fetch(`${ROOT}/api/update-iban-document`, {
+  const response = await fetch(`${ROOT}/api/onboarding/update-iban-document`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -698,7 +701,7 @@ export interface UpdateHostStatusParameters {
 const updateHostStatus = async (
   data: UpdateHostStatusParameters
 ): Promise<unknown> => {
-  const response = await fetch(`${ROOT}/api/update-host-status`, {
+  const response = await fetch(`${ROOT}/api/onboarding/update-host-status`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
