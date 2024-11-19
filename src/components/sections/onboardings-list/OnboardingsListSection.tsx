@@ -22,7 +22,7 @@ import {
   OnboardingProcessListItemResponse,
   reasignOnboardingProcess,
   scheduleOnboardingProcess,
-} from '@/services/api/onboarding-processes'
+} from '@/services/api/onboardings'
 import { useMutation } from '@tanstack/react-query'
 import {
   ColumnDef,

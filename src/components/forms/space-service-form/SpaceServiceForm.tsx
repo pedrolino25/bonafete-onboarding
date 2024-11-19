@@ -26,7 +26,7 @@ import {
   deleteSpaceService,
   OnboardingSpaceInfo,
   updateSpaceService,
-} from '@/services/api/onboarding-processes'
+} from '@/services/api/onboardings'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { Clock, Euro, Users } from 'lucide-react'

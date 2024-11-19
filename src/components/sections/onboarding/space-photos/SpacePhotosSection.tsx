@@ -14,7 +14,7 @@ import { uploadPictureToS3Bucket, urlToFile } from '@/lib/utils'
 import {
   OnboardingSpaceInfo,
   saveOnboardingSpacePhotos,
-} from '@/services/api/onboarding-processes'
+} from '@/services/api/onboardings'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { Info, Send } from 'lucide-react'

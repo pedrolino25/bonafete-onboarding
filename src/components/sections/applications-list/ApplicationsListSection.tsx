@@ -27,7 +27,7 @@ import {
   scheduleApplication,
   startOnboardingProcess,
 } from '@/services/api/applications'
-import { OnboardingProcessListItemResponse } from '@/services/api/onboarding-processes'
+import { OnboardingProcessListItemResponse } from '@/services/api/onboardings'
 import { useMutation } from '@tanstack/react-query'
 import {
   ColumnDef,

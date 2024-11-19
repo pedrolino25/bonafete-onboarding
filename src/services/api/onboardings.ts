@@ -158,11 +158,11 @@ export interface OnboardingSpaceInfo {
   schedule?: ScheduleFormType
   prices?: {
     priceModel?: { value: string; label: string }[]
-    cleaningFee?: CleaningFeeFormType
     fixed?: FixedPriceFormType
     flexible?: FlexiblePriceFormType
     custom?: CustomPriceFormType
   }
+  cleaning_fee?: CleaningFeeFormType
   packages?: SpacePackageFormType[]
   services?: SpaceServiceFormType[]
 }
@@ -381,6 +381,7 @@ export interface CancelationPolicy {
 }
 
 export interface UpdateSpaceOffersRentalParameters {
+  onboarding_id?: string
   space_id: string
   business_model: string
   prices: SpacePrice[]

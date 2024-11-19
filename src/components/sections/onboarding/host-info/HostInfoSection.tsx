@@ -14,7 +14,7 @@ import {
   updateHostInfo,
   updateHostStatus,
   updateOnboardingStatus,
-} from '@/services/api/onboarding-processes'
+} from '@/services/api/onboardings'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useStripe } from '@stripe/react-stripe-js'
 import { useMutation } from '@tanstack/react-query'

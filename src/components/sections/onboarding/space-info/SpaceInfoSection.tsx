@@ -12,7 +12,7 @@ import { cn, splitCommaGetFirst } from '@/lib/utils'
 import {
   OnboardingSpaceInfo,
   saveOnboardingSpaceInfo,
-} from '@/services/api/onboarding-processes'
+} from '@/services/api/onboardings'
 import { verifySpaceTitle } from '@/services/api/spaces'
 import {
   LocalityListItemResponse,

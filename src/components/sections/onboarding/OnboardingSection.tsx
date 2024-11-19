@@ -11,7 +11,7 @@ import {
   getOnboardingProcessesById,
   OnboardingProcessItemResponse,
   updateOnboardingStatus,
-} from '@/services/api/onboarding-processes'
+} from '@/services/api/onboardings'
 import {
   LocalityListItemResponse,
   PostalCodesListItemResponse,
@@ -482,8 +482,8 @@ export default function OnboardingSection({
                           fixed_price_form: data?.space?.prices?.fixed,
                           flexible_price_form: data?.space?.prices?.flexible,
                           custom_price_form: data?.space?.prices?.custom,
-                          cleaning_fee_form: data?.space?.prices?.cleaningFee,
                         },
+                        cleaning_fee_form: data?.space?.cleaning_fee,
                       } as SpaceRentalFormType
                     }
                     completed={

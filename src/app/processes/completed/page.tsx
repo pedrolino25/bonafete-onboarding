@@ -3,7 +3,7 @@
 import {
   ApplicationOnboardingStatus,
   getOnboardingsProcessesListByStatus,
-} from '@/services/api/onboarding-processes'
+} from '@/services/api/onboardings'
 import { useQuery } from '@tanstack/react-query'
 import dynamic from 'next/dynamic'
 

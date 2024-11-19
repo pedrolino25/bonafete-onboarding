@@ -6,7 +6,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
-import { OnboardingProcessListItemResponse } from '@/services/api/onboarding-processes'
+import { OnboardingProcessListItemResponse } from '@/services/api/onboardings'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ColumnFiltersState } from '@tanstack/react-table'
 import { useTranslations } from 'next-intl'

@@ -2,7 +2,7 @@
 import SpaceServiceForm from '@/components/forms/space-service-form/SpaceServiceForm'
 import { Navbar } from '@/components/navigation/Navbar'
 import { Button } from '@/components/ui/button'
-import { getOnboardingSpaceById } from '@/services/api/onboarding-processes'
+import { getOnboardingSpaceById } from '@/services/api/onboardings'
 import { useQuery } from '@tanstack/react-query'
 import { ChevronLeft } from 'lucide-react'
 import { useTranslations } from 'next-intl'

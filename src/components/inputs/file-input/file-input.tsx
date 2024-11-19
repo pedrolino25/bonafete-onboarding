@@ -2,7 +2,7 @@ import { cn, uploadPictureToS3Bucket } from '@/lib/utils'
 import {
   updateIbanDocument,
   uploadStripeDocument,
-} from '@/services/api/onboarding-processes'
+} from '@/services/api/onboardings'
 import { FileUp, LoaderCircle } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'

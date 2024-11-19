@@ -1,5 +1,5 @@
 import { Option } from '@/components/ui/select'
-import { OnboardingSpaceInfo } from '@/services/api/onboarding-processes'
+import { OnboardingSpaceInfo } from '@/services/api/onboardings'
 import { SpaceBusinessModel } from './consts'
 
 interface AvailableHourOptionsProps {

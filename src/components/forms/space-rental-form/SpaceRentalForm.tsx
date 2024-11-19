@@ -13,7 +13,7 @@ import {
   SpaceSchedule,
   updateSpaceOffersRental,
   UpdateSpaceOffersRentalParameters,
-} from '@/services/api/onboarding-processes'
+} from '@/services/api/onboardings'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { useTranslations } from 'next-intl'
@@ -87,6 +87,7 @@ const spaceRentalFormSchema = z
 export type SpaceRentalFormType = z.infer<typeof spaceRentalFormSchema>
 
 interface SpaceRentalFormProps {
+  onboardingId?: string
   defaultValues?: SpaceRentalFormType
   spaceInfo: OnboardingSpaceInfo
   completed?: boolean
@@ -94,6 +95,7 @@ interface SpaceRentalFormProps {
 }
 
 export default function SpaceRentalForm({
+  onboardingId,
   spaceInfo,
   defaultValues,
   refetch,
@@ -105,14 +107,12 @@ export default function SpaceRentalForm({
     handleSubmit,
     setValue,
     watch,
-    reset,
     formState: { isValid, isDirty },
   } = useForm<SpaceRentalFormType>({
     resolver: zodResolver(spaceRentalFormSchema),
     defaultValues,
   })
 
-  console.log(defaultValues)
   const business_model = watch('business_model')
   const lotation_form = watch('lotation_form')
   const min_hours_form = watch('min_hours_form')
@@ -166,7 +166,8 @@ export default function SpaceRentalForm({
         description: t('success-messages.submit'),
       })
     },
-    onError: () => {
+    onError: (error) => {
+      console.log('error', error)
       refetch()
       setIsLoading(false)
       toast({
@@ -386,6 +387,7 @@ export default function SpaceRentalForm({
   const onSubmit = (values: SpaceRentalFormType) => {
     setIsLoading(true)
     const data = {
+      onboarding_id: onboardingId,
       space_id: spaceInfo.space_id,
       business_model: values.business_model[0].value,
       lotation: values.lotation_form?.lotation,

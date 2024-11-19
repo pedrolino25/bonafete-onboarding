@@ -22,7 +22,7 @@ import {
   SpaceSchedule,
   SpaceServiceListItemResponse,
   updateSpacePackage,
-} from '@/services/api/onboarding-processes'
+} from '@/services/api/onboardings'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { Clock, UsersRound } from 'lucide-react'

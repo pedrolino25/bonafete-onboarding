@@ -15,7 +15,7 @@ import {
   OnboardingSpaceInfo,
   updateOffersOnboardingStatus,
   updateOnboardingStatus,
-} from '@/services/api/onboarding-processes'
+} from '@/services/api/onboardings'
 import { useMutation } from '@tanstack/react-query'
 import { Info, Send } from 'lucide-react'
 import { useTranslations } from 'next-intl'
@@ -126,6 +126,7 @@ export default function SpaceOffersSection({
       <div className="w-9/12 max-w-[700px] max-sm:w-full flex flex-col gap-2 pt-4 pl-6 max-sm:pl-0 pb-12">
         <div className="w-full pb-6">
           <SpaceRentalForm
+            onboardingId={onboardingId}
             spaceInfo={spaceInfo}
             refetch={refetch}
             defaultValues={defaultValues}
