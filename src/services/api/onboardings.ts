@@ -14,6 +14,7 @@ import {
 } from '@/components/sections/onboarding/OnboardingSection'
 import { Cookies } from '@/middleware'
 import { getCookie } from 'cookies-next'
+import { SpaceStatus } from './spaces'
 
 const ROOT = process.env.NEXT_PUBLIC_API_URL
 
@@ -693,6 +694,8 @@ const updateIbanDocument = async (
 export enum HostStatus {
   Completed = 'completed',
   Pending = 'pending',
+  Archived = 'archived',
+  Suspended = 'suspended',
 }
 
 export interface UpdateHostStatusParameters {
@@ -713,12 +716,51 @@ const updateHostStatus = async (
   return response.json()
 }
 
+export interface FinishOnboardingParameters {
+  id: string
+}
+
+interface SpaceInfoResponse {
+  id: string
+  title?: string
+  url?: string
+  max_persons?: number
+  status?: SpaceStatus
+  business_model?: string
+  photos?: string[]
+}
+
+interface FinishOnboardingResponse {
+  id: string
+  type: string
+  name: string
+  email: string
+  phone: string
+  picture: string
+  status: HostStatus
+  spaces: SpaceInfoResponse[]
+}
+const finishOnboarding = async (
+  data: FinishOnboardingParameters
+): Promise<FinishOnboardingResponse> => {
+  const response = await fetch(`${ROOT}/api/onboarding/complete`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+    body: JSON.stringify(data),
+  })
+  return response.json()
+}
+
 export {
   addExtra,
   addService,
   archiveOnboardingProcess,
   deleteSpacePackage,
   deleteSpaceService,
+  finishOnboarding,
   getOnboardingProcessesById,
   getOnboardingSpaceById,
   getOnboardingsProcessesListByStatus,

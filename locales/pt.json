@@ -110,7 +110,9 @@
     "drag-grop-file-complete": "Documento enviado",
     "view-photo": "Ver fotografia",
     "submit": "Submeter",
-    "validate": "Validar"
+    "validate": "Validar",
+    "view_onboarding": "Ir para onboarding",
+    "suspend": "Suspender"
   },
   "titles": {
     "photos": "Fotografias",
@@ -189,6 +191,12 @@
     "onboarding": {
       "title": "Onboarding",
       "subtitle": "Processo de inscrição de anfitriões",
+      "host-title": "Anfitrião",
+      "host-subtitle": "Gerir dados de anfitrião",
+      "create-space-title": "Criar espaço",
+      "create-space-subtitle": "Processo de criação de espaço",
+      "update-space-title": "Editar espaço",
+      "update-space-subtitle": "Processo de edição de espaço",
       "space-package-title": "Pacote de serviços",
       "space-package-subtitle": "Introduza todas as informações do pacote de serviços",
       "space-package-title2": "Pacotes de serviços",
@@ -391,5 +399,29 @@
     "friday": "Sexta",
     "saturday": "Sábado",
     "sunday": "Domingo"
+  },
+  "host-status": {
+    "completed": "Activo",
+    "pending": "Pendente",
+    "archived": "Arquivado",
+    "suspended": "Suspenso"
+  },
+  "space-status": {
+    "pending": "Pendente",
+    "published": "Ativo",
+    "archived": "Arquivado",
+    "draft": "Rascunho"
+  },
+  "host-section": {
+    "name": "Nome:",
+    "email": "Email:",
+    "phone": "Telefone:",
+    "company-type": "Tipo de empresa:",
+    "status": "Estado:",
+    "stripe-account": "Conta Stripe:",
+    "archive": "Arquivar",
+    "edit": "Editar",
+    "publish": "Aprovar",
+    "create-space": "Criar espaço"
   }
 }

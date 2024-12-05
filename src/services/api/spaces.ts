@@ -19,6 +19,7 @@ export enum SpaceStatus {
   Pending = 'pending',
   Active = 'published',
   Archived = 'archived',
+  Draft = 'draft',
 }
 
 const getSpacesListByStatus = async (
@@ -51,4 +52,46 @@ const verifySpaceTitle = async (title: string, id: string): Promise<string> => {
   return response.json()
 }
 
-export { getSpacesListByStatus, verifySpaceTitle }
+interface CreateSpaceProps {
+  host_id: string
+}
+
+const createSpace = async (
+  data: CreateSpaceProps
+): Promise<SpaceListItemResponse> => {
+  const response = await fetch(`${ROOT}/api/onboarding/create-space`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+    body: JSON.stringify(data),
+  })
+  return response.json()
+}
+
+interface UpdateSpaceStatusProps {
+  id: string
+  status: SpaceStatus
+}
+
+const updateSpaceStatus = async (
+  data: UpdateSpaceStatusProps
+): Promise<SpaceListItemResponse> => {
+  const response = await fetch(`${ROOT}/api/onboarding/space-status`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+    body: JSON.stringify(data),
+  })
+  return response.json()
+}
+
+export {
+  createSpace,
+  getSpacesListByStatus,
+  updateSpaceStatus,
+  verifySpaceTitle,
+}

@@ -9,10 +9,9 @@ import { Option } from '@/components/ui/select'
 import { toast } from '@/lib/hooks/use-toast'
 import { COMPANY_TYPE_OPTIONS, CompanyType } from '@/lib/utils/consts'
 import {
-  HostStatus,
+  finishOnboarding,
   OnboardingProcessItemResponse,
   updateHostInfo,
-  updateHostStatus,
   updateOnboardingStatus,
 } from '@/services/api/onboardings'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -181,8 +180,8 @@ export default function HostInfoSection({
     },
   })
 
-  const updateHostStatusMutation = useMutation({
-    mutationFn: updateHostStatus,
+  const finishOnboardingMutation = useMutation({
+    mutationFn: finishOnboarding,
     onSuccess: () => {
       router.push('/processes/completed')
     },
@@ -248,9 +247,8 @@ export default function HostInfoSection({
               startAdornment={<Send className="h-4 w-4" />}
               color="success"
               onClick={() =>
-                updateHostStatusMutation.mutate({
-                  host_id: onboardingInfo.space.host_id,
-                  status: HostStatus.Pending,
+                finishOnboardingMutation.mutate({
+                  id: onboardingInfo.id,
                 })
               }
             >

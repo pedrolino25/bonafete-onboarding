@@ -1,6 +1,6 @@
 import { Cookies } from '@/middleware'
 import { getCookie } from 'cookies-next'
-import { OnboardingProcessListItemResponse } from './onboarding-processes'
+import { OnboardingProcessListItemResponse } from './onboardings'
 
 const ROOT = process.env.NEXT_PUBLIC_API_URL
 

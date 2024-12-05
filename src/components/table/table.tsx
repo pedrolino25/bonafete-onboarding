@@ -45,6 +45,9 @@ declare module '@tanstack/react-table' {
     continue?: (id: string) => void
     archive?: (data: string) => void
     unarchive?: (data: string) => void
+    suspend?: (data: string) => void
+    activate?: (data: string) => void
+    viewOnboarding?: (data: string) => void
   }
 }
 

@@ -66,7 +66,7 @@ export default function SpacesListSection({
       },
       cell: ({ row }) => {
         return (
-          <Link href={`/space/${row.getValue('id')}`} target="_blank">
+          <Link href={`/edit-space?id=${row.getValue('id')}`} target="_blank">
             <span className="text-sm font-medium text-utility-gray-900">
               {row.getValue('name')}
             </span>
@@ -95,7 +95,7 @@ export default function SpacesListSection({
       },
       cell: ({ row }) => {
         return (
-          <Link href={`/host/${row.original.host_id}`} target="_blank">
+          <Link href={`/host?id=${row.original.host_id}`} target="_blank">
             <span className="text-sm font-medium text-utility-gray-900">
               {row.getValue('host_name')}
             </span>
@@ -279,8 +279,8 @@ export default function SpacesListSection({
       columnVisibility,
     },
     meta: {
-      viewHost: (id: string) => router.push(`/host/${id}`),
-      viewSpace: (id: string) => router.push(`/space/${id}`),
+      viewHost: (id: string) => router.push(`/host?id=${id}`),
+      viewSpace: (id: string) => router.push(`/edit-space?id=${id}`),
     },
   })
 
