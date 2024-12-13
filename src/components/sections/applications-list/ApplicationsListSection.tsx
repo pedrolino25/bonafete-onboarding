@@ -16,7 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import useAuthenticatedUser from '@/lib/hooks/authenticated-user'
+import { useAuthenticatedUser } from '@/lib/hooks/authenticated-user'
 import { useToast } from '@/lib/hooks/use-toast'
 import {
   acceptApplication,

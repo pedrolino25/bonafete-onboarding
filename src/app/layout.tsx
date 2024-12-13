@@ -1,6 +1,7 @@
 // eslint-disable-next-line prettier/prettier
 import { Toaster } from '@/components/ui/toaster'
 import ConfigureAmplifyClientSide from '@/lib/amplify-config'
+import { AuthenticatedUserProvider } from '@/lib/hooks/authenticated-user'
 import { ReactQueryProvider } from '@/lib/react-query-provider'
 import type { Metadata } from 'next'
 import { NextIntlClientProvider } from 'next-intl'
@@ -40,7 +41,9 @@ export default async function RootLayout({
       <body className={inter.className}>
         <ConfigureAmplifyClientSide />
         <NextIntlClientProvider messages={messages}>
-          <ReactQueryProvider>{children}</ReactQueryProvider>
+          <ReactQueryProvider>
+            <AuthenticatedUserProvider>{children}</AuthenticatedUserProvider>
+          </ReactQueryProvider>
         </NextIntlClientProvider>
         <Toaster />
       </body>

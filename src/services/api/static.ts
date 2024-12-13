@@ -1,5 +1,5 @@
-import { Cookies } from '@/middleware'
 import { getCookie } from 'cookies-next'
+import { Cookies } from '../auth'
 
 const ROOT = process.env.NEXT_PUBLIC_API_URL
 

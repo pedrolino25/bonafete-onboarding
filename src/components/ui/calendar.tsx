@@ -1,6 +1,6 @@
 'use client'
 
-import useAuthenticatedUser from '@/lib/hooks/authenticated-user'
+import { useAuthenticatedUser } from '@/lib/hooks/authenticated-user'
 import { cn } from '@/lib/utils'
 import { enGB, es, pt } from 'date-fns/locale'
 import { ChevronLeft, ChevronRight } from 'lucide-react'

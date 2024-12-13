@@ -12,8 +12,8 @@ import {
   OnboardingFaseStatus,
   OnboardingSections,
 } from '@/components/sections/onboarding/OnboardingSection'
-import { Cookies } from '@/middleware'
 import { getCookie } from 'cookies-next'
+import { Cookies } from '../auth'
 import { SpaceStatus } from './spaces'
 
 const ROOT = process.env.NEXT_PUBLIC_API_URL
