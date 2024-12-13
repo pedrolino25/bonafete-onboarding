@@ -66,7 +66,7 @@ export default function SpacesListSection({
       },
       cell: ({ row }) => {
         return (
-          <Link href={`/edit-space?id=${row.getValue('id')}`} target="_blank">
+          <Link href={`/edit-space?id=${row.getValue('id')}`}>
             <span className="text-sm font-medium text-utility-gray-900">
               {row.getValue('name')}
             </span>
@@ -95,7 +95,7 @@ export default function SpacesListSection({
       },
       cell: ({ row }) => {
         return (
-          <Link href={`/host?id=${row.original.host_id}`} target="_blank">
+          <Link href={`/host?id=${row.original.host_id}`}>
             <span className="text-sm font-medium text-utility-gray-900">
               {row.getValue('host_name')}
             </span>

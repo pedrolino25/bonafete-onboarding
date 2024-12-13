@@ -74,7 +74,6 @@ export default function HostsListSection({
                 ? `/manage-process?id=${row.original.id}`
                 : `/host?id=${row.original.id}`
             }
-            target="_blank"
           >
             <span className="text-sm font-medium text-utility-gray-900">
               {row.getValue('name')}
