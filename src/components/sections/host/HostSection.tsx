@@ -6,6 +6,11 @@ import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import { toast } from '@/lib/hooks/use-toast'
 import { getHostInfo, SpaceInfoResponse } from '@/services/api/hosts'
 import { HostStatus } from '@/services/api/onboardings'
@@ -19,6 +24,7 @@ import {
   Ban,
   ChevronLeft,
   ChevronRight,
+  Ellipsis,
   House,
   Link as LinkIcon,
   Pencil,
@@ -27,6 +33,7 @@ import {
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { useState } from 'react'
 
 interface SpaceCardProps {
   space: SpaceInfoResponse
@@ -36,6 +43,8 @@ interface SpaceCardProps {
 function SpaceCard({ space, onArchive, onPublish }: SpaceCardProps) {
   const t = useTranslations()
   const router = useRouter()
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false)
+
   return (
     <div className="w-full border px-6 py-6 rounded-xl">
       <div className="w-full flex gap-4 max-sm:flex-col">
@@ -62,25 +71,76 @@ function SpaceCard({ space, onArchive, onPublish }: SpaceCardProps) {
         <div className="w-full flex items-center justify-between max-sm:flex-col max-sm:items-start">
           <div className="flex gap-4 max-sm:items-center max-sm:justify-between max-sm:w-full">
             <p className="text-base font-medium">{space.title}</p>
-            <Badge
-              color={
-                space.status === SpaceStatus.Archived
-                  ? 'error'
-                  : space.status === SpaceStatus.Active
-                  ? 'success'
-                  : space.status === SpaceStatus.Pending
-                  ? 'warning'
-                  : 'white'
-              }
-            >
-              {t(`space-status.${space.status}`)}
-            </Badge>
+            <div className="flex items-center gap-2">
+              <Badge
+                color={
+                  space.status === SpaceStatus.Archived
+                    ? 'error'
+                    : space.status === SpaceStatus.Active
+                    ? 'success'
+                    : space.status === SpaceStatus.Pending
+                    ? 'warning'
+                    : 'white'
+                }
+              >
+                {t(`space-status.${space.status}`)}
+              </Badge>
+
+              <div className="hidden max-sm:block">
+                <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+                  <PopoverTrigger asChild>
+                    <Button size="xs" color="secondary">
+                      <Ellipsis strokeWidth={2.5} className="h-4 w-4" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    align="start"
+                    className="w-fit flex flex-col gap-1 p-2"
+                  >
+                    {space.status !== SpaceStatus.Archived && (
+                      <Button
+                        size="xs"
+                        color="destructive"
+                        startAdornment={<Ban className="w-4 h-4" />}
+                        variant="outline"
+                        onClick={onArchive}
+                        className="mb-2 px-6"
+                      >
+                        {t('host-section.archive')}
+                      </Button>
+                    )}
+                    <Button
+                      size="xs"
+                      color="secondary"
+                      startAdornment={<Pencil className="w-4 h-4" />}
+                      onClick={() => router.push(`/edit-space?id=${space.id}`)}
+                      className="mb-2 px-6"
+                    >
+                      {t('host-section.edit')}
+                    </Button>
+                    {space.status !== SpaceStatus.Active &&
+                      space.status !== SpaceStatus.Draft && (
+                        <Button
+                          size="xs"
+                          color="success"
+                          startAdornment={<ShieldCheck className="w-4 h-4" />}
+                          onClick={onPublish}
+                          className="px-6"
+                        >
+                          {t('host-section.publish')}
+                        </Button>
+                      )}
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
           </div>
-          <div className="flex gap-4 max-sm:w-full max-sm:justify-end max-sm:pt-4">
+          <div className="block flex gap-4 max-sm:hidden">
             {space.status !== SpaceStatus.Archived && (
               <Button
                 size="xs"
                 color="destructive"
+                variant="outline"
                 startAdornment={<Ban className="w-4 h-4" />}
                 onClick={onArchive}
               >

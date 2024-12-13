@@ -69,7 +69,8 @@ export default function HostsListSection({
         return (
           <Link
             href={
-              row.original.status === HostStatus.Pending
+              row.original.status === HostStatus.Pending &&
+              row.original.onboarding_id
                 ? `/manage-process?id=${row.original.id}`
                 : `/host?id=${row.original.id}`
             }
