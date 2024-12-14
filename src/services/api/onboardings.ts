@@ -587,6 +587,7 @@ export interface UpdateSpaceServiceParameters {
   price: string
   units?: string
   packages_only: string
+  packages_available: string
   service_id: string
 }
 

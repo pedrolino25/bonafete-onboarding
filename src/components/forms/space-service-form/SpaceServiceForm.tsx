@@ -20,6 +20,7 @@ import { toast } from '@/lib/hooks/use-toast'
 import { uploadPictureToS3Bucket } from '@/lib/utils'
 import {
   PACKAGES_AVAILABLE_OPTIONS,
+  PACKAGES_ONLY_OPTIONS,
   PRICING_MODEL_SERVICES_OPTIONS,
 } from '@/lib/utils/consts'
 import {
@@ -69,6 +70,7 @@ const spaceServiceFormSchema = z.object({
   price: z.string().min(1),
   units: z.string().min(1).optional(),
   packages_only: z.array(optionSchema).min(1),
+  packages_available: z.array(optionSchema).min(1),
   photos: z.array(imageTypeSchema).max(4).optional(),
 })
 
@@ -87,12 +89,20 @@ export default function SpaceServiceForm({
     handleSubmit,
     setValue,
     watch,
-    formState: { isValid, isDirty, errors },
+    formState: { isValid, isDirty },
   } = useForm<SpaceServiceFormType>({
     resolver: zodResolver(spaceServiceFormSchema),
     defaultValues: {
       ...defaultValues,
       description: defaultValues?.description || '',
+      packages_available: defaultValues?.packages_available?.[0]
+        ? defaultValues?.packages_available
+        : [
+            {
+              value: 'true',
+              label: 'packages-available-options.true',
+            },
+          ],
     },
   })
 
@@ -102,6 +112,7 @@ export default function SpaceServiceForm({
   const price = watch('price')
   const units = watch('units')
   const packages_only = watch('packages_only')
+  const packages_available = watch('packages_available')
   const photos = watch('photos')
 
   const handleSelectChange =
@@ -188,6 +199,7 @@ export default function SpaceServiceForm({
       price: values.price,
       units: values.units,
       packages_only: values.packages_only?.[0]?.value,
+      packages_available: values.packages_available?.[0]?.value,
       service_id: values.services_form?.services?.[0]?.value,
     })
   }
@@ -279,19 +291,19 @@ export default function SpaceServiceForm({
 
       <OnboardingFormLayout.Main>
         <OnboardingFormLayout.Title>
-          {t('sections.onboarding.services-form.packages-available-title')}
+          {t('sections.onboarding.services-form.packages-only-title')}
         </OnboardingFormLayout.Title>
         <OnboardingFormLayout.Subtitle>
-          {t('sections.onboarding.services-form.packages-available-subtitle')}
+          {t('sections.onboarding.services-form.packages-only-subtitle')}
         </OnboardingFormLayout.Subtitle>
         <OnboardingFormLayout.Container>
           <SelectInput
             required
             data-testid="packages_only"
             placeholder={t(
-              'sections.onboarding.services-form.select-packages-available'
+              'sections.onboarding.services-form.select-packages-only'
             )}
-            options={PACKAGES_AVAILABLE_OPTIONS}
+            options={PACKAGES_ONLY_OPTIONS}
             value={packages_only}
             onSelect={handleSelectChange('packages_only')}
             useTranslation
@@ -299,13 +311,42 @@ export default function SpaceServiceForm({
           {packages_only?.[0]?.value && (
             <OnboardingFormLayout.Info>
               {t(
-                `sections.onboarding.services-form.explanation-messages.packages-available-${packages_only?.[0]?.value}`
+                `sections.onboarding.services-form.explanation-messages.packages-only-${packages_only?.[0]?.value}`
               )}
             </OnboardingFormLayout.Info>
           )}
         </OnboardingFormLayout.Container>
       </OnboardingFormLayout.Main>
-
+      {packages_only?.[0]?.value && packages_only?.[0]?.value === 'false' && (
+        <OnboardingFormLayout.Main>
+          <OnboardingFormLayout.Title>
+            {t('sections.onboarding.services-form.packages-available-title')}
+          </OnboardingFormLayout.Title>
+          <OnboardingFormLayout.Subtitle>
+            {t('sections.onboarding.services-form.packages-available-subtitle')}
+          </OnboardingFormLayout.Subtitle>
+          <OnboardingFormLayout.Container>
+            <SelectInput
+              required
+              data-testid="packages_available"
+              placeholder={t(
+                'sections.onboarding.services-form.select-packages-available'
+              )}
+              options={PACKAGES_AVAILABLE_OPTIONS}
+              value={packages_available}
+              onSelect={handleSelectChange('packages_available')}
+              useTranslation
+            />
+            {packages_available?.[0]?.value && (
+              <OnboardingFormLayout.Info>
+                {t(
+                  `sections.onboarding.services-form.explanation-messages.packages-available-${packages_available?.[0]?.value}`
+                )}
+              </OnboardingFormLayout.Info>
+            )}
+          </OnboardingFormLayout.Container>
+        </OnboardingFormLayout.Main>
+      )}
       {packages_only?.[0]?.value && packages_only?.[0]?.value === 'false' && (
         <OnboardingFormLayout.Main>
           <OnboardingFormLayout.Title>

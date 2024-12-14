@@ -79,6 +79,17 @@ export const PACKAGES_AVAILABLE_OPTIONS: Option[] = [
   },
 ]
 
+export const PACKAGES_ONLY_OPTIONS: Option[] = [
+  {
+    value: 'true',
+    label: 'packages-only-options.true',
+  },
+  {
+    value: 'false',
+    label: 'packages-only-options.false',
+  },
+]
+
 export const HOURS: Option[] = [
   { value: '--:--', label: 'Indisponível', disabled: false },
   { value: '00:00', label: '00:00', disabled: false },
