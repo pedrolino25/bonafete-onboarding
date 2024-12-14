@@ -1,7 +1,7 @@
 import { Button, buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { handleSignOut } from '@/services/auth'
-import { LogOut, LucideIcon, Settings } from 'lucide-react'
+import { LogOut, LucideIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
@@ -75,18 +75,6 @@ export function Sidebar({ links }: SidebarProps) {
         </nav>
       </div>
       <div className="px-2 py-4">
-        <Button
-          className="text-sm font-medium w-full mb-2"
-          color="secondary"
-          size="xs"
-          startAdornment={!isCollapsed && <Settings className="h-4 w-4" />}
-        >
-          {isCollapsed ? (
-            <Settings className="h-4 w-4" />
-          ) : (
-            <>{t('navigation.manage-users')}</>
-          )}
-        </Button>
         <Button
           className="w-full text-sm font-medium"
           color="secondary"
