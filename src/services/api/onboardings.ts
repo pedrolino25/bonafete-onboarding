@@ -755,6 +755,29 @@ const finishOnboarding = async (
   return response.json()
 }
 
+export interface StatisticItem {
+  status: string
+  count: number
+}
+
+interface StatisticsResponse {
+  applications: StatisticItem[]
+  onboardings: StatisticItem[]
+  hosts: StatisticItem[]
+  spaces: StatisticItem[]
+}
+
+const getStatistics = async (): Promise<StatisticsResponse> => {
+  const response = await fetch(`${ROOT}/api/onboarding/statistics`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+  })
+  return response.json()
+}
+
 export {
   addExtra,
   addService,
@@ -767,6 +790,7 @@ export {
   getOnboardingsProcessesListByStatus,
   getServicesList,
   getSpaceServicesList,
+  getStatistics,
   reasignOnboardingProcess,
   saveOnboardingIntro,
   saveOnboardingSpaceInfo,

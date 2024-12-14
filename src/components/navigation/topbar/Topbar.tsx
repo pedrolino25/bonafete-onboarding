@@ -31,7 +31,7 @@ export function Topbar({
     <div className="w-svw h-svh">
       <div className="w-full h-14 border-b-[1px] flex items-center overflow-x-auto">
         {showIcon && (
-          <div className="pl-4">
+          <div className="pl-4" onClick={() => router.push('/')}>
             <Image
               src={logo}
               alt={'logo-image'}
