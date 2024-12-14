@@ -13,7 +13,7 @@ export interface LocalityListItemResponse {
 }
 
 const getLocalitiesList = async (): Promise<LocalityListItemResponse[]> => {
-  const response = await fetch(`${ROOT}/static/localities`, {
+  const response = await fetch(`${ROOT}/api/static/localities`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ export interface SpaceConvenienceResponse {
 
 const getSpaceConveniencesList =
   async (): Promise<SpaceConvenienceResponse> => {
-    const response = await fetch(`${ROOT}/static/conveniences`, {
+    const response = await fetch(`${ROOT}/api/static/conveniences`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ export interface SpaceTypeListItemResponse {
 }
 
 const getSpaceTypesList = async (): Promise<SpaceTypeListItemResponse[]> => {
-  const response = await fetch(`${ROOT}/static/types`, {
+  const response = await fetch(`${ROOT}/api/static/types`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -73,7 +73,7 @@ export interface SpaceTargetListItemResponse {
 const getSpaceTargetsList = async (): Promise<
   SpaceTargetListItemResponse[]
 > => {
-  const response = await fetch(`${ROOT}/static/targets`, {
+  const response = await fetch(`${ROOT}/api/static/targets`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ export interface PostalCodesListItemResponse {
 }
 
 const getPostalCodesList = async (): Promise<PostalCodesListItemResponse[]> => {
-  const response = await fetch(`${ROOT}/static/postal-codes`, {
+  const response = await fetch(`${ROOT}/api/static/postal-codes`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
