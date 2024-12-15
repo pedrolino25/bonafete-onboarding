@@ -22,6 +22,7 @@ import {
   PACKAGES_AVAILABLE_OPTIONS,
   PACKAGES_ONLY_OPTIONS,
   PRICING_MODEL_SERVICES_OPTIONS,
+  ServicesPriceModel,
 } from '@/lib/utils/consts'
 import {
   deleteSpaceService,
@@ -238,9 +239,9 @@ export default function SpaceServiceForm({
             onSelect={handleSelectChange('price_modality')}
             useTranslation
           />
-          {(price_modality?.[0]?.value === 'hourly' ||
-            price_modality?.[0]?.value === 'person' ||
-            price_modality?.[0]?.value === 'unit') && (
+          {(price_modality?.[0]?.value === ServicesPriceModel.Hourly ||
+            price_modality?.[0]?.value === ServicesPriceModel.Person ||
+            price_modality?.[0]?.value === ServicesPriceModel.HourlyPerson) && (
             <TextInput
               data-testid="units"
               value={units}
@@ -301,7 +302,7 @@ export default function SpaceServiceForm({
             required
             data-testid="packages_only"
             placeholder={t(
-              'sections.onboarding.services-form.select-packages-only'
+              'sections.onboarding.services-form.select-only-available'
             )}
             options={PACKAGES_ONLY_OPTIONS}
             value={packages_only}

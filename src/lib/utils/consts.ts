@@ -6,6 +6,24 @@ export enum SpaceBusinessModel {
   OnlyPackages = 'packages',
 }
 
+export enum SpacePriceModel {
+  HourlyFixed = 'hourly-fixed',
+  HourlyFlexible = 'hourly-flexible',
+  HourlyCustom = 'hourly-custom',
+}
+
+export enum ServicesPriceModel {
+  Person = 'person',
+  Hourly = 'hourly',
+  HourlyPerson = 'hourly-person',
+  Fixed = 'fixed',
+}
+
+export enum CompanyType {
+  Individual = 'individual',
+  Company = 'company',
+}
+
 export const BUSINESS_MODEL_OPTIONS: Option[] = [
   {
     value: SpaceBusinessModel.OnlyRental,
@@ -23,49 +41,36 @@ export const BUSINESS_MODEL_OPTIONS: Option[] = [
 
 export const PRICE_MODEL_OPTIONS: Option[] = [
   {
-    value: 'hourly-fixed',
+    value: SpacePriceModel.HourlyFixed,
     label: 'price-model-options.hourly-fixed',
   },
   {
-    value: 'hourly-flexible',
+    value: SpacePriceModel.HourlyFlexible,
     label: 'price-model-options.hourly-flexible',
   },
   {
-    value: 'hourly-custom',
+    value: SpacePriceModel.HourlyCustom,
     label: 'price-model-options.hourly-custom',
-  },
-]
-
-export const PRICING_MODEL_PACKAGES_OPTIONS: Option[] = [
-  {
-    value: 'person',
-    label: 'price-model-options.person',
-  },
-  {
-    value: 'hourly',
-    label: 'price-model-options.hourly',
   },
 ]
 
 export const PRICING_MODEL_SERVICES_OPTIONS: Option[] = [
   {
-    value: 'person',
+    value: ServicesPriceModel.Person,
     label: 'price-model-options.person',
   },
   {
-    value: 'hourly',
+    value: ServicesPriceModel.Hourly,
     label: 'price-model-options.hourly',
   },
   {
-    value: 'fixed',
+    value: ServicesPriceModel.Fixed,
     label: 'price-model-options.fixed',
   },
-  /*
   {
-    value: 'unit',
-    label: 'price-model-options.unit',
+    value: ServicesPriceModel.HourlyPerson,
+    label: 'price-model-options.hourly-person',
   },
-  */
 ]
 
 export const PACKAGES_AVAILABLE_OPTIONS: Option[] = [
@@ -141,11 +146,6 @@ export const HOURS: Option[] = [
   { value: '22:00+1', label: '22:00+1', disabled: false },
   { value: '23:00+1', label: '23:00+1', disabled: false },
 ]
-
-export enum CompanyType {
-  Individual = 'individual',
-  Company = 'company',
-}
 
 export const COMPANY_TYPE_OPTIONS = [
   { value: CompanyType.Individual, label: 'company-type-options.individual' },
