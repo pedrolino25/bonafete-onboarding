@@ -1,6 +1,6 @@
 'use client'
-import { FileInput } from '@/components/inputs/file-input/file-input'
 import { SelectInput } from '@/components/inputs/select-input/select-input'
+import { StripeDocsInput } from '@/components/inputs/stripe-docs-input/stripe-docs-input'
 import { TextInput } from '@/components/inputs/text-input/text-input'
 import { OnboardingFormLayout } from '@/components/layouts/onboarding-form'
 import { OnboardingSectionLayout } from '@/components/layouts/onboarding-section'
@@ -533,7 +533,7 @@ export default function HostInfoSection({
           </p>
         </div>
         <div className="col-span-3 max-sm:col-span-6">
-          <FileInput
+          <StripeDocsInput
             label="Frente do documento"
             complete={onboardingInfo?.host?.requirements?.identity_proof?.front}
             info={{
@@ -547,7 +547,7 @@ export default function HostInfoSection({
           />
         </div>
         <div className="col-span-3 max-sm:col-span-6">
-          <FileInput
+          <StripeDocsInput
             label="Verso do documento"
             complete={onboardingInfo?.host?.requirements?.identity_proof?.back}
             info={{
@@ -581,7 +581,7 @@ export default function HostInfoSection({
           </p>
         </div>
         <div className="col-span-6">
-          <FileInput
+          <StripeDocsInput
             complete={onboardingInfo?.host?.requirements?.address_proof}
             info={{
               account_id: onboardingInfo.host?.account_id as string,
@@ -621,7 +621,7 @@ export default function HostInfoSection({
             </p>
           </div>
           <div className="col-span-6">
-            <FileInput
+            <StripeDocsInput
               complete={onboardingInfo?.host?.requirements?.company_proof}
               info={{
                 account_id: onboardingInfo.host?.account_id as string,
@@ -658,7 +658,7 @@ export default function HostInfoSection({
           </p>
         </div>
         <div className="col-span-6">
-          <FileInput
+          <StripeDocsInput
             complete={onboardingInfo?.host?.requirements?.iban_proof}
             info={{
               account_id: onboardingInfo.host?.account_id as string,

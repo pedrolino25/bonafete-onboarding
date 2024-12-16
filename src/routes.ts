@@ -7,7 +7,7 @@ export const routes = {
     {
       title: 'navigation.applications',
       icon: Inbox,
-      path: '/applications/new',
+      path: '/applications/spontaneous',
       alias: 'applications',
     },
     {
@@ -31,20 +31,20 @@ export const routes = {
   ] as SidebarLink[],
   applications: [
     {
-      title: 'navigation.new-applications',
-      path: '/applications/new',
+      title: 'navigation.spontaneous-applications',
+      path: '/applications/spontaneous',
     },
     {
-      title: 'navigation.accepted-applications',
-      path: '/applications/accepted',
+      title: 'navigation.sent-applications',
+      path: '/applications/sent',
     },
     {
-      title: 'navigation.rejected-applications',
-      path: '/applications/rejected',
+      title: 'navigation.ready-applications',
+      path: '/applications/ready',
     },
     {
-      title: 'navigation.scheduled-applications',
-      path: '/applications/scheduled',
+      title: 'navigation.onboarding-applications',
+      path: '/applications/onboarding',
     },
     {
       title: 'navigation.completed-applications',

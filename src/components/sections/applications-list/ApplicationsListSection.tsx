@@ -39,7 +39,14 @@ import {
   VisibilityState,
 } from '@tanstack/react-table'
 import { format } from 'date-fns'
-import { ChevronDown, ChevronUp, Filter, Images, Search } from 'lucide-react'
+import {
+  ChevronDown,
+  ChevronUp,
+  Filter,
+  Images,
+  Search,
+  Send,
+} from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
@@ -64,41 +71,8 @@ export default function ApplicationsListSection({
   const { toast } = useToast()
 
   const columns: ColumnDef<ApplicationsListItemResponse>[] = [
-    ...(type === ApplicationStatus.Scheduled
-      ? [
-          {
-            accessorKey: 'schedule_date',
-            id: 'schedule_date',
-            header: ({ column }: any) => {
-              return (
-                <Button
-                  variant="link"
-                  color="secondary"
-                  onClick={() =>
-                    column.toggleSorting(column.getIsSorted() === 'asc')
-                  }
-                >
-                  {t('columns.schedule_date')}
-                  {column.getIsSorted() === 'desc' ? (
-                    <ChevronUp className="ml-2 h-3 w-3" />
-                  ) : column.getIsSorted() === 'asc' ? (
-                    <ChevronDown className="ml-2 h-3 w-3" />
-                  ) : null}
-                </Button>
-              )
-            },
-            cell: ({ row }: any) => {
-              return format(
-                new Date(row.getValue('schedule_date')),
-                'dd/MM/yyyy HH:mm'
-              )
-            },
-          },
-        ]
-      : []),
-    ...(type === ApplicationStatus.Scheduled ||
-    type === ApplicationStatus.Accepted ||
-    type === ApplicationStatus.Completed
+    ...(type !== ApplicationStatus.Spontaneous &&
+    type !== ApplicationStatus.Sent
       ? [
           {
             accessorKey: 'assigned_user_name',
@@ -135,26 +109,59 @@ export default function ApplicationsListSection({
         )
       },
     },
-    {
-      accessorKey: 'name',
-      id: 'name',
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="link"
-            color="secondary"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          >
-            {t('columns.name')}
-            {column.getIsSorted() === 'desc' ? (
-              <ChevronUp className="ml-2 h-3 w-3" />
-            ) : column.getIsSorted() === 'asc' ? (
-              <ChevronDown className="ml-2 h-3 w-3" />
-            ) : null}
-          </Button>
-        )
-      },
-    },
+    ...(type !== ApplicationStatus.Spontaneous
+      ? [
+          {
+            accessorKey: 'lead_id',
+            id: 'lead_id',
+            header: ({ column }: any) => {
+              return (
+                <Button
+                  variant="link"
+                  color="secondary"
+                  onClick={() =>
+                    column.toggleSorting(column.getIsSorted() === 'asc')
+                  }
+                >
+                  {t('columns.lead_id')}
+                  {column.getIsSorted() === 'desc' ? (
+                    <ChevronUp className="ml-2 h-3 w-3" />
+                  ) : column.getIsSorted() === 'asc' ? (
+                    <ChevronDown className="ml-2 h-3 w-3" />
+                  ) : null}
+                </Button>
+              )
+            },
+          },
+        ]
+      : []),
+    ...(type !== ApplicationStatus.Spontaneous &&
+    type !== ApplicationStatus.Sent
+      ? [
+          {
+            accessorKey: 'name',
+            id: 'name',
+            header: ({ column }: any) => {
+              return (
+                <Button
+                  variant="link"
+                  color="secondary"
+                  onClick={() =>
+                    column.toggleSorting(column.getIsSorted() === 'asc')
+                  }
+                >
+                  {t('columns.name')}
+                  {column.getIsSorted() === 'desc' ? (
+                    <ChevronUp className="ml-2 h-3 w-3" />
+                  ) : column.getIsSorted() === 'asc' ? (
+                    <ChevronDown className="ml-2 h-3 w-3" />
+                  ) : null}
+                </Button>
+              )
+            },
+          },
+        ]
+      : []),
     {
       accessorKey: 'email',
       id: 'email',
@@ -359,7 +366,7 @@ export default function ApplicationsListSection({
         return format(new Date(row.getValue('created_at')), 'dd/MM/yyyy HH:mm')
       },
     },
-    ...(type !== ApplicationStatus.Completed
+    ...(type === ApplicationStatus.Ready
       ? [
           {
             accessorKey: 'actions',
@@ -368,24 +375,6 @@ export default function ApplicationsListSection({
             },
             cell: ({ row, table }: any) => {
               const handleClick = (action: string) => {
-                if (
-                  table.options.meta?.accept &&
-                  action === 'application_accept'
-                ) {
-                  table.options.meta.accept(row.original.id)
-                }
-                if (
-                  table.options.meta?.reject &&
-                  action === 'application_reject'
-                ) {
-                  table.options.meta.reject(row.original.id)
-                }
-                if (table.options.meta?.schedule && action === 'schedule') {
-                  table.options.meta.schedule(row.original.id)
-                }
-                if (table.options.meta?.schedule && action === 'reschedule') {
-                  table.options.meta.schedule(row.original.id)
-                }
                 if (table.options.meta?.reasign && action === 'reasign') {
                   table.options.meta.reasign(row.original.id)
                 }
@@ -401,25 +390,7 @@ export default function ApplicationsListSection({
                 <div className="inline-flex gap-x-[4px] items-center justify-end w-[100%]">
                   <DataTable.ActionsDropdown
                     actions={
-                      type === ApplicationStatus.New
-                        ? ['application_accept', 'application_reject']
-                        : type === ApplicationStatus.Accepted
-                        ? [
-                            'schedule',
-                            'space_register',
-                            'reasign',
-                            'application_reject',
-                          ]
-                        : type === ApplicationStatus.Rejected
-                        ? ['application_accept', 'schedule']
-                        : type === ApplicationStatus.Scheduled
-                        ? [
-                            'space_register',
-                            'reschedule',
-                            'reasign',
-                            'application_reject',
-                          ]
-                        : []
+                      type === ApplicationStatus.Ready ? ['space_register'] : []
                     }
                     onClick={handleClick}
                   />
@@ -443,10 +414,12 @@ export default function ApplicationsListSection({
 
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
     id: false,
+    assigned_user_name: false,
     targets: false,
-    email: false,
-    created_at: type === ApplicationStatus.New,
+    phone: false,
+    created_at: type === ApplicationStatus.Spontaneous,
   })
+
   const [search, setSearch] = useState<string>('')
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [photos, setPhotos] = useState<string[]>([])
@@ -640,6 +613,16 @@ export default function ApplicationsListSection({
             {t('table.results')}
           </DataTable.Title>
         </div>
+        <div className="w-full flex justify-end pt-4 px-6 hidden max-sm:block">
+          <Button
+            startAdornment={<Send className="h-4 w-4" />}
+            data-testid="submit-application-button"
+            onClick={() => router.push('/submit-application')}
+            className="w-full"
+          >
+            {t('table.submit-application')}
+          </Button>
+        </div>
         <DataTable.HeaderActionsContainer className="pl-4">
           <div className="flex items-center gap-3">
             <TextInput
@@ -659,6 +642,14 @@ export default function ApplicationsListSection({
               disabled={!data || data.length === 0}
             >
               {t('table.filters')}
+            </Button>
+            <Button
+              startAdornment={<Send className="h-4 w-4" />}
+              data-testid="submit-application-button"
+              onClick={() => router.push('/submit-application')}
+              className="max-sm:hidden"
+            >
+              {t('table.submit-application')}
             </Button>
             <DataTable.ColumnVisibilityDropdown table={table} />
           </div>

@@ -1,5 +1,6 @@
 'use client'
 
+import { cn } from '@/lib/utils'
 import { routes } from '@/routes'
 import { usePathname } from 'next/navigation'
 import { ReactNode } from 'react'
@@ -38,7 +39,12 @@ export function Navbar({
     >
       <div className="flex overflow-auto max-w-full ">
         {!hideSideBar && <Sidebar links={routes.sidebar} />}
-        <div className="w-full overflow-auto max-h-[calc(100svh-56px)]">
+        <div
+          className={cn(
+            'w-full overflow-auto ',
+            !hideSideBar && 'max-h-[calc(100svh-56px)]'
+          )}
+        >
           {children}
         </div>
       </div>

@@ -7,6 +7,14 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -40,6 +48,7 @@ interface SpaceCardProps {
   onArchive: () => void
   onPublish: () => void
 }
+
 function SpaceCard({ space, onArchive, onPublish }: SpaceCardProps) {
   const t = useTranslations()
   const router = useRouter()
@@ -216,6 +225,11 @@ export default function HostSection({}: HostSectionProps) {
   const router = useRouter()
   const params = useSearchParams()
   const id = params.get('id') as string
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [openArchive, setOpenArchive] = useState<boolean>(false)
+  const [openPublish, setOpenPublish] = useState<boolean>(false)
+  const [spaceId, setSpaceId] = useState<string>()
+
   const { data, refetch } = useQuery({
     queryKey: ['host-info', id],
     queryFn: async () => {
@@ -241,8 +255,14 @@ export default function HostSection({}: HostSectionProps) {
     mutationFn: updateSpaceStatus,
     onSuccess: () => {
       refetch()
+      setIsLoading(false)
+      setOpenArchive(false)
+      setOpenPublish(false)
     },
     onError: () => {
+      setIsLoading(false)
+      setOpenArchive(false)
+      setOpenPublish(false)
       toast({
         variant: 'destructive',
         title: t('error'),
@@ -377,18 +397,14 @@ export default function HostSection({}: HostSectionProps) {
                   return (
                     <SpaceCard
                       space={space}
-                      onArchive={() =>
-                        updateSpaceStatusMutation.mutate({
-                          id: space.id,
-                          status: SpaceStatus.Archived,
-                        })
-                      }
-                      onPublish={() =>
-                        updateSpaceStatusMutation.mutate({
-                          id: space.id,
-                          status: SpaceStatus.Active,
-                        })
-                      }
+                      onArchive={() => {
+                        setOpenArchive(true)
+                        setSpaceId(space.id)
+                      }}
+                      onPublish={() => {
+                        setOpenPublish(true)
+                        setSpaceId(space.id)
+                      }}
                     />
                   )
                 })}
@@ -404,6 +420,73 @@ export default function HostSection({}: HostSectionProps) {
           </SidebarLayout.Root>
         )}
       </Navbar>
+
+      <Dialog open={openArchive} onOpenChange={setOpenArchive}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>{t('titles.archive-space')}</DialogTitle>
+            <DialogDescription className="pt-2 pb-6">
+              {t('subtitles.archive-space')}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              color="secondary"
+              disabled={isLoading}
+              onClick={() => setOpenArchive(false)}
+            >
+              {t('button-actions.cancel')}
+            </Button>
+            <Button
+              color="destructive"
+              loading={isLoading}
+              disabled={isLoading}
+              onClick={() => {
+                updateSpaceStatusMutation.mutate({
+                  id: spaceId as string,
+                  status: SpaceStatus.Archived,
+                })
+                setIsLoading(true)
+              }}
+            >
+              {t('button-actions.confirm')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={openPublish} onOpenChange={setOpenPublish}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>{t('titles.publish-space')}</DialogTitle>
+            <DialogDescription className="pt-2 pb-6">
+              {t('subtitles.publish-space')}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              color="secondary"
+              disabled={isLoading}
+              onClick={() => setOpenPublish(false)}
+            >
+              {t('button-actions.cancel')}
+            </Button>
+            <Button
+              loading={isLoading}
+              disabled={isLoading}
+              onClick={() => {
+                updateSpaceStatusMutation.mutate({
+                  id: spaceId as string,
+                  status: SpaceStatus.Active,
+                })
+                setIsLoading(true)
+              }}
+            >
+              {t('button-actions.confirm')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </main>
   )
 }

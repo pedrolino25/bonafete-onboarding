@@ -174,6 +174,8 @@ export interface ApplicationSpaceInfo {
   targets: ApplicationSpaceTarget[]
   type: ApplicationSpaceType
   business_model: string
+  offers: string[]
+  kyc: string[]
 }
 
 interface OnboardingHostInfo {

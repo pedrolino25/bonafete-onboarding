@@ -14,16 +14,16 @@ const ApplicationsListSection = dynamic(
 
 export default function Applications() {
   const { isPending, data, refetch } = useQuery({
-    queryKey: ['applications', ApplicationStatus.Scheduled],
+    queryKey: ['applications', ApplicationStatus.Spontaneous],
     queryFn: async () => {
-      return await getApplicationsListByStatus(ApplicationStatus.Scheduled)
+      return await getApplicationsListByStatus(ApplicationStatus.Spontaneous)
     },
   })
   return (
     <ApplicationsListSection
       data={data}
       isPending={isPending}
-      type={ApplicationStatus.Scheduled}
+      type={ApplicationStatus.Spontaneous}
       refresh={refetch}
     />
   )

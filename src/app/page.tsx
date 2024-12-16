@@ -15,7 +15,6 @@ export default function Home() {
     },
   })
 
-  console.log(data)
   return (
     <Navbar>
       <main>

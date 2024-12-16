@@ -1,10 +1,15 @@
-import { cn } from '@/lib/utils'
+import { cn, uploadPictureToS3Bucket } from '@/lib/utils'
+import {
+  updateIbanDocument,
+  uploadStripeDocument,
+} from '@/services/api/onboardings'
 import { FileUp, LoaderCircle } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { useDropzone } from 'react-dropzone'
+import { v4 } from 'uuid'
 
-interface FileInputInfoProps {
+interface StripeDocsInputInfoProps {
   account_id: string
   person_id?: string
   verification_type: string
@@ -12,25 +17,25 @@ interface FileInputInfoProps {
   is_company: boolean
 }
 
-export interface FileInputProps {
+export interface StripeDocsInputProps {
   maxFiles?: number
   onSuccess?: (images: File[]) => void
   onError?: (error: unknown) => void
   label?: string
   disabled?: boolean
-  path: string
+  info: StripeDocsInputInfoProps
   complete?: boolean
 }
 
-export function FileInput({
+export function StripeDocsInput({
   maxFiles,
   onSuccess,
   onError,
   label,
   disabled,
+  info,
   complete,
-  path,
-}: FileInputProps) {
+}: StripeDocsInputProps) {
   const t = useTranslations()
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
@@ -39,6 +44,28 @@ export function FileInput({
       return
     }
     try {
+      setIsLoading(true)
+      const formData = new FormData()
+      formData.append('file', files[0])
+      formData.append('account_id', info.account_id)
+      formData.append('person_id', info.person_id || '')
+      formData.append('verification_type', info.verification_type)
+      formData.append('file_type', info.file_type)
+      formData.append('is_company', info.is_company.toString())
+      if (info.verification_type !== 'iban') {
+        await uploadStripeDocument(formData)
+      } else {
+        await updateIbanDocument({
+          account_id: info.account_id,
+        })
+      }
+      await uploadPictureToS3Bucket({
+        file: files[0],
+        path: `public/stripe-docs/account_id/person_id/${
+          info.verification_type
+        }_${info.file_type}_${v4()}.webp`,
+      })
+      setIsLoading(false)
       onSuccess?.(files)
     } catch (error) {
       setIsLoading(false)
@@ -48,6 +75,9 @@ export function FileInput({
 
   const { getRootProps, getInputProps } = useDropzone({
     maxFiles,
+    accept: {
+      'image/*': [],
+    },
     onDrop,
     onError,
     onDropRejected: () => onError?.('exceded-max-photos'),

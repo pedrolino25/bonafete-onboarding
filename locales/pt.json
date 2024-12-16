@@ -20,10 +20,10 @@
     "archived-processes": "Arquivados",
     "completed-processes": "Concluídos",
     "applications": "Inscrições",
-    "new-applications": "Novas",
-    "accepted-applications": "Aceites",
-    "rejected-applications": "Rejeitadas",
-    "scheduled-applications": "Agendadas",
+    "spontaneous-applications": "Espontâneas",
+    "sent-applications": "Enviadas",
+    "ready-applications": "Prontas",
+    "onboarding-applications": "Onboardings",
     "completed-applications": "Concluídas",
     "hosts": "Anfitriões",
     "pending-hosts": "Pendentes",
@@ -46,7 +46,8 @@
     "apply": "Aplicar",
     "results": "Resultados:",
     "loading": "A carregar...",
-    "no-results": "Sem resultados."
+    "no-results": "Sem resultados.",
+    "submit-application": "Submeter inscrição"
   },
   "columns": {
     "id": "ID",
@@ -76,7 +77,9 @@
     "street": "Rua",
     "address": "Morada",
     "latitude": "Latitude",
-    "longitude": "Longitude"
+    "longitude": "Longitude",
+    "application-email": "Email do anfitrião",
+    "lead_id": "Lead ID"
   },
   "business_model": {
     "only-space": "Aluguer",
@@ -123,7 +126,9 @@
     "archive": "Arquivar processo",
     "init-process": "Iniciar onboarding",
     "delete-package": "Eliminar pacote",
-    "delete-service": "Eliminar serviço"
+    "delete-service": "Eliminar serviço",
+    "archive-space": "Arquivar espaço",
+    "publish-space": "Publicar espaço"
   },
   "subtitles": {
     "reasign": "Selecione a pessoa que pretende que seja responsável pelo seguimento deste processo",
@@ -132,7 +137,9 @@
     "archive": "Tem a certeza que deseja arquivar o processo?",
     "init-process": "Tem a certeza que deseja iniciar o processo de onboarding?",
     "delete-package": "Tem a certeza que deseja eliminar o pacote?",
-    "delete-service": "Tem a certeza que deseja eliminar o serviço?"
+    "delete-service": "Tem a certeza que deseja eliminar o serviço?",
+    "archive-space": "Tem a certeza que deseja arquivar o espaço?",
+    "publish-space": "Tem a certeza que deseja publicar o espaço?"
   },
   "button-actions": {
     "confirm": "Confirmar",
@@ -148,7 +155,9 @@
     "edit": "Editar",
     "validate": "Validar",
     "complete": "Finalizar",
-    "create": "Criar"
+    "create": "Criar",
+    "next": "Seguinte",
+    "send": "Enviar"
   },
   "error": "Erro",
   "success": "Sucesso",
@@ -191,6 +200,12 @@
     "onboarding": {
       "title": "Onboarding",
       "subtitle": "Processo de inscrição de anfitriões",
+      "application-offers-title": "Informações de ofertas",
+      "application-offers-subtitle": "Faça upload do ficheiro com todas as ofertas do anfitrião",
+      "application-info-title": "Informações de inscrição",
+      "application-info-subtitle": "Introduza todas as informações básicas de inscrição",
+      "submit-application-title": "Submeter inscrição",
+      "submit-application-subtitle": "Introduza todas as informações necessárias para submeter a inscrição",
       "host-title": "Anfitrião",
       "host-subtitle": "Gerir dados de anfitrião",
       "create-space-title": "Criar espaço",

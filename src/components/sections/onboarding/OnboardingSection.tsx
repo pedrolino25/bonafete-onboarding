@@ -305,6 +305,10 @@ export default function OnboardingSection({
               <SidebarLayout.Container>
                 {section.value === OnboardingSections.Intro && (
                   <OnboardingIntro
+                    documentation={{
+                      offers: data?.application.offers,
+                      kyc: data?.application.kyc,
+                    }}
                     onboardingInfo={data}
                     completed={
                       data && data.fase1 === OnboardingFaseStatus.Completed

@@ -1,6 +1,12 @@
 import { OnboardingSectionLayout } from '@/components/layouts/onboarding-section'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { toast } from '@/lib/hooks/use-toast'
 import {
   OnboardingProcessItemResponse,
@@ -8,13 +14,15 @@ import {
 } from '@/services/api/onboardings'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
-import { FileSearch, Send } from 'lucide-react'
+import { FileDown, FileSearch, Send } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
 
 interface OnboardingIntroProps {
   onboardingInfo: OnboardingProcessItemResponse
+  documentation: { offers: string[]; kyc: string[] }
   completed?: boolean
   refetch: () => void
 }
@@ -32,10 +40,12 @@ type OnboardingIntroFormType = z.infer<typeof onboardingIntroFormSchema>
 
 export default function OnboardingIntro({
   onboardingInfo,
+  documentation,
   completed,
   refetch,
 }: OnboardingIntroProps) {
   const t = useTranslations()
+  const [openDocuments, setOpenDocuments] = useState<boolean>(false)
 
   const saveOnboardingIntroMutation = useMutation({
     mutationFn: saveOnboardingIntro,
@@ -105,6 +115,7 @@ export default function OnboardingIntro({
             startAdornment={<FileSearch className="w-4 h-4" />}
             color="secondary"
             variant="ghost"
+            onClick={() => setOpenDocuments(true)}
           >
             {t('sections.onboarding.documentation')}
           </Button>
@@ -209,6 +220,58 @@ export default function OnboardingIntro({
           />
         </div>
       </div>
+
+      <Dialog open={openDocuments} onOpenChange={setOpenDocuments}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>{t('sections.onboarding.documentation')}</DialogTitle>
+          </DialogHeader>
+          <div className="w-full flex flex-col gap-4">
+            <div className="w-full">
+              <p className="text-utility-gray-600 text-base font-normal pb-2">
+                Ofertas
+              </p>
+              {documentation?.offers?.map((item, index) => {
+                return (
+                  <a
+                    key={index}
+                    href={item}
+                    target="_blank"
+                    className="w-full cursor-pointer p-2 border rounded-xl flex justify-between items-center mb-2"
+                  >
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-light text-utility-gray-500">
+                        {item?.split('/')[item?.split('/')?.length - 1]}
+                      </p>
+                    </div>
+                    <FileDown className="w-4 h-4 text-utility-gray-500 cursor-pointer hover:text-utility-gray-900" />
+                  </a>
+                )
+              })}
+              <p className="text-utility-gray-600 text-base font-normal pb-2 pt-4">
+                KYC
+              </p>
+              {documentation?.kyc?.map((item, index) => {
+                return (
+                  <a
+                    key={index}
+                    href={item}
+                    target="_blank"
+                    className="w-full cursor-pointer p-2 border rounded-xl flex justify-between items-center mb-2"
+                  >
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-light text-utility-gray-500">
+                        {item?.split('/')[item?.split('/')?.length - 1]}
+                      </p>
+                    </div>
+                    <FileDown className="w-4 h-4 text-utility-gray-500 cursor-pointer hover:text-utility-gray-900" />
+                  </a>
+                )
+              })}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </form>
   )
 }

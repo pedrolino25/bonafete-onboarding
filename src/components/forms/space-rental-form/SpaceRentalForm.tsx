@@ -167,7 +167,6 @@ export default function SpaceRentalForm({
       })
     },
     onError: (error) => {
-      console.log('error', error)
       refetch()
       setIsLoading(false)
       toast({
