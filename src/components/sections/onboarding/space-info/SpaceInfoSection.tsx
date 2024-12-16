@@ -134,13 +134,13 @@ export default function SpaceInfoSection({
     handleSubmit,
     setValue,
     getValues,
-    formState: { isValid, isDirty },
+    formState: { isValid, isDirty, errors },
   } = useForm<SpaceInfoFormType>({
     mode: 'onChange',
     resolver: zodResolver(spaceInfoFormSchema),
     defaultValues,
   })
-
+  console.log(getValues())
   const {
     isLoading,
     data,

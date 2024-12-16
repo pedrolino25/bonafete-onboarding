@@ -368,7 +368,7 @@ export default function OnboardingSection({
                                 (item) => item.value === '17'
                               ),
                         title: data.space?.title,
-                        tour: data.space?.tour,
+                        tour: data.space?.tour || '',
                         description: data.space?.description,
                         allow_pets: data.space?.allow_pets,
                         allow_alcool: data.space?.allow_alcool,

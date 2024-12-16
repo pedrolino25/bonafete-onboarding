@@ -289,6 +289,7 @@ export default function HostInfoSection({
             options={COMPANY_TYPE_OPTIONS}
             value={getValues().company_type}
             onSelect={handleSelectChange('company_type')}
+            disabled={!!onboardingInfo.host?.account_id}
             useTranslation
           />
         </div>
@@ -299,7 +300,9 @@ export default function HostInfoSection({
             placeholder={t('sections.onboarding.host-info-form.nif')}
             value={getValues().nif}
             onChange={handleChange('nif')}
-            disabled={!getValues().company_type}
+            disabled={
+              !getValues().company_type || !!onboardingInfo.host?.account_id
+            }
           />
         </div>
         {getValues().company_type?.[0]?.value === CompanyType.Company && (
@@ -313,6 +316,7 @@ export default function HostInfoSection({
                 )}
                 value={getValues().company_name}
                 onChange={handleChange('company_name')}
+                disabled={!!onboardingInfo.host?.account_id}
               />
             </div>
             <div className="col-span-3 max-sm:col-span-6">
@@ -322,6 +326,7 @@ export default function HostInfoSection({
                 placeholder={t('sections.onboarding.host-info-form.phone')}
                 value={getValues().company_phone}
                 onChange={handleChange('company_phone')}
+                disabled={!!onboardingInfo.host?.account_id}
                 type="number"
               />
             </div>
@@ -332,6 +337,7 @@ export default function HostInfoSection({
                 placeholder={t('sections.onboarding.host-info-form.email')}
                 value={getValues().company_email}
                 onChange={handleChange('company_email')}
+                disabled={!!onboardingInfo.host?.account_id}
               />
             </div>
             <div className="col-span-6">
@@ -341,6 +347,7 @@ export default function HostInfoSection({
                 placeholder={t('sections.onboarding.host-info-form.address')}
                 value={getValues().company_address}
                 onChange={handleChange('company_address')}
+                disabled={!!onboardingInfo.host?.account_id}
               />
             </div>
             <div className="col-span-4 max-sm:col-span-6">
@@ -350,6 +357,7 @@ export default function HostInfoSection({
                 placeholder={t('sections.onboarding.host-info-form.city')}
                 value={getValues().company_city}
                 onChange={handleChange('company_city')}
+                disabled={!!onboardingInfo.host?.account_id}
               />
             </div>
             <div className="col-span-2 max-sm:col-span-6">
@@ -361,6 +369,7 @@ export default function HostInfoSection({
                 )}
                 value={getValues().company_postal_code}
                 onChange={handleChange('company_postal_code')}
+                disabled={!!onboardingInfo.host?.account_id}
               />
             </div>
           </>
@@ -383,6 +392,7 @@ export default function HostInfoSection({
             placeholder={t('sections.onboarding.host-info-form.first-name')}
             value={getValues().first_name}
             onChange={handleChange('first_name')}
+            disabled={!!onboardingInfo.host?.account_id}
           />
         </div>
         <div className="col-span-3 max-sm:col-span-6">
@@ -392,6 +402,7 @@ export default function HostInfoSection({
             placeholder={t('sections.onboarding.host-info-form.last-name')}
             value={getValues().last_name}
             onChange={handleChange('last_name')}
+            disabled={!!onboardingInfo.host?.account_id}
           />
         </div>
         <div className="col-span-2 max-sm:col-span-6">
@@ -402,6 +413,7 @@ export default function HostInfoSection({
             defaultValue={getValues().birth_date}
             onChange={handleChange('birth_date')}
             type="date"
+            disabled={!!onboardingInfo.host?.account_id}
           />
         </div>
         <div className="col-span-2 max-sm:col-span-6">
@@ -411,6 +423,7 @@ export default function HostInfoSection({
             placeholder={t('sections.onboarding.host-info-form.email')}
             value={getValues().email}
             onChange={handleChange('email')}
+            disabled={!!onboardingInfo.host?.account_id}
           />
         </div>
         <div className="col-span-2 max-sm:col-span-6">
@@ -421,6 +434,7 @@ export default function HostInfoSection({
             value={getValues().phone}
             onChange={handleChange('phone')}
             type="number"
+            disabled={!!onboardingInfo.host?.account_id}
           />
         </div>
         <div className="col-span-6">
@@ -430,6 +444,7 @@ export default function HostInfoSection({
             placeholder={t('sections.onboarding.host-info-form.address')}
             value={getValues().address}
             onChange={handleChange('address')}
+            disabled={!!onboardingInfo.host?.account_id}
           />
         </div>
         <div className="col-span-4 max-sm:col-span-6">
@@ -439,6 +454,7 @@ export default function HostInfoSection({
             placeholder={t('sections.onboarding.host-info-form.city')}
             value={getValues().city}
             onChange={handleChange('city')}
+            disabled={!!onboardingInfo.host?.account_id}
           />
         </div>
         <div className="col-span-2 max-sm:col-span-6">
@@ -448,6 +464,7 @@ export default function HostInfoSection({
             placeholder={t('sections.onboarding.host-info-form.postal-code')}
             value={getValues().postal_code}
             onChange={handleChange('postal_code')}
+            disabled={!!onboardingInfo.host?.account_id}
           />
         </div>
       </div>
@@ -467,6 +484,7 @@ export default function HostInfoSection({
             placeholder={t('sections.onboarding.host-info-form.account-owner')}
             value={getValues().account_owner}
             onChange={handleChange('account_owner')}
+            disabled={!!onboardingInfo.host?.account_id}
           />
         </div>
         <div className="col-span-6">
@@ -492,7 +510,8 @@ export default function HostInfoSection({
                     !getValues().iban ||
                     getValues().iban?.length < 25 ||
                     getValues().iban?.length > 25 ||
-                    getValues().iban?.substring(0, 2) !== 'PT'
+                    getValues().iban?.substring(0, 2) !== 'PT' ||
+                    !!onboardingInfo.host?.account_id
                   }
                 >
                   {t('button-actions.validate')}
@@ -504,7 +523,12 @@ export default function HostInfoSection({
         <div className="col-span-6 w-full flex justify-end pt-4">
           <Button
             className="px-10"
-            disabled={!isValid || isLoading || !isDirty}
+            disabled={
+              !isValid ||
+              isLoading ||
+              !isDirty ||
+              !!onboardingInfo.host?.account_id
+            }
             loading={isLoading}
             onClick={handleSubmit(onSubmit)}
           >
