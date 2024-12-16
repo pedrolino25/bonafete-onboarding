@@ -20,6 +20,7 @@ import {
 import { ApplicationStatus } from '@/services/api/applications'
 import { StatisticItem } from '@/services/api/onboardings'
 import { TrendingUp } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { useMemo } from 'react'
 
 interface ApplicationsChartProps {
@@ -27,34 +28,37 @@ interface ApplicationsChartProps {
 }
 
 export function ApplicationsChart({ data }: ApplicationsChartProps) {
+  const t = useTranslations()
   const chartData = [
     {
-      status: ApplicationStatus.New,
+      status: ApplicationStatus.Spontaneous,
       count:
-        data?.filter((item) => item.status === ApplicationStatus.New)?.[0]
-          ?.count || 0,
-      fill: 'var(--color-new)',
+        data?.filter(
+          (item) => item.status === ApplicationStatus.Spontaneous
+        )?.[0]?.count || 0,
+      fill: 'var(--color-spontaneous)',
     },
     {
-      status: ApplicationStatus.Accepted,
+      status: ApplicationStatus.Sent,
       count:
-        data?.filter((item) => item.status === ApplicationStatus.Accepted)?.[0]
+        data?.filter((item) => item.status === ApplicationStatus.Sent)?.[0]
           ?.count || 0,
-      fill: 'var(--color-accepted)',
+      fill: 'var(--color-sent)',
     },
     {
-      status: ApplicationStatus.Rejected,
+      status: ApplicationStatus.Ready,
       count:
-        data?.filter((item) => item.status === ApplicationStatus.Rejected)?.[0]
+        data?.filter((item) => item.status === ApplicationStatus.Ready)?.[0]
           ?.count || 0,
-      fill: 'var(--color-rejected)',
+      fill: 'var(--color-ready)',
     },
     {
-      status: ApplicationStatus.Scheduled,
+      status: ApplicationStatus.Onboarding,
       count:
-        data?.filter((item) => item.status === ApplicationStatus.Scheduled)?.[0]
-          ?.count || 0,
-      fill: 'var(--color-scheduled)',
+        data?.filter(
+          (item) => item.status === ApplicationStatus.Onboarding
+        )?.[0]?.count || 0,
+      fill: 'var(--color-onboarding)',
     },
     {
       status: ApplicationStatus.Completed,
@@ -66,24 +70,24 @@ export function ApplicationsChart({ data }: ApplicationsChartProps) {
   ]
 
   const chartConfig = {
-    [ApplicationStatus.New]: {
-      label: 'Novas',
+    [ApplicationStatus.Spontaneous]: {
+      label: t('charts.spontaneous-applications'),
       color: 'hsl(var(--chart-4))',
     },
-    [ApplicationStatus.Accepted]: {
-      label: 'Aceites',
+    [ApplicationStatus.Sent]: {
+      label: t('charts.sent-applications'),
       color: 'hsl(var(--chart-5))',
     },
-    [ApplicationStatus.Rejected]: {
-      label: 'Rejeitadas',
+    [ApplicationStatus.Ready]: {
+      label: t('charts.ready-applications'),
       color: 'hsl(var(--chart-1))',
     },
-    [ApplicationStatus.Scheduled]: {
-      label: 'Agendadas',
+    [ApplicationStatus.Onboarding]: {
+      label: t('charts.onboarding-applications'),
       color: 'hsl(var(--chart-3))',
     },
     [ApplicationStatus.Completed]: {
-      label: 'Concluídas',
+      label: t('charts.completed-applications'),
       color: 'hsl(var(--chart-2))',
     },
   } satisfies ChartConfig
@@ -94,7 +98,7 @@ export function ApplicationsChart({ data }: ApplicationsChartProps) {
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-start pb-0">
-        <CardTitle>Inscrições</CardTitle>
+        <CardTitle>{t('charts.applications')}</CardTitle>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
@@ -139,7 +143,7 @@ export function ApplicationsChart({ data }: ApplicationsChartProps) {
                           y={(viewBox.cy || 0) + 24}
                           className="fill-muted-foreground"
                         >
-                          Inscriçoes completas
+                          {t('charts.applications-complete')}
                         </tspan>
                       </text>
                     )
@@ -156,7 +160,10 @@ export function ApplicationsChart({ data }: ApplicationsChartProps) {
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
         <div className="flex items-center gap-2 text-muted-foreground text-sm leading-none">
-          Total de {total.toLocaleString()} inscrições{' '}
+          {t('charts.applications-total')?.replace(
+            '$1',
+            total.toLocaleString()
+          )}
           <TrendingUp className="h-4 w-4" />
         </div>
       </CardFooter>

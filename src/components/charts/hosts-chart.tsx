@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/chart'
 import { HostStatus, StatisticItem } from '@/services/api/onboardings'
 import { TrendingUp } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { useMemo } from 'react'
 import { Label, Pie, PieChart } from 'recharts'
 import {
@@ -24,6 +25,7 @@ interface HostsChartProps {
 }
 
 export default function HostsChart({ data }: HostsChartProps) {
+  const t = useTranslations()
   const chartData = [
     {
       status: HostStatus.Completed,
@@ -57,19 +59,19 @@ export default function HostsChart({ data }: HostsChartProps) {
 
   const chartConfig = {
     [HostStatus.Completed]: {
-      label: 'Ativos',
+      label: t('charts.active-hosts'),
       color: 'hsl(var(--chart-2))',
     },
     [HostStatus.Pending]: {
-      label: 'Pendentes',
+      label: t('charts.pending-hosts'),
       color: 'hsl(var(--chart-3))',
     },
     [HostStatus.Archived]: {
-      label: 'Arquivados',
+      label: t('charts.archived-hosts'),
       color: 'hsl(var(--chart-4))',
     },
     [HostStatus.Suspended]: {
-      label: 'Suspensos',
+      label: t('charts.suspended-hosts'),
       color: 'hsl(var(--chart-1))',
     },
   } satisfies ChartConfig
@@ -81,7 +83,7 @@ export default function HostsChart({ data }: HostsChartProps) {
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-start pb-0">
-        <CardTitle>Anfitriões</CardTitle>
+        <CardTitle>{t('charts.hosts')}</CardTitle>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
@@ -125,7 +127,7 @@ export default function HostsChart({ data }: HostsChartProps) {
                           y={(viewBox.cy || 0) + 24}
                           className="fill-muted-foreground"
                         >
-                          Anfitriões ativos
+                          {t('charts.hosts-active')}
                         </tspan>
                       </text>
                     )
@@ -142,7 +144,7 @@ export default function HostsChart({ data }: HostsChartProps) {
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
         <div className="flex items-center gap-2 text-muted-foreground text-sm leading-none">
-          Total de {total.toLocaleString()} anfitriões{' '}
+          {t('charts.hosts-total')?.replace('$1', total.toLocaleString())}
           <TrendingUp className="h-4 w-4" />
         </div>
       </CardFooter>

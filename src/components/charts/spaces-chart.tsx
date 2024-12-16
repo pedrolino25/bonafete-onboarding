@@ -10,6 +10,7 @@ import {
 import { StatisticItem } from '@/services/api/onboardings'
 import { SpaceStatus } from '@/services/api/spaces'
 import { TrendingUp } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { useMemo } from 'react'
 import { Label, Pie, PieChart } from 'recharts'
 import {
@@ -25,6 +26,7 @@ interface SpacesChartProps {
 }
 
 export default function SpacesChart({ data }: SpacesChartProps) {
+  const t = useTranslations()
   const chartData = [
     {
       status: SpaceStatus.Active,
@@ -58,19 +60,19 @@ export default function SpacesChart({ data }: SpacesChartProps) {
 
   const chartConfig = {
     [SpaceStatus.Active]: {
-      label: 'Ativos',
+      label: t('charts.active-spaces'),
       color: 'hsl(var(--chart-2))',
     },
     [SpaceStatus.Pending]: {
-      label: 'Pendentes',
+      label: t('charts.pending-spaces'),
       color: 'hsl(var(--chart-4))',
     },
     [SpaceStatus.Archived]: {
-      label: 'Arquivados',
+      label: t('charts.archived-spaces'),
       color: 'hsl(var(--chart-1))',
     },
     [SpaceStatus.Draft]: {
-      label: 'Rascunhos',
+      label: t('charts.draft-spaces'),
       color: 'hsl(var(--chart-3))',
     },
   } satisfies ChartConfig
@@ -82,7 +84,7 @@ export default function SpacesChart({ data }: SpacesChartProps) {
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-start pb-0">
-        <CardTitle>Espaços</CardTitle>
+        <CardTitle>{t('charts.spaces')}</CardTitle>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
@@ -116,7 +118,9 @@ export default function SpacesChart({ data }: SpacesChartProps) {
                           className="fill-foreground text-3xl font-bold"
                         >
                           {chartData
-                            ?.filter((item) => item.status === 'published')?.[0]
+                            ?.filter(
+                              (item) => item.status === SpaceStatus.Active
+                            )?.[0]
                             ?.count.toLocaleString()}
                         </tspan>
                         <tspan
@@ -124,7 +128,7 @@ export default function SpacesChart({ data }: SpacesChartProps) {
                           y={(viewBox.cy || 0) + 24}
                           className="fill-muted-foreground"
                         >
-                          Espaços publicados
+                          {t('charts.spaces-active')}
                         </tspan>
                       </text>
                     )
@@ -141,7 +145,7 @@ export default function SpacesChart({ data }: SpacesChartProps) {
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
         <div className="flex items-center gap-2 text-muted-foreground text-sm leading-none">
-          Total de {total.toLocaleString()} espaços{' '}
+          {t('charts.spaces-total')?.replace('$1', total.toLocaleString())}
           <TrendingUp className="h-4 w-4" />
         </div>
       </CardFooter>

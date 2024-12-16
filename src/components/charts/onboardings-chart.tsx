@@ -22,6 +22,7 @@ import {
   StatisticItem,
 } from '@/services/api/onboardings'
 import { TrendingUp } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { useMemo } from 'react'
 
 interface OnboardingsChartProps {
@@ -29,6 +30,7 @@ interface OnboardingsChartProps {
 }
 
 export function OnboardingsChart({ data }: OnboardingsChartProps) {
+  const t = useTranslations()
   const chartData = [
     {
       status: ApplicationOnboardingStatus.InProgress,
@@ -66,19 +68,19 @@ export function OnboardingsChart({ data }: OnboardingsChartProps) {
 
   const chartConfig = {
     [ApplicationOnboardingStatus.InProgress]: {
-      label: 'Em curso',
+      label: t('charts.in-progress-onboardings'),
       color: 'hsl(var(--chart-4))',
     },
     [ApplicationOnboardingStatus.Archived]: {
-      label: 'Arquivados',
+      label: t('charts.archived-onboardings'),
       color: 'hsl(var(--chart-1))',
     },
     [ApplicationOnboardingStatus.Scheduled]: {
-      label: 'Agendados',
+      label: t('charts.scheduled-onboardings'),
       color: 'hsl(var(--chart-3))',
     },
     [ApplicationOnboardingStatus.Completed]: {
-      label: 'Concluídos',
+      label: t('charts.completed-onboardings'),
       color: 'hsl(var(--chart-2))',
     },
   } satisfies ChartConfig
@@ -90,7 +92,7 @@ export function OnboardingsChart({ data }: OnboardingsChartProps) {
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-start pb-0">
-        <CardTitle>Onboardings</CardTitle>
+        <CardTitle>{t('charts.onboardings')}</CardTitle>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
@@ -136,7 +138,7 @@ export function OnboardingsChart({ data }: OnboardingsChartProps) {
                           y={(viewBox.cy || 0) + 24}
                           className="fill-muted-foreground"
                         >
-                          Onboardings completos
+                          {t('charts.onboardings-complete')}
                         </tspan>
                       </text>
                     )
@@ -153,7 +155,7 @@ export function OnboardingsChart({ data }: OnboardingsChartProps) {
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
         <div className="flex items-center gap-2 text-muted-foreground text-sm leading-none">
-          Total de {total.toLocaleString()} onboardings{' '}
+          {t('charts.onboardings-total')?.replace('$1', total.toLocaleString())}
           <TrendingUp className="h-4 w-4" />
         </div>
       </CardFooter>
