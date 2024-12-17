@@ -135,6 +135,12 @@ export default function SubmitApplicationInfoSection({
           shouldValidate: true,
           shouldDirty: true,
         })
+        if (data.lead_id) {
+          setValue('lead_id', data.lead_id, {
+            shouldValidate: true,
+            shouldDirty: true,
+          })
+        }
         if (data.type) {
           const spaceType = JSON.parse(data.type)
           setValue(
@@ -275,6 +281,7 @@ export default function SubmitApplicationInfoSection({
           placeholder={t('columns.lead_id')}
           value={getValues().lead_id}
           onChange={handleChange('lead_id')}
+          disabled
         />
         <TextInput
           required
