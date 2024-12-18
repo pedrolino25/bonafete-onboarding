@@ -140,7 +140,7 @@ export default function SpaceInfoSection({
     resolver: zodResolver(spaceInfoFormSchema),
     defaultValues,
   })
-  console.log(getValues())
+
   const {
     isLoading,
     data,
