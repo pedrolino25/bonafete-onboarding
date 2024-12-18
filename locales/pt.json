@@ -360,6 +360,8 @@
         "birth-date": "Data de nascimento",
         "email": "Email",
         "phone": "Telemóvel",
+        "certificate": "Código da certidão permanente",
+        "account_type": "Tipo de conta",
         "address": "Morada",
         "city": "Cidade",
         "postal-code": "Código postal",

@@ -174,6 +174,8 @@ export interface ApplicationSpaceInfo {
   targets: ApplicationSpaceTarget[]
   type: ApplicationSpaceType
   business_model: string
+  account_type: string
+  certificate: string
   offers: string[]
   kyc: string[]
 }

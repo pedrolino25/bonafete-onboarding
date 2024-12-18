@@ -282,6 +282,22 @@ export default function HostInfoSection({
           </OnboardingFormLayout.Subtitle>
         </div>
         <div className="col-span-3 max-sm:col-span-6">
+          <TextInput
+            data-testid="nif"
+            label={t('sections.onboarding.host-info-form.account_type')}
+            value={onboardingInfo.application.account_type}
+            disabled={true}
+          />
+        </div>
+        <div className="col-span-3 max-sm:col-span-6">
+          <TextInput
+            data-testid="nif"
+            label={t('sections.onboarding.host-info-form.certificate')}
+            value={onboardingInfo.application.certificate}
+            disabled={true}
+          />
+        </div>
+        <div className="col-span-3 max-sm:col-span-6">
           <SelectInput
             data-testid="company_type"
             label={t('sections.onboarding.host-info-form.company-type')}
