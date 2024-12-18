@@ -436,7 +436,8 @@ const getServicesList = async (): Promise<ServiceListItemResponse[]> => {
 export interface SpaceServiceListItemResponse {
   id: string
   priceModel: string
-  units: string
+  min_hours: string
+  min_persons: string
   service: {
     id: string
     key: string
@@ -591,7 +592,8 @@ export interface UpdateSpaceServiceParameters {
   photos: string
   price_modality: string
   price: string
-  units?: string
+  min_hours?: string
+  min_persons?: string
   packages_only: string
   packages_available: string
   service_id: string

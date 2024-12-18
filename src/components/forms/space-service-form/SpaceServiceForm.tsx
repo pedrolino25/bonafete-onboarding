@@ -69,7 +69,8 @@ const spaceServiceFormSchema = z.object({
   description: z.string().optional(),
   price_modality: z.array(optionSchema).min(1),
   price: z.string().min(1),
-  units: z.string().min(1).optional(),
+  min_hours: z.string().min(1).optional(),
+  min_persons: z.string().min(1).optional(),
   packages_only: z.array(optionSchema).min(1),
   packages_available: z.array(optionSchema).min(1),
   photos: z.array(imageTypeSchema).max(4).optional(),
@@ -111,7 +112,8 @@ export default function SpaceServiceForm({
   const description = watch('description')
   const price_modality = watch('price_modality')
   const price = watch('price')
-  const units = watch('units')
+  const min_hours = watch('min_hours')
+  const min_persons = watch('min_persons')
   const packages_only = watch('packages_only')
   const packages_available = watch('packages_available')
   const photos = watch('photos')
@@ -198,7 +200,8 @@ export default function SpaceServiceForm({
       photos: JSON.stringify(pictures),
       price_modality: values.price_modality?.[0]?.value,
       price: values.price,
-      units: values.units,
+      min_hours: values.min_hours,
+      min_persons: values.min_persons,
       packages_only: values.packages_only?.[0]?.value,
       packages_available: values.packages_available?.[0]?.value,
       service_id: values.services_form?.services?.[0]?.value,
@@ -240,26 +243,32 @@ export default function SpaceServiceForm({
             useTranslation
           />
           {(price_modality?.[0]?.value === ServicesPriceModel.Hourly ||
-            price_modality?.[0]?.value === ServicesPriceModel.Person ||
             price_modality?.[0]?.value === ServicesPriceModel.HourlyPerson) && (
             <TextInput
-              data-testid="units"
-              value={units}
-              onChange={handleChange('units')}
+              data-testid="min_hours"
+              value={min_hours}
+              onChange={handleChange('min_hours')}
               type="number"
-              placeholder={t(
-                `sections.onboarding.services-form.unit-${price_modality?.[0]?.value}`
-              )}
+              placeholder={t(`sections.onboarding.services-form.unit-hourly`)}
               fixedEndAdornment={
-                price_modality?.[0]?.value === 'hourly' ? (
-                  <div className="px-3 pt-2.5 text-sm">
-                    <Clock className="h-4 w-4" />
-                  </div>
-                ) : price_modality?.[0]?.value === 'person' ? (
-                  <div className="px-3 pt-2.5 text-sm">
-                    <Users className="h-4 w-4" />
-                  </div>
-                ) : undefined
+                <div className="px-3 pt-2.5 text-sm">
+                  <Clock className="h-4 w-4" />
+                </div>
+              }
+            />
+          )}
+          {(price_modality?.[0]?.value === ServicesPriceModel.Person ||
+            price_modality?.[0]?.value === ServicesPriceModel.HourlyPerson) && (
+            <TextInput
+              data-testid="min_persons"
+              value={min_persons}
+              onChange={handleChange('min_persons')}
+              type="number"
+              placeholder={t(`sections.onboarding.services-form.unit-person`)}
+              fixedEndAdornment={
+                <div className="px-3 pt-2.5 text-sm">
+                  <Users className="h-4 w-4" />
+                </div>
               }
             />
           )}
@@ -278,13 +287,26 @@ export default function SpaceServiceForm({
           />
 
           {((price_modality?.[0]?.value === 'fixed' && price) ||
-            (price_modality?.[0]?.value && price && units)) && (
+            (price_modality?.[0]?.value &&
+              price &&
+              (min_hours || min_persons))) && (
             <OnboardingFormLayout.Info>
               {t(
                 `sections.onboarding.services-form.explanation-messages.pricing-${price_modality?.[0]?.value}`
               )
                 .replace('$1', price)
-                .replace('$2', units || '')}
+                .replace(
+                  '$2',
+                  price_modality?.[0]?.value === ServicesPriceModel.HourlyPerson
+                    ? min_persons || ''
+                    : min_hours || min_persons || ''
+                )
+                .replace(
+                  '$3',
+                  price_modality?.[0]?.value === ServicesPriceModel.HourlyPerson
+                    ? min_hours || ''
+                    : min_hours || min_persons || ''
+                )}
             </OnboardingFormLayout.Info>
           )}
         </OnboardingFormLayout.Container>

@@ -51,9 +51,14 @@ export default function EditSpaceSection({
   const router = useRouter()
   const params = useSearchParams()
   const id = params.get('id') as string
+  const section_id = params.get('section') as string
   const [section, setSection] = useState<SidebarLink>({
-    value: EditSpaceSections.SpaceInfo,
-    label: t(`sections.onboarding.navigation.${EditSpaceSections.SpaceInfo}`),
+    value: section_id || EditSpaceSections.SpaceInfo,
+    label: t(
+      `sections.onboarding.navigation.${
+        section_id || EditSpaceSections.SpaceInfo
+      }`
+    ),
     disabled: false,
     complete: false,
     incomplete: false,

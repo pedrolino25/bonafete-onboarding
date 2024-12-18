@@ -347,7 +347,7 @@
           "pricing-hourly": "O serviço terá um custo de $1€ por hora, e estará disponível para reservas de periodo igual ou superior a $2 horas",
           "pricing-person": "O serviço terá um custo de $1€ por pessoa, e estará disponível para reservas a partir de $2 pessoas",
           "pricing-unit": "O serviço terá um custo de $1€ por unidade, e existem $2 unidades disponiveis",
-          "pricing-hourly-person": "O serviço terá um custo de $1€ por pessoa e por hora, e estará disponível para reservas a partir de $2 pessoas",
+          "pricing-hourly-person": "O serviço terá um custo de $1€ por pessoa e por hora, e estará disponível para reservas a partir de $2 pessoas e $3 horas",
           "packages-available-true": "O serviço extra estará disponível para pacotes",
           "packages-available-false": "O serviço extra estará disponível apenas para aluguer do espaço",
           "packages-only-true": "O serviço estará disponível apenas para pacotes",

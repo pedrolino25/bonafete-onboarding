@@ -1,6 +1,7 @@
 'use client'
 import SpaceServiceForm from '@/components/forms/space-service-form/SpaceServiceForm'
 import { Navbar } from '@/components/navigation/Navbar'
+import { EditSpaceSections } from '@/components/sections/space/EditSpaceSection'
 import { Button } from '@/components/ui/button'
 import { getOnboardingSpaceById } from '@/services/api/onboardings'
 import { useQuery } from '@tanstack/react-query'
@@ -57,7 +58,16 @@ export default function SpaceServiceSection() {
               <SpaceServiceForm
                 spaceInfo={data}
                 defaultValues={spaceExtra}
-                refetch={() => router.back()}
+                refetch={() => {
+                  const previousUrl = document.referrer
+                  if (previousUrl) {
+                    const url = new URL(previousUrl, window.location.origin)
+                    url.searchParams.set('section', EditSpaceSections.Offers)
+                    router.push(url.toString())
+                  } else {
+                    router.back()
+                  }
+                }}
               />
             </div>
           </div>

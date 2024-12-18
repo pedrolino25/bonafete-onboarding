@@ -364,11 +364,14 @@ export default function SpacePackageForm({
             }
             multiple
           />
-          {services?.map((item) => {
+          {services?.map((item, index) => {
             return (
               <>
                 {requiresHourConfiguration(item.service[0].value) && (
-                  <div className="w-full flex gap-4 items-center">
+                  <div
+                    key={`service-${index}`}
+                    className="w-full flex gap-4 items-center"
+                  >
                     <TextInput
                       data-testid="nr_hours"
                       value={item.hours}
