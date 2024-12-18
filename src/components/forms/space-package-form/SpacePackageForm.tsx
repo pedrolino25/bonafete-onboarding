@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dialog'
 import { Option } from '@/components/ui/select'
 import { toast } from '@/lib/hooks/use-toast'
+import { ServicesPriceModel } from '@/lib/utils/consts'
 import {
   deleteSpacePackage,
   getSpaceServicesList,
@@ -47,10 +48,15 @@ const optionSchema = z.object({
   disabled: z.any().optional(),
 })
 
+const packageServiceSchema = z.object({
+  service: z.array(optionSchema).min(1),
+  hours: z.string().optional(),
+})
+
 const spacePackageFormSchema = z.object({
   id: z.string().optional(),
   name: z.string(),
-  services: z.array(optionSchema).min(1),
+  services: z.array(packageServiceSchema).min(1),
   description: z.string().min(12),
   schedule_form: scheduleFormSchema,
   min_hours: z.string().min(1),
@@ -58,6 +64,7 @@ const spacePackageFormSchema = z.object({
   max_persons: z.string().min(1),
 })
 
+export type PackageServiceType = z.infer<typeof packageServiceSchema>
 export type SpacePackageFormType = z.infer<typeof spacePackageFormSchema>
 
 export default function SpacePackageForm({
@@ -118,11 +125,6 @@ export default function SpacePackageForm({
   const max_persons = watch('max_persons')
   const name = watch('name')
   const schedule_form = watch('schedule_form')
-
-  const handleSelectChange =
-    (field: keyof SpacePackageFormType) => (option: Option[]) => {
-      setValue(field, option, { shouldValidate: true, shouldDirty: true })
-    }
 
   const handleChange =
     (field: keyof SpacePackageFormType) =>
@@ -265,8 +267,9 @@ export default function SpacePackageForm({
         name: values.name,
         services: values.services?.map((item) => {
           return {
+            hours: item.hours,
             spaceService: {
-              id: item.value,
+              id: item.service[0].value,
             },
           }
         }),
@@ -282,6 +285,28 @@ export default function SpacePackageForm({
 
   const handleDelete = () => {
     setOpenDelete(true)
+  }
+
+  const requiresHourConfiguration = (value: string): boolean => {
+    const service = spaceServicesList?.find((item) => item.id === value)
+    return (
+      service?.priceModel === ServicesPriceModel.Hourly ||
+      service?.priceModel === ServicesPriceModel.HourlyPerson
+    )
+  }
+
+  const handleChangeService = (id: string, value: string) => {
+    const result = services?.map((item) => {
+      if (item.service[0].value === id) {
+        return {
+          hours: value,
+          service: item.service,
+        }
+      } else {
+        return item
+      }
+    })
+    setValue('services', result, { shouldValidate: true, shouldDirty: true })
   }
 
   return (
@@ -324,10 +349,55 @@ export default function SpacePackageForm({
                 }
               }) || []
             }
-            value={services}
-            onSelect={handleSelectChange('services')}
+            value={services?.flatMap((item) => item.service)}
+            onSelect={(value) =>
+              setValue(
+                'services',
+                value?.map((item) => {
+                  return {
+                    service: [item],
+                    hours: undefined,
+                  }
+                }),
+                { shouldValidate: true, shouldDirty: true }
+              )
+            }
             multiple
           />
+          {services?.map((item) => {
+            return (
+              <>
+                {requiresHourConfiguration(item.service[0].value) && (
+                  <div className="w-full flex gap-4 items-center">
+                    <TextInput
+                      data-testid="nr_hours"
+                      value={item.hours}
+                      onChange={(event) =>
+                        handleChangeService(
+                          item.service[0].value,
+                          event.target.value
+                        )
+                      }
+                      type="number"
+                      placeholder={t('sections.onboarding.package-form.hours')}
+                      fixedStartAdornment={
+                        <div className="px-2 pt-2 text-sm w-[300px]">
+                          <p className="text-utility-gray-600">
+                            {item.service[0].label}
+                          </p>
+                        </div>
+                      }
+                      fixedEndAdornment={
+                        <div className="px-3 pt-2.5 text-sm">
+                          <Clock className="h-4 w-4" />
+                        </div>
+                      }
+                    />
+                  </div>
+                )}
+              </>
+            )
+          })}
         </OnboardingFormLayout.Container>
       </OnboardingFormLayout.Main>
 

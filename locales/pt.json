@@ -302,6 +302,7 @@
         "min-hours-persons-title": "Minímo de horas e lotação",
         "min-hours-persons-subtitle": "Defina o minímo de horas e o minímo e máximo de pessoas para este pacote estar disponível",
         "min-hours": "Minímo de horas",
+        "hours": "Número de horas",
         "min-persons": "Minímo de pessoas",
         "max-persons": "Máximo de pessoas",
         "pricing-title": "Preçário",
