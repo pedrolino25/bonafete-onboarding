@@ -613,7 +613,7 @@ export default function ApplicationsListSection({
             {t('table.results')}
           </DataTable.Title>
         </div>
-        <div className="w-full flex justify-end pt-4 px-6 hidden max-sm:block">
+        <div className="w-full flex justify-end pt-4 px-4 hidden max-sm:block">
           <Button
             startAdornment={<Send className="h-4 w-4" />}
             data-testid="submit-application-button"
@@ -641,7 +641,7 @@ export default function ApplicationsListSection({
               onClick={() => setOpenFilters(true)}
               disabled={!data || data.length === 0}
             >
-              {t('table.filters')}
+              <span className="max-sm:hidden">{t('table.filters')}</span>
             </Button>
             <Button
               startAdornment={<Send className="h-4 w-4" />}

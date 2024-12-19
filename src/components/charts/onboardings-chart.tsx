@@ -49,14 +49,6 @@ export function OnboardingsChart({ data }: OnboardingsChartProps) {
       fill: 'var(--color-archived)',
     },
     {
-      status: ApplicationOnboardingStatus.Scheduled,
-      count:
-        data?.filter(
-          (item) => item.status === ApplicationOnboardingStatus.Scheduled
-        )?.[0]?.count || 0,
-      fill: 'var(--color-scheduled)',
-    },
-    {
       status: ApplicationOnboardingStatus.Completed,
       count:
         data?.filter(
@@ -74,10 +66,6 @@ export function OnboardingsChart({ data }: OnboardingsChartProps) {
     [ApplicationOnboardingStatus.Archived]: {
       label: t('charts.archived-onboardings'),
       color: 'hsl(var(--chart-1))',
-    },
-    [ApplicationOnboardingStatus.Scheduled]: {
-      label: t('charts.scheduled-onboardings'),
-      color: 'hsl(var(--chart-3))',
     },
     [ApplicationOnboardingStatus.Completed]: {
       label: t('charts.completed-onboardings'),

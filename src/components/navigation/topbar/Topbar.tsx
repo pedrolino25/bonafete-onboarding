@@ -29,9 +29,9 @@ export function Topbar({
 
   return (
     <div className="w-svw h-svh">
-      <div className="w-full h-14 border-b-[1px] flex items-center overflow-x-auto">
+      <div className="w-full h-14 border-b-[1px] flex items-center">
         {showIcon && (
-          <div className="pl-4" onClick={() => router.push('/')}>
+          <div className="pl-4 max-sm:pr-4 " onClick={() => router.push('/')}>
             <Image
               src={logo}
               alt={'logo-image'}
@@ -42,24 +42,26 @@ export function Topbar({
             />
           </div>
         )}
-        <div className="w-full flex gap-6 justify-center items-center max-sm:justify-start">
-          {links && links.length > 0 && (
-            <Tabs defaultValue={path} className="w-fit">
-              <TabsList className="bg-white">
-                {links.map((link) => {
-                  return (
-                    <TabsTrigger
-                      key={link.path}
-                      value={link.path}
-                      onClick={() => router.push(link.path)}
-                    >
-                      {t(link.title)}
-                    </TabsTrigger>
-                  )
-                })}
-              </TabsList>
-            </Tabs>
-          )}
+        <div className="w-full h-14 flex items-center justify-center max-sm:justify-start overflow-x-auto">
+          <div className="flex gap-6 justify-center items-center max-sm:justify-start">
+            {links && links.length > 0 && (
+              <Tabs defaultValue={path} className="w-fit">
+                <TabsList className="bg-white">
+                  {links.map((link) => {
+                    return (
+                      <TabsTrigger
+                        key={link.path}
+                        value={link.path}
+                        onClick={() => router.push(link.path)}
+                      >
+                        {t(link.title)}
+                      </TabsTrigger>
+                    )
+                  })}
+                </TabsList>
+              </Tabs>
+            )}
+          </div>
         </div>
         {topbarActions && <div className="pr-4">{topbarActions}</div>}
       </div>

@@ -486,7 +486,7 @@ export default function OnboardingsListSection({
               onClick={() => setOpenFilters(true)}
               disabled={!data || data.length === 0}
             >
-              {t('table.filters')}
+              <span className="max-sm:hidden">{t('table.filters')}</span>
             </Button>
             <DataTable.ColumnVisibilityDropdown table={table} />
           </div>

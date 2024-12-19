@@ -49,13 +49,6 @@ export default function SpacesChart({ data }: SpacesChartProps) {
           ?.count || 0,
       fill: 'var(--color-archived)',
     },
-    {
-      status: SpaceStatus.Draft,
-      count:
-        data?.filter((item) => item.status === SpaceStatus.Draft)?.[0]?.count ||
-        0,
-      fill: 'var(--color-draft)',
-    },
   ]
 
   const chartConfig = {
@@ -70,10 +63,6 @@ export default function SpacesChart({ data }: SpacesChartProps) {
     [SpaceStatus.Archived]: {
       label: t('charts.archived-spaces'),
       color: 'hsl(var(--chart-1))',
-    },
-    [SpaceStatus.Draft]: {
-      label: t('charts.draft-spaces'),
-      color: 'hsl(var(--chart-3))',
     },
   } satisfies ChartConfig
 

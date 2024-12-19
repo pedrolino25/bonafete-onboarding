@@ -31,14 +31,6 @@ export function ApplicationsChart({ data }: ApplicationsChartProps) {
   const t = useTranslations()
   const chartData = [
     {
-      status: ApplicationStatus.Spontaneous,
-      count:
-        data?.filter(
-          (item) => item.status === ApplicationStatus.Spontaneous
-        )?.[0]?.count || 0,
-      fill: 'var(--color-spontaneous)',
-    },
-    {
       status: ApplicationStatus.Sent,
       count:
         data?.filter((item) => item.status === ApplicationStatus.Sent)?.[0]
@@ -70,10 +62,6 @@ export function ApplicationsChart({ data }: ApplicationsChartProps) {
   ]
 
   const chartConfig = {
-    [ApplicationStatus.Spontaneous]: {
-      label: t('charts.spontaneous-applications'),
-      color: 'hsl(var(--chart-4))',
-    },
     [ApplicationStatus.Sent]: {
       label: t('charts.sent-applications'),
       color: 'hsl(var(--chart-5))',
