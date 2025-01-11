@@ -3,10 +3,11 @@
 import { SelectInput } from '@/components/inputs/select-input/select-input'
 import { TextInput } from '@/components/inputs/text-input/text-input'
 import { ApplicationsListFilterMenu } from '@/components/menus/ApplicationsListFilterMenu'
-import { Navbar } from '@/components/navbar/Navbar'
 import { DataTable } from '@/components/table/table'
+import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
 import {
   Dialog,
   DialogContent,
@@ -15,7 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import useAuthenticatedUser from '@/lib/hooks/authenticated-user'
+import { useAuthenticatedUser } from '@/lib/hooks/authenticated-user'
 import { useToast } from '@/lib/hooks/use-toast'
 import {
   acceptApplication,
@@ -24,7 +25,9 @@ import {
   reasignApplication,
   rejectApplication,
   scheduleApplication,
+  startOnboardingProcess,
 } from '@/services/api/applications'
+import { OnboardingProcessListItemResponse } from '@/services/api/onboardings'
 import { useMutation } from '@tanstack/react-query'
 import {
   ColumnDef,
@@ -36,9 +39,17 @@ import {
   VisibilityState,
 } from '@tanstack/react-table'
 import { format } from 'date-fns'
-import { ChevronDown, ChevronUp, Filter, Images, Search } from 'lucide-react'
+import {
+  ChevronDown,
+  ChevronUp,
+  Filter,
+  Images,
+  Search,
+  Send,
+} from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 interface ApplicationsListSectionProps {
@@ -55,44 +66,13 @@ export default function ApplicationsListSection({
   refresh,
 }: ApplicationsListSectionProps) {
   const t = useTranslations()
+  const router = useRouter()
   const user = useAuthenticatedUser()
   const { toast } = useToast()
 
   const columns: ColumnDef<ApplicationsListItemResponse>[] = [
-    ...(type === ApplicationStatus.Scheduled
-      ? [
-          {
-            accessorKey: 'schedule_date',
-            id: 'schedule_date',
-            header: ({ column }: any) => {
-              return (
-                <Button
-                  variant="link"
-                  color="secondary"
-                  onClick={() =>
-                    column.toggleSorting(column.getIsSorted() === 'asc')
-                  }
-                >
-                  {t('columns.schedule_date')}
-                  {column.getIsSorted() === 'desc' ? (
-                    <ChevronUp className="ml-2 h-3 w-3" />
-                  ) : column.getIsSorted() === 'asc' ? (
-                    <ChevronDown className="ml-2 h-3 w-3" />
-                  ) : null}
-                </Button>
-              )
-            },
-            cell: ({ row }: any) => {
-              return format(
-                new Date(row.getValue('schedule_date')),
-                'dd/MM/yyyy HH:mm'
-              )
-            },
-          },
-        ]
-      : []),
-    ...(type === ApplicationStatus.Scheduled ||
-    type === ApplicationStatus.Accepted
+    ...(type !== ApplicationStatus.Spontaneous &&
+    type !== ApplicationStatus.Sent
       ? [
           {
             accessorKey: 'assigned_user_name',
@@ -129,26 +109,59 @@ export default function ApplicationsListSection({
         )
       },
     },
-    {
-      accessorKey: 'name',
-      id: 'name',
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="link"
-            color="secondary"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          >
-            {t('columns.name')}
-            {column.getIsSorted() === 'desc' ? (
-              <ChevronUp className="ml-2 h-3 w-3" />
-            ) : column.getIsSorted() === 'asc' ? (
-              <ChevronDown className="ml-2 h-3 w-3" />
-            ) : null}
-          </Button>
-        )
-      },
-    },
+    ...(type !== ApplicationStatus.Spontaneous
+      ? [
+          {
+            accessorKey: 'lead_id',
+            id: 'lead_id',
+            header: ({ column }: any) => {
+              return (
+                <Button
+                  variant="link"
+                  color="secondary"
+                  onClick={() =>
+                    column.toggleSorting(column.getIsSorted() === 'asc')
+                  }
+                >
+                  {t('columns.lead_id')}
+                  {column.getIsSorted() === 'desc' ? (
+                    <ChevronUp className="ml-2 h-3 w-3" />
+                  ) : column.getIsSorted() === 'asc' ? (
+                    <ChevronDown className="ml-2 h-3 w-3" />
+                  ) : null}
+                </Button>
+              )
+            },
+          },
+        ]
+      : []),
+    ...(type !== ApplicationStatus.Spontaneous &&
+    type !== ApplicationStatus.Sent
+      ? [
+          {
+            accessorKey: 'name',
+            id: 'name',
+            header: ({ column }: any) => {
+              return (
+                <Button
+                  variant="link"
+                  color="secondary"
+                  onClick={() =>
+                    column.toggleSorting(column.getIsSorted() === 'asc')
+                  }
+                >
+                  {t('columns.name')}
+                  {column.getIsSorted() === 'desc' ? (
+                    <ChevronUp className="ml-2 h-3 w-3" />
+                  ) : column.getIsSorted() === 'asc' ? (
+                    <ChevronDown className="ml-2 h-3 w-3" />
+                  ) : null}
+                </Button>
+              )
+            },
+          },
+        ]
+      : []),
     {
       accessorKey: 'email',
       id: 'email',
@@ -353,60 +366,42 @@ export default function ApplicationsListSection({
         return format(new Date(row.getValue('created_at')), 'dd/MM/yyyy HH:mm')
       },
     },
-    {
-      accessorKey: 'actions',
-      header: () => {
-        return <></>
-      },
-      cell: ({ row, table }) => {
-        const handleClick = (action: string) => {
-          if (table.options.meta?.accept && action === 'application_accept') {
-            table.options.meta.accept(row.original.id)
-          }
-          if (table.options.meta?.reject && action === 'application_reject') {
-            table.options.meta.reject(row.original.id)
-          }
-          if (table.options.meta?.schedule && action === 'schedule') {
-            table.options.meta.schedule(row.original.id)
-          }
-          if (table.options.meta?.schedule && action === 'reschedule') {
-            table.options.meta.schedule(row.original.id)
-          }
-          if (table.options.meta?.reasign && action === 'reasign') {
-            table.options.meta.reasign(row.original.id)
-          }
-          if (table.options.meta?.register && action === 'space_register') {
-            table.options.meta.register(row.original.id)
-          }
-        }
-
-        return (
-          <div className="inline-flex gap-x-[4px] items-center justify-end w-[100%]">
-            <DataTable.ActionsDropdown
-              actions={
-                type === ApplicationStatus.New
-                  ? ['application_accept', 'application_reject']
-                  : type === ApplicationStatus.Accepted
-                  ? ['schedule', 'reasign', 'application_reject']
-                  : type === ApplicationStatus.Rejected
-                  ? ['application_accept', 'schedule']
-                  : type === ApplicationStatus.Scheduled
-                  ? [
-                      'space_register',
-                      'reschedule',
-                      'reasign',
-                      'application_reject',
-                    ]
-                  : []
+    ...(type === ApplicationStatus.Ready
+      ? [
+          {
+            accessorKey: 'actions',
+            header: () => {
+              return <></>
+            },
+            cell: ({ row, table }: any) => {
+              const handleClick = (action: string) => {
+                if (table.options.meta?.reasign && action === 'reasign') {
+                  table.options.meta.reasign(row.original.id)
+                }
+                if (
+                  table.options.meta?.register &&
+                  action === 'space_register'
+                ) {
+                  table.options.meta.register(row.original.id)
+                }
               }
-              onClick={handleClick}
-            />
-          </div>
-        )
-      },
-      enableSorting: false,
-      enableHiding: false,
-    },
+
+              return (
+                <div className="inline-flex gap-x-[4px] items-center justify-end w-[100%]">
+                  <DataTable.ActionsDropdown
+                    actions={
+                      type === ApplicationStatus.Ready ? ['space_register'] : []
+                    }
+                    onClick={handleClick}
+                  />
+                </div>
+              )
+            },
+            enableSorting: false,
+            enableHiding: false,
+          },
+        ]
+      : []),
   ]
 
   const [openFilters, setOpenFilters] = useState<boolean>(false)
@@ -415,13 +410,16 @@ export default function ApplicationsListSection({
   const [openAccept, setOpenAccept] = useState<boolean>(false)
   const [openSchedule, setOpenSchedule] = useState<boolean>(false)
   const [openReject, setOpenReject] = useState<boolean>(false)
+  const [openStartOnboarding, setOpenStartOnboarding] = useState<boolean>(false)
 
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
     id: false,
+    assigned_user_name: false,
     targets: false,
-    email: false,
-    created_at: type === ApplicationStatus.New,
+    phone: false,
+    created_at: type === ApplicationStatus.Spontaneous,
   })
+
   const [search, setSearch] = useState<string>('')
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [photos, setPhotos] = useState<string[]>([])
@@ -510,6 +508,27 @@ export default function ApplicationsListSection({
     },
   })
 
+  const startOnboardingProcessMutation = useMutation({
+    mutationFn: startOnboardingProcess,
+    onSuccess: (response: OnboardingProcessListItemResponse) => {
+      toast({
+        variant: 'success',
+        title: t('success'),
+        description: t('success-messages.init-process'),
+      })
+      if (response.id) {
+        router.push(`/manage-process?id=${response.id}`)
+      }
+    },
+    onError: () => {
+      toast({
+        variant: 'destructive',
+        title: t('error'),
+        description: t('error-messages.init-process'),
+      })
+    },
+  })
+
   const handleAcceptApplication = (id: string) => {
     setApplicationId(id)
     setOpenAccept(true)
@@ -532,8 +551,9 @@ export default function ApplicationsListSection({
     setOpenReasign(true)
   }
 
-  const handleRegisterApplication = (id: string) => {
-    console.log('register', id)
+  const handleStartOnboarding = (id: string) => {
+    setApplicationId(id)
+    setOpenStartOnboarding(true)
   }
 
   const handleViewPhotos = (photos: string[]) => {
@@ -561,7 +581,7 @@ export default function ApplicationsListSection({
       reject: handleRejectApplication,
       schedule: handleScheduleApplication,
       reasign: handleReasignApplication,
-      register: handleRegisterApplication,
+      register: handleStartOnboarding,
       viewPhotos: handleViewPhotos,
     },
   })
@@ -569,12 +589,6 @@ export default function ApplicationsListSection({
   const handleFilters = (filters: ColumnFiltersState) => {
     setColumnFilters(filters)
     setOpenFilters(false)
-  }
-
-  const handleChangeDate = (value: string) => {
-    const d = value.split('-')
-    const date = new Date(parseInt(d[0]), parseInt(d[1]) - 1, parseInt(d[2]))
-    setScheduleDate(date)
   }
 
   const handleChangeHour = (value: string) => {
@@ -589,76 +603,99 @@ export default function ApplicationsListSection({
 
   return (
     <main>
-      <Navbar>
-        <DataTable.HeaderContainer>
-          <div className="flex items-end h-16 max-sm:hidden">
-            <DataTable.Title
-              rowCount={table.getRowCount()}
-              data-testid="title"
-              className="pl-4 font-normal text-sm"
+      <DataTable.HeaderContainer>
+        <div className="flex items-end h-16 max-sm:hidden">
+          <DataTable.Title
+            rowCount={table.getRowCount()}
+            data-testid="title"
+            className="pl-4 font-normal text-sm"
+          >
+            {t('table.results')}
+          </DataTable.Title>
+        </div>
+        <div className="w-full flex justify-end pt-4 px-4 hidden max-sm:block">
+          <Button
+            startAdornment={<Send className="h-4 w-4" />}
+            data-testid="submit-application-button"
+            onClick={() => router.push('/submit-application')}
+            className="w-full"
+          >
+            {t('table.submit-application')}
+          </Button>
+        </div>
+        <DataTable.HeaderActionsContainer className="pl-4">
+          <div className="flex items-center gap-3">
+            <TextInput
+              startAdornment={
+                <Search className="h-4 w-4 text-utility-gray-600" />
+              }
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={t('table.search')}
+              data-testid="search-input"
+              className="w-[320px] max-sm:w-full"
+            />
+            <Button
+              color="secondary"
+              startAdornment={<Filter className="h-4 w-4" />}
+              data-testid="filters-button"
+              onClick={() => setOpenFilters(true)}
+              disabled={!data || data.length === 0}
             >
-              {t('table.results')}
-            </DataTable.Title>
+              <span className="max-sm:hidden">{t('table.filters')}</span>
+            </Button>
+            <Button
+              startAdornment={<Send className="h-4 w-4" />}
+              data-testid="submit-application-button"
+              onClick={() => router.push('/submit-application')}
+              className="max-sm:hidden"
+            >
+              {t('table.submit-application')}
+            </Button>
+            <DataTable.ColumnVisibilityDropdown table={table} />
           </div>
-          <DataTable.HeaderActionsContainer className="pl-4">
-            <div className="flex items-center gap-3">
-              <TextInput
-                startAdornment={
-                  <Search className="h-4 w-4 text-utility-gray-600" />
-                }
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder={t('table.search')}
-                data-testid="search-input"
-                className="w-[320px] max-sm:w-full"
-              />
-              <Button
-                color="secondary"
-                startAdornment={<Filter className="h-4 w-4" />}
-                data-testid="filters-button"
-                onClick={() => setOpenFilters(true)}
-                disabled={!data || data.length === 0}
-                className="max-sm:hidden"
-              >
-                {t('table.filters')}
-              </Button>
-              <DataTable.ColumnVisibilityDropdown table={table} />
-            </div>
-          </DataTable.HeaderActionsContainer>
-        </DataTable.HeaderContainer>
-        <DataTable.Table
-          table={table}
-          columns={columns}
-          isLoading={isPending}
+        </DataTable.HeaderActionsContainer>
+      </DataTable.HeaderContainer>
+      <DataTable.Table table={table} columns={columns} isLoading={isPending} />
+      {data && data.length > 0 && (
+        <ApplicationsListFilterMenu
+          open={openFilters}
+          onOpenChange={setOpenFilters}
+          submit={handleFilters}
+          data={data || []}
         />
-        {data && data.length > 0 && (
-          <ApplicationsListFilterMenu
-            open={openFilters}
-            onOpenChange={setOpenFilters}
-            submit={handleFilters}
-            data={data || []}
-          />
-        )}
-      </Navbar>
+      )}
       <Dialog open={openPhotos} onOpenChange={setOpenPhotos}>
-        <DialogContent className="sm:max-w-[800px]">
+        <DialogContent className="max-w-[1024px] max-h-svh">
           <DialogHeader>
             <DialogTitle>{t('titles.photos')}</DialogTitle>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            {photos && photos.length > 0 && (
-              <div className="overflow-y-auto max-h-[500px]">
-                {photos.map((photo) => {
-                  return (
-                    <div className="relative w-full h-[400px] mb-6">
-                      <Image src={photo} alt={photo} fill />
-                    </div>
-                  )
-                })}
-              </div>
-            )}
-            {!photos && (
-              <p className="text-md">{t('error-messages.empty-photos')}</p>
-            )}
+          <div className="max-h-[calc(100svh-100px)] w-full overflow-y-auto">
+            <div className="flex flex-col gap-8 py-8 px-1 w-full">
+              {openPhotos && photos && photos.length > 0 && (
+                <>
+                  {photos.map((photo, index) => {
+                    return (
+                      <div
+                        key={`space_image_${index}`}
+                        className="relative w-full"
+                      >
+                        <AspectRatio ratio={16 / 9}>
+                          <Image
+                            src={photo}
+                            alt={`space_image_${index}`}
+                            fill
+                            objectFit="cover"
+                          />
+                        </AspectRatio>
+                      </div>
+                    )
+                  })}
+                </>
+              )}
+              {!photos && (
+                <p className="text-md">{t('error-messages.empty-photos')}</p>
+              )}
+            </div>
           </div>
         </DialogContent>
       </Dialog>
@@ -675,16 +712,16 @@ export default function ApplicationsListSection({
             <SelectInput
               options={[
                 {
-                  value: user?.id,
-                  label: user?.name,
-                  info: user?.email,
+                  value: user.id,
+                  label: user.name,
+                  info: user.email,
                 },
               ]}
               value={[
                 {
-                  value: user?.id,
-                  label: user?.name,
-                  info: user?.email,
+                  value: user.id,
+                  label: user.name,
+                  info: user.email,
                 },
               ]}
               onSelect={(option) => setResponsableUser(option[0]?.value)}
@@ -782,18 +819,20 @@ export default function ApplicationsListSection({
         </DialogContent>
       </Dialog>
       <Dialog open={openSchedule} onOpenChange={setOpenSchedule}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[380px]">
           <DialogHeader>
             <DialogTitle>{t('titles.schedule')}</DialogTitle>
             <DialogDescription className="pt-2">
               {t('subtitles.schedule')}
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <TextInput
-              label={t('calendar.date')}
-              type="date"
-              onChange={(e) => handleChangeDate(e.target.value)}
+          <div className="grid gap-4 py-4 m-auto">
+            <Calendar
+              className="!pt-0"
+              mode="single"
+              selected={scheduleDate}
+              onSelect={(val) => setScheduleDate(val as Date)}
+              initialFocus
             />
             <TextInput
               label={t('calendar.hour')}
@@ -815,6 +854,36 @@ export default function ApplicationsListSection({
                 setOpenSchedule(false)
               }}
               disabled={!scheduleDate || !scheduleHour}
+            >
+              {t('button-actions.confirm')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={openStartOnboarding} onOpenChange={setOpenStartOnboarding}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>{t('titles.init-process')}</DialogTitle>
+            <DialogDescription className="pt-2 pb-6">
+              {t('subtitles.init-process')}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              color="secondary"
+              onClick={() => setOpenStartOnboarding(false)}
+            >
+              {t('button-actions.cancel')}
+            </Button>
+            <Button
+              onClick={() => {
+                startOnboardingProcessMutation.mutate({
+                  applicationId: applicationId as string,
+                  userId: user.id,
+                })
+                setOpenStartOnboarding(false)
+              }}
             >
               {t('button-actions.confirm')}
             </Button>

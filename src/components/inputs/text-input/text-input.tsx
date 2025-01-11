@@ -1,3 +1,5 @@
+'use client'
+
 import { Input } from '@/components/ui/input'
 import { Info } from 'lucide-react'
 import * as React from 'react'
@@ -36,18 +38,18 @@ export const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(
     ref
   ) => {
     return (
-      <div data-testid={props['data-testid']}>
+      <div data-testid={props['data-testid']} className="grid">
         {label && (
           <label
             data-testid="label"
-            className="text-sm font-medium text-utility-gray-700 p-0 m-0 mb-1.5"
+            className="text-sm font-medium text-utility-gray-700 mb-1.5"
           >
             {label}
             {required && '*'}
           </label>
         )}
         <Input
-          ref={ref} // Forward ref to Input component
+          ref={ref}
           variant={error ? 'error' : 'default'}
           dimension={dimension}
           fixedStartAdornment={fixedStartAdornment}
@@ -70,7 +72,7 @@ export const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(
         />
         {hint && !error && (
           <p
-            className="text-sm font-light text-utility-gray-600 p-0 m-0 mt-1.5"
+            className="pl-2 text-xs font-light text-utility-gray-600 p-0 m-0 mt-1.5"
             data-testid="hint-text"
           >
             {hint}

@@ -15,7 +15,7 @@
   },
   "navigation": {
     "processes": "Processes",
-    "ongoing-processes": "Ongoing",
+    "in-progress-processes": "Ongoing",
     "archived-processes": "Archived",
     "completed-processes": "Completed",
     "applications": "Applications",

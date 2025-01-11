@@ -1,19 +1,19 @@
 import { Inbox, Loader, PartyPopper, Users } from 'lucide-react'
-import { SidebarLink } from './components/navbar/sidebar/Sidebar'
-import { TopbarLink } from './components/navbar/topbar/Topbar'
+import { SidebarLink } from './components/navigation/sidebar/Sidebar'
+import { TopbarLink } from './components/navigation/topbar/Topbar'
 
 export const routes = {
   sidebar: [
     {
       title: 'navigation.applications',
       icon: Inbox,
-      path: '/applications/new',
+      path: '/applications/spontaneous',
       alias: 'applications',
     },
     {
       title: 'navigation.processes',
       icon: Loader,
-      path: '/processes/ongoing',
+      path: '/processes/in-progress',
       alias: 'processes',
     },
     {
@@ -31,20 +31,20 @@ export const routes = {
   ] as SidebarLink[],
   applications: [
     {
-      title: 'navigation.new-applications',
-      path: '/applications/new',
+      title: 'navigation.spontaneous-applications',
+      path: '/applications/spontaneous',
     },
     {
-      title: 'navigation.accepted-applications',
-      path: '/applications/accepted',
+      title: 'navigation.sent-applications',
+      path: '/applications/sent',
     },
     {
-      title: 'navigation.rejected-applications',
-      path: '/applications/rejected',
+      title: 'navigation.ready-applications',
+      path: '/applications/ready',
     },
     {
-      title: 'navigation.scheduled-applications',
-      path: '/applications/scheduled',
+      title: 'navigation.onboarding-applications',
+      path: '/applications/onboarding',
     },
     {
       title: 'navigation.completed-applications',
@@ -71,8 +71,12 @@ export const routes = {
   ] as TopbarLink[],
   processes: [
     {
-      title: 'navigation.ongoing-processes',
-      path: '/processes/ongoing',
+      title: 'navigation.in-progress-processes',
+      path: '/processes/in-progress',
+    },
+    {
+      title: 'navigation.scheduled-processes',
+      path: '/processes/scheduled',
     },
     {
       title: 'navigation.completed-processes',

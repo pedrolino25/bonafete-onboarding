@@ -1,6 +1,6 @@
 import { getRequestConfig } from 'next-intl/server'
 import { cookies, headers } from 'next/headers'
-import { Cookies } from './middleware'
+import { Cookies } from './services/auth'
 
 const LOCALES = ['pt', 'es', 'en']
 const DEFAULT_LOCALE = 'pt'

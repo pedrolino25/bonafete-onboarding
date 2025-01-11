@@ -1,10 +1,11 @@
 import { cn } from '@/lib/utils'
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
+import { LoaderCircle } from 'lucide-react'
 import * as React from 'react'
 
 const buttonVariants = cva(
-  'inline-flex gap-x-2 items-center justify-center whitespace-nowrap rounded-lg text-sm font-bold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none',
+  'inline-flex gap-x-2 items-center justify-center whitespace-nowrap rounded-lg text-sm font-bold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:pointer-events-none',
   {
     variants: {
       variant: {
@@ -20,9 +21,12 @@ const buttonVariants = cva(
           'text-utility-gray-700 shadow-xs bg-transparent hover:bg-utility-gray-50 active:bg-transparent active:shadow-gray-md disabled:bg-utility-gray-100 disabled:!bg-white border-utility-gray-300 disabled:!border-utility-gray-200 disabled:!text-utility-gray-400',
         destructive:
           'text-utility-error-700 shadow-xs bg-transparent hover:bg-utility-error-50 active:bg-transparent active:shadow-error-md disabled:bg-utility-gray-100 disabled:!bg-white border-utility-error-300 disabled:!border-utility-gray-200 disabled:!text-utility-gray-400',
+        link: 'text-utility-gray-700 bg-transparent disabled:bg-utility-gray-100 disabled:!bg-white disabled:!text-utility-gray-400 font-medium disabled:font-medium',
+        success:
+          'text-utility-success-700 shadow-xs bg-transparent hover:bg-utility-success-50 active:bg-transparent active:shadow-success-md disabled:bg-utility-gray-100 disabled:!bg-utility-gray-100 border-utility-success-300 disabled:!border-utility-gray-200 disabled:!text-utility-gray-400',
       },
       size: {
-        xs: 'h-9 px-3 py-2 font-normal text-sm',
+        xs: 'h-8 px-3 py-2 font-medium text-sm',
         sm: 'h-10 px-3.5 py-2.5',
         md: 'h-11 px-4 py-2.5',
         lg: 'h-12 px-[18px] py-3',
@@ -31,10 +35,22 @@ const buttonVariants = cva(
     },
     compoundVariants: [
       {
+        color: 'link',
+        variant: 'fill',
+        class:
+          '!bg-utility-gray-200 hover:!bg-utility-gray-200 active:!bg-utility-gray-50 !text-utility-gray-700',
+      },
+      {
         color: 'primary',
         variant: 'fill',
         class:
           '!bg-utility-brand-600 hover:!bg-utility-brand-700 active:!bg-utility-brand-600',
+      },
+      {
+        color: 'success',
+        variant: 'fill',
+        class:
+          '!bg-utility-success-600 hover:!bg-utility-success-700 active:!bg-utility-success-600',
       },
       {
         color: 'primary',
@@ -75,10 +91,11 @@ const buttonVariants = cva(
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
-  color?: 'primary' | 'secondary' | 'destructive'
+  color?: 'primary' | 'secondary' | 'destructive' | 'link' | 'success'
   asChild?: boolean
   startAdornment?: React.ReactNode
   endAdornment?: React.ReactNode
+  loading?: boolean
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -92,6 +109,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       children,
       startAdornment,
       endAdornment,
+      loading,
+      type = 'button',
       ...props
     },
     ref
@@ -101,10 +120,12 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <Comp
         className={cn(buttonVariants({ variant, size, color, className }))}
         ref={ref}
+        type={type}
         {...props}
       >
         {startAdornment}
         {children}
+        {loading && <LoaderCircle className="w-4 h-4 animate-spin" />}
         {endAdornment}
       </Comp>
     )

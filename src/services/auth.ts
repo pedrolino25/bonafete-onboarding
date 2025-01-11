@@ -13,6 +13,13 @@ import {
   signUp,
   updateUserAttribute,
 } from 'aws-amplify/auth'
+import { deleteCookie } from 'cookies-next'
+
+export enum Cookies {
+  SESSION_COOKIE = 'session',
+  NEXT_LOCALE = 'NEXT_LOCALE',
+  CURRENT_USER_COOKIE = 'bonafete_user',
+}
 
 interface AuthResponse {
   ok: boolean
@@ -118,6 +125,8 @@ export const handleSignInWithEmailPassword = async (
 export const handleSignOut = async (): Promise<AuthResponse> => {
   try {
     await signOut()
+    deleteCookie(Cookies.SESSION_COOKIE)
+    deleteCookie(Cookies.CURRENT_USER_COOKIE)
     return { ok: true }
   } catch (error) {
     return { ok: false, error }

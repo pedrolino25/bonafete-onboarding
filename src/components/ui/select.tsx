@@ -1,7 +1,10 @@
+'use client'
+
 import { cn } from '@/lib/utils'
 import { VariantProps, cva } from 'class-variance-authority'
 import { Command as CommandPrimitive } from 'cmdk'
 import { Check, ChevronDown, X } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import * as React from 'react'
 import { Badge } from './badge'
 import { Command, CommandGroup, CommandItem, CommandList } from './command'
@@ -11,6 +14,7 @@ export interface Option {
   label: string
   info?: string
   node?: React.ReactNode
+  disabled?: boolean
 }
 
 const selectVariants = cva(
@@ -45,6 +49,7 @@ export interface SelectProps extends VariantProps<typeof selectVariants> {
   value?: Option[]
   onSelect?: (value: Option[]) => void
   disabled?: boolean
+  useTranslation?: boolean
 }
 
 export function Select({
@@ -59,7 +64,12 @@ export function Select({
   value,
   onSelect,
   disabled,
+  useTranslation = false,
 }: SelectProps) {
+  const t = useTranslations()
+  const comandRef = React.useRef<HTMLDivElement>(null)
+  const comandListRef = React.useRef<HTMLDivElement>(null)
+  const comandListGroupRef = React.useRef<HTMLDivElement>(null)
   const inputRef = React.useRef<HTMLInputElement>(null)
   const containerRef = React.useRef<HTMLDivElement>(null)
   const [open, setOpen] = React.useState(false)
@@ -77,7 +87,9 @@ export function Select({
       }
     }
   }, [value])
+
   const handleUnselect = (option: Option) => {
+    if (option.disabled) return
     const opts = selected.filter((s) => s.value !== option.value)
     setSelected(opts)
     onSelect?.(opts)
@@ -101,9 +113,10 @@ export function Select({
 
   const handleSelectAll = () => {
     if (selectAll) {
-      setSelected([])
+      const optionsToUnselect = options.filter((item) => item.disabled)
+      setSelected(optionsToUnselect)
       setSelectAll(false)
-      onSelect?.([])
+      onSelect?.(optionsToUnselect)
     } else {
       setSelected(options)
       setSelectAll(true)
@@ -132,8 +145,14 @@ export function Select({
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
+        comandRef.current &&
         containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
+        comandListGroupRef.current &&
+        inputRef.current &&
+        !comandRef.current.contains(event.target as Node) &&
+        !containerRef.current.contains(event.target as Node) &&
+        !comandListGroupRef.current.contains(event.target as Node) &&
+        !inputRef.current.contains(event.target as Node)
       ) {
         setOpen(false)
       }
@@ -148,7 +167,7 @@ export function Select({
   const isSelected = selected?.length > 0
 
   return (
-    <Command onKeyDown={handleKeyDown}>
+    <Command ref={comandRef} onKeyDown={handleKeyDown}>
       <div
         ref={containerRef}
         className={cn(
@@ -169,27 +188,29 @@ export function Select({
                 data-testid={`select-value-${index}`}
                 key={option.value}
                 variant="fill"
-                size="sm"
-                shape="square"
+                size="md"
+                shape="rounded"
               >
                 {option.node && <div>{option.node}</div>}
-                {option.label}
-                <button
-                  className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      handleUnselect(option)
-                    }
-                  }}
-                  onMouseDown={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                  }}
-                  onClick={() => handleUnselect(option)}
-                  disabled={disabled}
-                >
-                  <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
-                </button>
+                {useTranslation ? t(option.label) : option.label}
+                {!option.disabled && (
+                  <button
+                    className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleUnselect(option)
+                      }
+                    }}
+                    onMouseDown={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                    }}
+                    onClick={() => handleUnselect(option)}
+                    disabled={disabled}
+                  >
+                    <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+                  </button>
+                )}
               </Badge>
             ))}
           </>
@@ -203,14 +224,20 @@ export function Select({
             setOpen(!open)
           }}
           placeholder={
-            !multiple ? selected[0]?.label || placeholder : placeholder
+            !multiple
+              ? useTranslation
+                ? selected[0]?.label
+                  ? t(selected[0]?.label)
+                  : placeholder
+                : selected[0]?.label || placeholder
+              : placeholder
           }
           className={cn(
             'flex-1 bg-transparent outline-none text-base font-light placeholder:text-utility-gray-500',
             isSelected && !multiple
               ? 'placeholder:text-utility-gray-900 font-light'
               : null,
-            !multiple ? 'cursor-pointer caret-transparent' : null
+            !multiple ? 'cursor-pointer caret-transparent min-w-0' : null
           )}
           disabled={disabled}
         />
@@ -232,10 +259,13 @@ export function Select({
         )}
       </div>
       <div className={`relative ${!multiple ? '' : 'hidden'}`}>
-        <CommandList data-testid="select-list">
+        <CommandList ref={comandListRef} data-testid="select-list">
           {open && options.length > 0 ? (
             <div className="absolute top-2 z-10 w-full rounded-md border bg-popover text-popover-foreground animate-in shadow-dropdown-shadow !border-utility-gray-200">
-              <CommandGroup className="h-full overflow-auto max-h-[200px]">
+              <CommandGroup
+                ref={comandListGroupRef}
+                className="h-full overflow-auto max-h-[200px]"
+              >
                 {options.map((option: Option, index) => (
                   <CommandItem
                     data-testid={`select-list-item-${index}`}
@@ -258,11 +288,11 @@ export function Select({
                     <div className="flex items-center gap-2">
                       {option.node && <div>{option.node}</div>}
                       <span className="text-utility-gray-900 font-medium">
-                        {option.label}
+                        {useTranslation ? t(option.label) : option.label}
                       </span>
                       {option.info && (
                         <span className="text-utility-gray-600 font-light">
-                          {option.info}
+                          {useTranslation ? t(option.info) : option.info}
                         </span>
                       )}
                     </div>
@@ -278,10 +308,13 @@ export function Select({
       </div>
       {multiple && (
         <div className="relative">
-          <CommandList data-testid="select-list">
+          <CommandList ref={comandListRef} data-testid="select-list">
             {open && options.length > 0 ? (
               <div className="absolute top-2 z-10 w-full rounded-md border bg-popover text-popover-foreground animate-in">
-                <CommandGroup className="h-full overflow-auto max-h-[200px]">
+                <CommandGroup
+                  ref={comandListGroupRef}
+                  className="h-full overflow-auto max-h-[200px]"
+                >
                   <CommandItem
                     data-testid={'select-all-list-item'}
                     key={'select-all'}
@@ -297,7 +330,9 @@ export function Select({
                   >
                     <div className="flex items-center gap-2">
                       <span className="text-utility-gray-900 font-medium">
-                        {selectAll ? 'Unselect All' : 'Select All'}
+                        {selectAll
+                          ? t('button-actions.unselect-all')
+                          : t('button-actions.select-all')}
                       </span>
                     </div>
                     {selectAll && (
@@ -326,11 +361,11 @@ export function Select({
                       <div className="flex items-center gap-2">
                         {option.node && <div>{option.node}</div>}
                         <span className="text-utility-gray-900 font-medium">
-                          {option.label}
+                          {useTranslation ? t(option.label) : option.label}
                         </span>
                         {option.info && (
                           <span className="text-utility-gray-600 font-light">
-                            {option.info}
+                            {useTranslation ? t(option.info) : option.info}
                           </span>
                         )}
                       </div>

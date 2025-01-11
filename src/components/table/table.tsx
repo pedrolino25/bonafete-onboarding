@@ -42,6 +42,12 @@ declare module '@tanstack/react-table' {
     reasign?: (id: string) => void
     schedule?: (id: string) => void
     register?: (id: string) => void
+    continue?: (id: string) => void
+    archive?: (data: string) => void
+    unarchive?: (data: string) => void
+    suspend?: (data: string) => void
+    activate?: (data: string) => void
+    viewOnboarding?: (data: string) => void
   }
 }
 
@@ -281,7 +287,9 @@ function Title({ children, rowCount, className, ...props }: TitleProps) {
       {...props}
     >
       {children}
-      <Badge color="success">{rowCount}</Badge>
+      <Badge color="gray" size="sm">
+        {rowCount}
+      </Badge>
     </h2>
   )
 }

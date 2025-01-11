@@ -179,8 +179,58 @@
 }
 
 @layer base {
+  :root {
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+  }
+
+  .dark {
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
   .date-picker-hide::-webkit-calendar-picker-indicator {
     @apply hidden;
     width: 0px !important;
+  }
+  .quill {
+    @apply w-full min-h-52 h-[fill-available];
+  }
+
+  .ql-container {
+    @apply rounded-lg border border-solid shadow-xs border-utility-gray-300 bg-white disabled:cursor-not-allowed disabled:bg-utility-gray-50 disabled:!text-utility-gray-500 disabled:hover:!text-utility-gray-500 disabled:hover:placeholder:!text-utility-gray-500 focus-visible:outline-none;
+  }
+
+  .ql-blank {
+    @apply px-3.5 py-2.5;
+  }
+
+  .ql-editor::before {
+    @apply text-base font-light text-utility-gray-500 !not-italic; /* Tailwind classes */
+  }
+
+  .ql-editor:hover::before {
+    @apply !text-utility-gray-900 !not-italic; /* Tailwind classes */
+  }
+
+  .ql-editor strong,
+  .ql-editor blockquote,
+  .ql-editor h1,
+  .ql-editor h2,
+  .ql-editor h3,
+  .ql-editor p {
+    @apply text-base font-light text-utility-gray-900;
+  }
+
+  .quill:focus-within .ql-container {
+    @apply border-utility-brand-300 shadow-brand-md;
   }
 }
