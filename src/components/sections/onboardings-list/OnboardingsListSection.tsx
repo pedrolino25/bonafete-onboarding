@@ -469,16 +469,17 @@ export default function OnboardingsListSection({
           </DataTable.Title>
         </div>
         <DataTable.HeaderActionsContainer className="pl-4">
-          <div className="flex items-center gap-3">
-            <TextInput
-              startAdornment={
-                <Search className="h-4 w-4 text-utility-gray-600" />
-              }
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder={t('table.search')}
-              data-testid="search-input"
-              className="w-[320px] max-sm:w-full"
-            />
+          <div className="w-full flex items-center gap-3">
+            <div className="w-[320px] max-sm:w-full">
+              <TextInput
+                startAdornment={
+                  <Search className="h-4 w-4 text-utility-gray-600" />
+                }
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={t('table.search')}
+                data-testid="search-input"
+              />
+            </div>
             <Button
               color="secondary"
               startAdornment={<Filter className="h-4 w-4" />}

@@ -1,53 +1,222 @@
 'use client'
-
+import logo from '@/assets/logo.png'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+  SidebarProvider,
+  SidebarTrigger,
+  useIsMobile,
+} from '@/components/ui/sidebar'
 import { cn } from '@/lib/utils'
 import { routes } from '@/routes'
-import { usePathname } from 'next/navigation'
+import { handleSignOut } from '@/services/auth'
+
+import { ChevronRight, ChevronsUpDown } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import Image from 'next/image'
+import { usePathname, useRouter } from 'next/navigation'
 import { ReactNode } from 'react'
-import { Sidebar } from './sidebar/Sidebar'
-import { Topbar } from './topbar/Topbar'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu'
+import { Separator } from '../ui/separator'
 
 interface NavbarProps {
   children?: ReactNode
-  showIcon?: boolean
-  hideSideBar?: boolean
   topbarActions?: ReactNode
 }
-
-export function Navbar({
-  children,
-  showIcon = true,
-  hideSideBar = false,
-  topbarActions,
-}: NavbarProps) {
+export function Navbar({ children, topbarActions }: NavbarProps) {
+  const isMobile = useIsMobile()
   const path = usePathname()
-  return (
-    <Topbar
-      showIcon={showIcon}
-      topbarActions={topbarActions}
-      links={
-        path.includes('/applications')
-          ? routes.applications
-          : path.includes('/hosts')
-          ? routes.hosts
-          : path.includes('/processes')
-          ? routes.processes
-          : path.includes('/spaces')
-          ? routes.spaces
-          : undefined
+  const router = useRouter()
+  const t = useTranslations()
+  const signOut = async () => {
+    await handleSignOut()
+    router.push('/signin')
+  }
+
+  const getNavigationOptions = () => {
+    const alias = routes
+      ?.flatMap((route) => route.childrens)
+      ?.find((item) => item?.path === path)?.alias
+    if (alias) {
+      const childrens = routes?.find((item) => item.alias === alias)?.childrens
+      if (childrens && childrens?.length > 0) {
+        return {
+          context: routes.find((item) => item.alias === alias)?.title,
+          list: childrens?.map((children) => {
+            return {
+              path: children.path,
+              title: children.title,
+              isActive: children.path === path,
+            }
+          }),
+        }
       }
-    >
-      <div className="flex overflow-auto max-w-full ">
-        {!hideSideBar && <Sidebar links={routes.sidebar} />}
+    }
+    return undefined
+  }
+
+  const navigationOptions = getNavigationOptions()
+
+  return (
+    <SidebarProvider>
+      <Sidebar collapsible="icon">
+        <SidebarHeader>
+          <a href="/">
+            <SidebarMenuButton
+              size="lg"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+            >
+              <div className="flex aspect-square size-8 items-center justify-center rounded-lg text-sidebar-primary-foreground">
+                <Image
+                  src={logo}
+                  alt={'logo-image'}
+                  priority
+                  height={40}
+                  width={40}
+                  quality={70}
+                />
+              </div>
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-semibold">{t('company')}</span>
+                <span className="truncate text-xs">{t('app-name')}</span>
+              </div>
+            </SidebarMenuButton>
+          </a>
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel>Application</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {routes.map((item) => (
+                  <>
+                    {item.childrens && item.childrens.length > 0 ? (
+                      <Collapsible
+                        key={item.path}
+                        asChild
+                        className="group/collapsible"
+                      >
+                        <SidebarMenuItem>
+                          <CollapsibleTrigger asChild>
+                            <SidebarMenuButton tooltip={item.title}>
+                              {item.icon && <item.icon />}
+                              <span>{t(item.title)}</span>
+                              <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                            </SidebarMenuButton>
+                          </CollapsibleTrigger>
+                          <CollapsibleContent>
+                            <SidebarMenuSub>
+                              {item.childrens?.map((subItem) => (
+                                <SidebarMenuSubItem key={subItem.path}>
+                                  <SidebarMenuSubButton asChild>
+                                    <a href={subItem.path}>
+                                      <span>{t(subItem.title)}</span>
+                                    </a>
+                                  </SidebarMenuSubButton>
+                                </SidebarMenuSubItem>
+                              ))}
+                            </SidebarMenuSub>
+                          </CollapsibleContent>
+                        </SidebarMenuItem>
+                      </Collapsible>
+                    ) : (
+                      <SidebarMenuItem key={t(item.path)}>
+                        <SidebarMenuButton asChild>
+                          <a href={item.path}>
+                            <item.icon />
+                            <span>{t(item.title)}</span>
+                          </a>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    )}
+                  </>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
+      <main className="w-full">
         <div
           className={cn(
-            'w-full overflow-auto ',
-            !hideSideBar && 'max-h-[calc(100svh-56px)]'
+            'w-full flex justify-between items-center border-b h-12'
           )}
         >
-          {children}
+          <div className={cn('flex items-center w-full justify-between')}>
+            <div className={cn('flex items-center')}>
+              <SidebarTrigger />
+              {navigationOptions && (
+                <div className="flex items-center">
+                  <span className="text-sm">
+                    {t(navigationOptions.context)}
+                  </span>
+                  <Separator orientation="vertical" className="ml-2 h-[30px]" />
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <SidebarMenuButton
+                        size="lg"
+                        className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                      >
+                        <div className="grid flex-1 text-left text-sm leading-tight">
+                          <span className="truncate font-semibold">
+                            {t(
+                              navigationOptions.list?.find(
+                                (item) => item.isActive
+                              )?.title
+                            )}
+                          </span>
+                        </div>
+                        <ChevronsUpDown className="ml-auto" />
+                      </SidebarMenuButton>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+                      align="start"
+                      side={'bottom'}
+                      sideOffset={4}
+                    >
+                      {navigationOptions.list.map((item) => {
+                        return (
+                          <a href={item.path}>
+                            <DropdownMenuItem
+                              key={item.path}
+                              className="gap-2 p-2"
+                            >
+                              {t(item.title)}
+                            </DropdownMenuItem>
+                          </a>
+                        )
+                      })}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              )}
+            </div>
+            {topbarActions && <div className="pr-1">{topbarActions}</div>}
+          </div>
         </div>
-      </div>
-    </Topbar>
+        <div className={cn('w-full overflow-auto')}>{children}</div>
+      </main>
+    </SidebarProvider>
   )
 }

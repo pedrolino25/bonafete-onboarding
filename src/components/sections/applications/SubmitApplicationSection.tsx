@@ -200,12 +200,11 @@ export default function SubmitApplicationSection({
   return (
     <main>
       <Navbar
-        showIcon
-        hideSideBar
         topbarActions={
           <Button
             color="secondary"
             startAdornment={<ChevronLeft className="h-4 w-4" />}
+            variant="ghost"
             onClick={() => router.back()}
           >
             {t('navigation.back')}
