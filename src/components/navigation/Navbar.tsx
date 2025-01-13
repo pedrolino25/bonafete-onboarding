@@ -123,7 +123,7 @@ export function Navbar({ children, topbarActions }: NavbarProps) {
                         >
                           <SidebarMenuItem>
                             <CollapsibleTrigger asChild>
-                              <SidebarMenuButton tooltip={item.title}>
+                              <SidebarMenuButton tooltip={t(item.title)}>
                                 {item.icon && <item.icon />}
                                 <span>{t(item.title)}</span>
                                 <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
