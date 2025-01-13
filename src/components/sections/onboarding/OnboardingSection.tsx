@@ -274,13 +274,12 @@ export default function OnboardingSection({
   return (
     <main>
       <Navbar
-        showIcon
-        hideSideBar
         topbarActions={
           <Button
             color="secondary"
             startAdornment={<ChevronLeft className="h-4 w-4" />}
             onClick={() => router.back()}
+            variant="ghost"
           >
             {t('navigation.back')}
           </Button>
