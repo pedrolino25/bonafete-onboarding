@@ -162,7 +162,7 @@ export function Navbar({ children, topbarActions }: NavbarProps) {
           ))}
         </SidebarContent>
         <SidebarFooter>
-          <SidebarMenuButton tooltip={t('signin.logout')}>
+          <SidebarMenuButton tooltip={t('signin.logout')} onClick={signOut}>
             <LogOut className="h-4 w-4" />
             <span>{t('signin.logout')}</span>
           </SidebarMenuButton>
@@ -180,7 +180,7 @@ export function Navbar({ children, topbarActions }: NavbarProps) {
               <SidebarTrigger />
               {navigationOptions && (
                 <div className="flex items-center">
-                  <span className="text-sm">
+                  <span className="text-sm text-nowrap">
                     {t(navigationOptions.context)}
                   </span>
                   <Separator orientation="vertical" className="ml-2 h-[30px]" />
