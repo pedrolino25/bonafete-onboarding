@@ -162,7 +162,7 @@ export function Navbar({ children, topbarActions }: NavbarProps) {
           ))}
         </SidebarContent>
         <SidebarFooter>
-          <SidebarMenuButton tooltip={t('signin.logout')}>
+          <SidebarMenuButton tooltip={t('signin.logout')} onClick={signOut}>
             <LogOut className="h-4 w-4" />
             <span>{t('signin.logout')}</span>
           </SidebarMenuButton>
