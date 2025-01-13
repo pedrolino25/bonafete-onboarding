@@ -55,14 +55,15 @@ export function Navbar({ children, topbarActions }: NavbarProps) {
   }
 
   const getNavigationOptions = () => {
-    const alias = routes
+    const items = routes?.flatMap((route) => route.links)
+    const alias = items
       ?.flatMap((route) => route.childrens)
       ?.find((item) => item?.path === path)?.alias
     if (alias) {
-      const childrens = routes?.find((item) => item.alias === alias)?.childrens
+      const childrens = items?.find((item) => item.alias === alias)?.childrens
       if (childrens && childrens?.length > 0) {
         return {
-          context: routes.find((item) => item.alias === alias)?.title,
+          context: items.find((item) => item.alias === alias)?.title,
           list: childrens?.map((children) => {
             return {
               path: children.path,
@@ -105,56 +106,60 @@ export function Navbar({ children, topbarActions }: NavbarProps) {
           </a>
         </SidebarHeader>
         <SidebarContent>
-          <SidebarGroup>
-            <SidebarGroupLabel>Application</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {routes.map((item) => (
-                  <>
-                    {item.childrens && item.childrens.length > 0 ? (
-                      <Collapsible
-                        key={item.path}
-                        asChild
-                        className="group/collapsible"
-                      >
-                        <SidebarMenuItem>
-                          <CollapsibleTrigger asChild>
-                            <SidebarMenuButton tooltip={item.title}>
-                              {item.icon && <item.icon />}
+          {routes.map((route) => (
+            <SidebarGroup>
+              {route.title && (
+                <SidebarGroupLabel>{t(route.title)}</SidebarGroupLabel>
+              )}
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {route.links.map((item) => (
+                    <>
+                      {item.childrens && item.childrens.length > 0 ? (
+                        <Collapsible
+                          key={item.path}
+                          asChild
+                          className="group/collapsible"
+                        >
+                          <SidebarMenuItem>
+                            <CollapsibleTrigger asChild>
+                              <SidebarMenuButton tooltip={item.title}>
+                                {item.icon && <item.icon />}
+                                <span>{t(item.title)}</span>
+                                <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                              </SidebarMenuButton>
+                            </CollapsibleTrigger>
+                            <CollapsibleContent>
+                              <SidebarMenuSub>
+                                {item.childrens?.map((subItem) => (
+                                  <SidebarMenuSubItem key={subItem.path}>
+                                    <SidebarMenuSubButton asChild>
+                                      <a href={subItem.path}>
+                                        <span>{t(subItem.title)}</span>
+                                      </a>
+                                    </SidebarMenuSubButton>
+                                  </SidebarMenuSubItem>
+                                ))}
+                              </SidebarMenuSub>
+                            </CollapsibleContent>
+                          </SidebarMenuItem>
+                        </Collapsible>
+                      ) : (
+                        <SidebarMenuItem key={t(item.path)}>
+                          <SidebarMenuButton asChild>
+                            <a href={item.path}>
+                              <item.icon />
                               <span>{t(item.title)}</span>
-                              <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                            </SidebarMenuButton>
-                          </CollapsibleTrigger>
-                          <CollapsibleContent>
-                            <SidebarMenuSub>
-                              {item.childrens?.map((subItem) => (
-                                <SidebarMenuSubItem key={subItem.path}>
-                                  <SidebarMenuSubButton asChild>
-                                    <a href={subItem.path}>
-                                      <span>{t(subItem.title)}</span>
-                                    </a>
-                                  </SidebarMenuSubButton>
-                                </SidebarMenuSubItem>
-                              ))}
-                            </SidebarMenuSub>
-                          </CollapsibleContent>
+                            </a>
+                          </SidebarMenuButton>
                         </SidebarMenuItem>
-                      </Collapsible>
-                    ) : (
-                      <SidebarMenuItem key={t(item.path)}>
-                        <SidebarMenuButton asChild>
-                          <a href={item.path}>
-                            <item.icon />
-                            <span>{t(item.title)}</span>
-                          </a>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    )}
-                  </>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
+                      )}
+                    </>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          ))}
         </SidebarContent>
         <SidebarFooter>
           <SidebarMenuButton tooltip={t('signin.logout')}>
