@@ -8,6 +8,7 @@ import {
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -19,14 +20,14 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarProvider,
+  SidebarRail,
   SidebarTrigger,
-  useIsMobile,
 } from '@/components/ui/sidebar'
 import { cn } from '@/lib/utils'
 import { routes } from '@/routes'
 import { handleSignOut } from '@/services/auth'
 
-import { ChevronRight, ChevronsUpDown } from 'lucide-react'
+import { ChevronRight, ChevronsUpDown, LogOut } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
@@ -44,10 +45,10 @@ interface NavbarProps {
   topbarActions?: ReactNode
 }
 export function Navbar({ children, topbarActions }: NavbarProps) {
-  const isMobile = useIsMobile()
   const path = usePathname()
   const router = useRouter()
   const t = useTranslations()
+
   const signOut = async () => {
     await handleSignOut()
     router.push('/signin')
@@ -155,6 +156,13 @@ export function Navbar({ children, topbarActions }: NavbarProps) {
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
+        <SidebarFooter>
+          <SidebarMenuButton tooltip={t('signin.logout')}>
+            <LogOut className="h-4 w-4" />
+            <span>{t('signin.logout')}</span>
+          </SidebarMenuButton>
+        </SidebarFooter>
+        <SidebarRail />
       </Sidebar>
       <main className="w-full">
         <div
