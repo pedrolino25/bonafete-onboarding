@@ -82,6 +82,7 @@ export default function ApplicationsListSection({
                 <Button
                   variant="link"
                   color="secondary"
+                  className="text-utility-gray-600"
                   onClick={() =>
                     column.toggleSorting(column.getIsSorted() === 'asc')
                   }
@@ -119,6 +120,7 @@ export default function ApplicationsListSection({
                 <Button
                   variant="link"
                   color="secondary"
+                  className="text-utility-gray-600"
                   onClick={() =>
                     column.toggleSorting(column.getIsSorted() === 'asc')
                   }
@@ -146,6 +148,7 @@ export default function ApplicationsListSection({
                 <Button
                   variant="link"
                   color="secondary"
+                  className="text-utility-gray-600"
                   onClick={() =>
                     column.toggleSorting(column.getIsSorted() === 'asc')
                   }
@@ -170,6 +173,7 @@ export default function ApplicationsListSection({
           <Button
             variant="link"
             color="secondary"
+            className="text-utility-gray-600"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
             {t('columns.email')}
@@ -190,6 +194,7 @@ export default function ApplicationsListSection({
           <Button
             variant="link"
             color="secondary"
+            className="text-utility-gray-600"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
             {t('columns.phone')}
@@ -210,6 +215,7 @@ export default function ApplicationsListSection({
           <Button
             variant="link"
             color="secondary"
+            className="text-utility-gray-600"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
             {t('columns.locality')}
@@ -230,6 +236,7 @@ export default function ApplicationsListSection({
           <Button
             variant="link"
             color="secondary"
+            className="text-utility-gray-600"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
             {t('columns.type')}
@@ -250,6 +257,7 @@ export default function ApplicationsListSection({
           <Button
             variant="link"
             color="secondary"
+            className="text-utility-gray-600"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
             {t('columns.max_of_persons')}
@@ -270,6 +278,7 @@ export default function ApplicationsListSection({
           <Button
             variant="link"
             color="secondary"
+            className="text-utility-gray-600"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
             {t('columns.business_model')}
@@ -297,6 +306,7 @@ export default function ApplicationsListSection({
           <Button
             variant="link"
             color="secondary"
+            className="text-utility-gray-600"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
             {t('columns.targets')}
@@ -323,7 +333,11 @@ export default function ApplicationsListSection({
       id: 'photos',
       header: () => {
         return (
-          <Button variant="link" color="secondary">
+          <Button
+            variant="link"
+            color="secondary"
+            className="text-utility-gray-600"
+          >
             {t('columns.photos')}
           </Button>
         )
@@ -351,6 +365,7 @@ export default function ApplicationsListSection({
           <Button
             variant="link"
             color="secondary"
+            className="text-utility-gray-600"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
             {t('columns.created_at')}

@@ -38,7 +38,7 @@ export default function SpacesListSection({
       id: 'id',
       header: () => {
         return (
-          <div className="px-3.5 text-sm font-extrabold text-utility-gray-900">
+          <div className="px-3.5 text-sm font-extrabold text-utility-gray-600">
             {t('columns.id')}
           </div>
         )
@@ -52,6 +52,7 @@ export default function SpacesListSection({
           <Button
             variant="link"
             color="secondary"
+            className="text-utility-gray-600"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
             {t('columns.name')}
@@ -81,6 +82,7 @@ export default function SpacesListSection({
           <Button
             variant="link"
             color="secondary"
+            className="text-utility-gray-600"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
             {t('columns.host_name')}
@@ -110,6 +112,7 @@ export default function SpacesListSection({
           <Button
             variant="link"
             color="secondary"
+            className="text-utility-gray-600"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
             {t('columns.locality')}
@@ -130,6 +133,7 @@ export default function SpacesListSection({
           <Button
             variant="link"
             color="secondary"
+            className="text-utility-gray-600"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
             {t('columns.type')}
@@ -153,6 +157,7 @@ export default function SpacesListSection({
           <Button
             variant="link"
             color="secondary"
+            className="text-utility-gray-600"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
             {t('columns.business_model')}
@@ -180,6 +185,7 @@ export default function SpacesListSection({
           <Button
             variant="link"
             color="secondary"
+            className="text-utility-gray-600"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
             {t('columns.targets')}
@@ -209,6 +215,7 @@ export default function SpacesListSection({
           <Button
             variant="link"
             color="secondary"
+            className="text-utility-gray-600"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
             {t('columns.created_at')}
