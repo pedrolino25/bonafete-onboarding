@@ -106,75 +106,83 @@ function SpaceCard({ space, onArchive, onPublish }: SpaceCardProps) {
                     align="start"
                     className="w-fit flex flex-col gap-1 p-2"
                   >
-                    {space.status !== SpaceStatus.Archived && (
+                    {space.status !== SpaceStatus.Archived &&
+                      space.status !== SpaceStatus.Active && (
+                        <>
+                          <Button
+                            size="xs"
+                            color="destructive"
+                            startAdornment={<Ban className="w-4 h-4" />}
+                            variant="outline"
+                            onClick={onArchive}
+                            className="mb-2 px-6"
+                          >
+                            {t('host-section.archive')}
+                          </Button>
+                          <Button
+                            size="xs"
+                            color="secondary"
+                            startAdornment={<Pencil className="w-4 h-4" />}
+                            onClick={() =>
+                              router.push(`/edit-space?id=${space.id}`)
+                            }
+                            className="mb-2 px-6"
+                          >
+                            {t('host-section.edit')}
+                          </Button>
+                        </>
+                      )}
+
+                    {space.status === SpaceStatus.Pending && (
                       <Button
                         size="xs"
-                        color="destructive"
-                        startAdornment={<Ban className="w-4 h-4" />}
-                        variant="outline"
-                        onClick={onArchive}
-                        className="mb-2 px-6"
+                        color="success"
+                        startAdornment={<ShieldCheck className="w-4 h-4" />}
+                        onClick={onPublish}
+                        className="px-6"
                       >
-                        {t('host-section.archive')}
+                        {t('host-section.publish')}
                       </Button>
                     )}
-                    <Button
-                      size="xs"
-                      color="secondary"
-                      startAdornment={<Pencil className="w-4 h-4" />}
-                      onClick={() => router.push(`/edit-space?id=${space.id}`)}
-                      className="mb-2 px-6"
-                    >
-                      {t('host-section.edit')}
-                    </Button>
-                    {space.status !== SpaceStatus.Active &&
-                      space.status !== SpaceStatus.Draft && (
-                        <Button
-                          size="xs"
-                          color="success"
-                          startAdornment={<ShieldCheck className="w-4 h-4" />}
-                          onClick={onPublish}
-                          className="px-6"
-                        >
-                          {t('host-section.publish')}
-                        </Button>
-                      )}
                   </PopoverContent>
                 </Popover>
               </div>
             </div>
           </div>
           <div className="block flex gap-4 max-sm:hidden">
-            {space.status !== SpaceStatus.Archived && (
+            {space.status !== SpaceStatus.Archived &&
+              space.status !== SpaceStatus.Active && (
+                <>
+                  <Button
+                    size="xs"
+                    color="destructive"
+                    variant="outline"
+                    startAdornment={<Ban className="w-4 h-4" />}
+                    onClick={onArchive}
+                  >
+                    {t('host-section.archive')}
+                  </Button>
+                  <Button
+                    size="xs"
+                    color="secondary"
+                    startAdornment={<Pencil className="w-4 h-4" />}
+                    onClick={() => router.push(`/edit-space?id=${space.id}`)}
+                  >
+                    {t('host-section.edit')}
+                  </Button>
+                </>
+              )}
+
+            {space.status === SpaceStatus.Pending && (
               <Button
                 size="xs"
-                color="destructive"
-                variant="outline"
-                startAdornment={<Ban className="w-4 h-4" />}
-                onClick={onArchive}
+                color="success"
+                startAdornment={<ShieldCheck className="w-4 h-4" />}
+                onClick={onPublish}
               >
-                {t('host-section.archive')}
+                {t('host-section.publish')}
               </Button>
             )}
-            <Button
-              size="xs"
-              color="secondary"
-              startAdornment={<Pencil className="w-4 h-4" />}
-              onClick={() => router.push(`/edit-space?id=${space.id}`)}
-            >
-              {t('host-section.edit')}
-            </Button>
-            {space.status !== SpaceStatus.Active &&
-              space.status !== SpaceStatus.Draft && (
-                <Button
-                  size="xs"
-                  color="success"
-                  startAdornment={<ShieldCheck className="w-4 h-4" />}
-                  onClick={onPublish}
-                >
-                  {t('host-section.publish')}
-                </Button>
-              )}
           </div>
         </div>
       </div>
