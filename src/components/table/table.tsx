@@ -106,7 +106,7 @@ function Table<TData, TValue>({
   return (
     <div
       ref={scrollableContainerRef}
-      className="max-h-[calc(100vh-160px)] overflow-auto bg-white border-t-0"
+      className="max-h-[calc(100vh-160px)] overflow-auto bg-white border-t-0 px-4 max-sm:px-2"
     >
       <ShadcnTable data-testid="table">
         <TableHeader data-testid="table-header">
@@ -114,6 +114,7 @@ function Table<TData, TValue>({
             <TableRow
               key={headerGroup.id}
               data-testid={`table-header-row-${rowIndex}`}
+              className="!rounded-md !border-b-0"
             >
               {headerGroup.headers.map((header, headIndex) => {
                 return (
@@ -248,12 +249,7 @@ function HeaderContainer({
   className,
 }: React.InputHTMLAttributes<HTMLDivElement>) {
   return (
-    <div
-      className={cn(
-        'bg-white border-b-[1px] border-utility-gray-200',
-        className
-      )}
-    >
+    <div className={cn('bg-white border-utility-gray-200', className)}>
       <div className="flex max-sm:flex-col items-center justify-between">
         {children}
       </div>

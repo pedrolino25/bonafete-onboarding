@@ -72,7 +72,7 @@ export default function OnboardingsListSection({
       id: 'id',
       header: () => {
         return (
-          <div className="px-3.5 text-sm font-extrabold text-utility-gray-900">
+          <div className="px-3.5 text-sm font-extrabold text-utility-gray-600">
             {t('columns.id')}
           </div>
         )
@@ -88,6 +88,7 @@ export default function OnboardingsListSection({
                 <Button
                   variant="link"
                   color="secondary"
+                  className="text-utility-gray-600"
                   onClick={() =>
                     column.toggleSorting(column.getIsSorted() === 'asc')
                   }
@@ -118,6 +119,7 @@ export default function OnboardingsListSection({
           <Button
             variant="link"
             color="secondary"
+            className="text-utility-gray-600"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
             {t('columns.assigned_user_name')}
@@ -138,6 +140,7 @@ export default function OnboardingsListSection({
           <Button
             variant="link"
             color="secondary"
+            className="text-utility-gray-600"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
             {t('columns.name')}
@@ -158,6 +161,7 @@ export default function OnboardingsListSection({
           <Button
             variant="link"
             color="secondary"
+            className="text-utility-gray-600"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
             {t('columns.email')}
@@ -178,6 +182,7 @@ export default function OnboardingsListSection({
           <Button
             variant="link"
             color="secondary"
+            className="text-utility-gray-600"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
             {t('columns.phone')}
@@ -198,6 +203,7 @@ export default function OnboardingsListSection({
           <Button
             variant="link"
             color="secondary"
+            className="text-utility-gray-600"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
             {t('columns.fase_order')}
@@ -260,6 +266,7 @@ export default function OnboardingsListSection({
           <Button
             variant="link"
             color="secondary"
+            className="text-utility-gray-600"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
             {t('columns.created_at')}
