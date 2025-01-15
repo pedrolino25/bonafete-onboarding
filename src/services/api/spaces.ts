@@ -25,22 +25,19 @@ export enum SpaceStatus {
 const getSpacesListByStatus = async (
   status: SpaceStatus
 ): Promise<SpaceListItemResponse[]> => {
-  const response = await fetch(
-    `${ROOT}/api/onboarding/spaces-list?status=${status}`,
-    {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
-      },
-    }
-  )
+  const response = await fetch(`${ROOT}/api/space/list?status=${status}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+  })
   return response.json()
 }
 
 const verifySpaceTitle = async (title: string, id: string): Promise<string> => {
   const response = await fetch(
-    `${ROOT}/api/onboarding/verify-space-title?url=${title}&id=${id}`,
+    `${ROOT}/api/space/verify-title?url=${title}&id=${id}`,
     {
       method: 'GET',
       headers: {
@@ -59,7 +56,7 @@ interface CreateSpaceProps {
 const createSpace = async (
   data: CreateSpaceProps
 ): Promise<SpaceListItemResponse> => {
-  const response = await fetch(`${ROOT}/api/onboarding/create-space`, {
+  const response = await fetch(`${ROOT}/api/space/create`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -78,7 +75,7 @@ interface UpdateSpaceStatusProps {
 const updateSpaceStatus = async (
   data: UpdateSpaceStatusProps
 ): Promise<SpaceListItemResponse> => {
-  const response = await fetch(`${ROOT}/api/onboarding/space-status`, {
+  const response = await fetch(`${ROOT}/api/space/status`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',

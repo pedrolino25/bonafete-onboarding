@@ -28,16 +28,13 @@ export enum HostsStatus {
 const getHostsListByStatus = async (
   status: HostsStatus
 ): Promise<HostsListItemResponse[]> => {
-  const response = await fetch(
-    `${ROOT}/api/onboarding/hosts-list?status=${status}`,
-    {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
-      },
-    }
-  )
+  const response = await fetch(`${ROOT}/api/host/list?status=${status}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+  })
   return response.json()
 }
 
@@ -64,7 +61,7 @@ interface HostInfoResponse {
 }
 
 const getHostInfo = async (id: string): Promise<HostInfoResponse> => {
-  const response = await fetch(`${ROOT}/api/onboarding/host-info?id=${id}`, {
+  const response = await fetch(`${ROOT}/api/onboarding/host?id=${id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
