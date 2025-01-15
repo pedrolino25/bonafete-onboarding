@@ -681,7 +681,7 @@ export default function ApplicationsListSection({
         />
       )}
       <Dialog open={openPhotos} onOpenChange={setOpenPhotos}>
-        <DialogContent className="max-w-[1024px] max-h-svh">
+        <DialogContent className="max-w-[1024px] max-sm:max-w-100svw max-h-svh">
           <DialogHeader>
             <DialogTitle>{t('titles.photos')}</DialogTitle>
           </DialogHeader>
@@ -717,7 +717,7 @@ export default function ApplicationsListSection({
       </Dialog>
 
       <Dialog open={openAccept} onOpenChange={setOpenAccept}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] max-sm:max-w-100svw">
           <DialogHeader>
             <DialogTitle>{t('titles.accept-application')}</DialogTitle>
             <DialogDescription className="pt-2">
@@ -763,7 +763,7 @@ export default function ApplicationsListSection({
       </Dialog>
 
       <Dialog open={openReject} onOpenChange={setOpenReject}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] max-sm:max-w-100svw">
           <DialogHeader>
             <DialogTitle>{t('titles.reject')}</DialogTitle>
             <DialogDescription className="pt-2 pb-6">
@@ -790,7 +790,7 @@ export default function ApplicationsListSection({
       </Dialog>
 
       <Dialog open={openReasign} onOpenChange={setOpenReasign}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] max-sm:max-w-100svw">
           <DialogHeader>
             <DialogTitle>{t('titles.reasign')}</DialogTitle>
             <DialogDescription className="pt-2">
@@ -835,7 +835,7 @@ export default function ApplicationsListSection({
         </DialogContent>
       </Dialog>
       <Dialog open={openSchedule} onOpenChange={setOpenSchedule}>
-        <DialogContent className="sm:max-w-[380px]">
+        <DialogContent className="sm:max-w-[380px] max-sm:max-w-100svw">
           <DialogHeader>
             <DialogTitle>{t('titles.schedule')}</DialogTitle>
             <DialogDescription className="pt-2">
@@ -878,7 +878,7 @@ export default function ApplicationsListSection({
       </Dialog>
 
       <Dialog open={openStartOnboarding} onOpenChange={setOpenStartOnboarding}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] max-sm:max-w-100svw">
           <DialogHeader>
             <DialogTitle>{t('titles.init-process')}</DialogTitle>
             <DialogDescription className="pt-2 pb-6">

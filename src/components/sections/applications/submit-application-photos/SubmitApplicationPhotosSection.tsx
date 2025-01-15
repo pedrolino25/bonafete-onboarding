@@ -177,7 +177,7 @@ export default function SubmitApplicationPhotosSection({
         </div>
       </div>
       <Dialog open={viewPhotos} onOpenChange={setViewPhotos}>
-        <DialogContent className="max-w-[1024px] max-h-svh">
+        <DialogContent className="max-w-[1024px] max-sm:max-w-100svw max-h-svh">
           <DialogHeader>
             <DialogTitle>{t('titles.photos')}</DialogTitle>
           </DialogHeader>

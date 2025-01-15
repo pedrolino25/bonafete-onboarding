@@ -222,7 +222,7 @@ export default function OnboardingIntro({
       </div>
 
       <Dialog open={openDocuments} onOpenChange={setOpenDocuments}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="max-w-[500px] max-sm:max-w-100svw">
           <DialogHeader>
             <DialogTitle>{t('sections.onboarding.documentation')}</DialogTitle>
           </DialogHeader>
