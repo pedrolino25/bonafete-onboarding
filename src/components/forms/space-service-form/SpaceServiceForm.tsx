@@ -479,7 +479,7 @@ export default function SpaceServiceForm({
         </Button>
       </div>
       <Dialog open={openDelete} onOpenChange={setOpenDelete}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] max-sm:max-w-100svw">
           <DialogHeader>
             <DialogTitle>{t('titles.delete-service')}</DialogTitle>
             <DialogDescription className="pt-2 pb-6">
