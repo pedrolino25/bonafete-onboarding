@@ -40,7 +40,7 @@ const getApplicationsListByStatus = async (
   status: ApplicationStatus
 ): Promise<ApplicationsListItemResponse[]> => {
   const response = await fetch(
-    `${ROOT}/api/onboarding/application/list?status=${status}`,
+    `${ROOT}/api/application/list?status=${status}`,
     {
       method: 'GET',
       headers: {
@@ -60,7 +60,7 @@ interface AcceptApplicationProps {
 const acceptApplication = async (
   data: AcceptApplicationProps
 ): Promise<ApplicationsListItemResponse> => {
-  const response = await fetch(`${ROOT}/api/onboarding/application/accept`, {
+  const response = await fetch(`${ROOT}/api/application/accept`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -78,7 +78,7 @@ interface RejectApplicationProps {
 const rejectApplication = async (
   data: RejectApplicationProps
 ): Promise<ApplicationsListItemResponse> => {
-  const response = await fetch(`${ROOT}/api/onboarding/application/reject`, {
+  const response = await fetch(`${ROOT}/api/application/reject`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -97,7 +97,7 @@ interface ReasignApplicationProps {
 const reasignApplication = async (
   data: ReasignApplicationProps
 ): Promise<ApplicationsListItemResponse> => {
-  const response = await fetch(`${ROOT}/api/onboarding/application/reasign`, {
+  const response = await fetch(`${ROOT}/api/application/reasign`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -116,7 +116,7 @@ interface ScheduleApplicationProps {
 const scheduleApplication = async (
   data: ScheduleApplicationProps
 ): Promise<ApplicationsListItemResponse> => {
-  const response = await fetch(`${ROOT}/api/onboarding/application/schedule`, {
+  const response = await fetch(`${ROOT}/api/application/schedule`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -163,7 +163,7 @@ const getUserApplications = async (
   email: string
 ): Promise<UserApplicationsResponse> => {
   const response = await fetch(
-    `${ROOT}/api/onboarding/user-applications?email=${email}`,
+    `${ROOT}/api/application/user-applications?email=${email}`,
     {
       method: 'GET',
       headers: {
@@ -192,7 +192,7 @@ interface CreateApplicationParams {
 const submitApplication = async (
   data: CreateApplicationParams
 ): Promise<UserApplicationsResponse> => {
-  const response = await fetch(`${ROOT}/api/onboarding/application`, {
+  const response = await fetch(`${ROOT}/api/application/submit`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',

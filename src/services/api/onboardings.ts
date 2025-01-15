@@ -304,7 +304,7 @@ export interface SaveOnboardingSpaceInfoProps {
 const saveOnboardingSpaceInfo = async (
   data: SaveOnboardingSpaceInfoProps
 ): Promise<unknown> => {
-  const response = await fetch(`${ROOT}/api/onboarding/space-info`, {
+  const response = await fetch(`${ROOT}/api/space/info`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -324,7 +324,7 @@ export interface SaveOnboardingSpacePhotosProps {
 const saveOnboardingSpacePhotos = async (
   data: SaveOnboardingSpacePhotosProps
 ): Promise<unknown> => {
-  const response = await fetch(`${ROOT}/api/onboarding/space-photos`, {
+  const response = await fetch(`${ROOT}/api/space/photos`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -344,17 +344,14 @@ export interface UpdateOnboardingStatusProps {
 const updateOnboardingStatus = async (
   data: UpdateOnboardingStatusProps
 ): Promise<unknown> => {
-  const response = await fetch(
-    `${ROOT}/api/onboarding/update-onboarding-status`,
-    {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
-      },
-      body: JSON.stringify(data),
-    }
-  )
+  const response = await fetch(`${ROOT}/api/onboarding/status`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+    body: JSON.stringify(data),
+  })
   return response.json()
 }
 
@@ -400,7 +397,7 @@ export interface UpdateSpaceOffersRentalParameters {
 const updateSpaceOffersRental = async (
   data: UpdateSpaceOffersRentalParameters
 ): Promise<unknown> => {
-  const response = await fetch(`${ROOT}/api/onboarding/space-rental`, {
+  const response = await fetch(`${ROOT}/api/space/rental`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -534,7 +531,7 @@ export interface UpdateSpacePackageParameters {
 const updateSpacePackage = async (
   data: UpdateSpacePackageParameters
 ): Promise<unknown> => {
-  const response = await fetch(`${ROOT}/api/onboarding/space-package`, {
+  const response = await fetch(`${ROOT}/api/space/package`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -552,7 +549,7 @@ export interface DeleteSpacePackageParameters {
 const deleteSpacePackage = async (
   data: DeleteSpacePackageParameters
 ): Promise<unknown> => {
-  const response = await fetch(`${ROOT}/api/onboarding/space-package`, {
+  const response = await fetch(`${ROOT}/api/space/package`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
@@ -571,17 +568,14 @@ export interface UpdateOffersOnboardingStatusParameters {
 const updateOffersOnboardingStatus = async (
   data: UpdateOffersOnboardingStatusParameters
 ): Promise<unknown> => {
-  const response = await fetch(
-    `${ROOT}/api/onboarding/update-offers-onboarding-status`,
-    {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
-      },
-      body: JSON.stringify(data),
-    }
-  )
+  const response = await fetch(`${ROOT}/api/onboarding/space/status`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+    body: JSON.stringify(data),
+  })
   return response.json()
 }
 
@@ -602,7 +596,7 @@ export interface UpdateSpaceServiceParameters {
 const updateSpaceService = async (
   data: UpdateSpaceServiceParameters
 ): Promise<unknown> => {
-  const response = await fetch(`${ROOT}/api/onboarding/space-service`, {
+  const response = await fetch(`${ROOT}/api/space/service`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -620,7 +614,7 @@ export interface DeleteSpaceServiceParameters {
 const deleteSpaceService = async (
   data: DeleteSpaceServiceParameters
 ): Promise<unknown> => {
-  const response = await fetch(`${ROOT}/api/onboarding/space-service`, {
+  const response = await fetch(`${ROOT}/api/space/service`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
@@ -658,7 +652,7 @@ export interface UpdateHostInfoParameters {
 const updateHostInfo = async (
   data: UpdateHostInfoParameters
 ): Promise<unknown> => {
-  const response = await fetch(`${ROOT}/api/onboarding/host-info`, {
+  const response = await fetch(`${ROOT}/api/onboarding/host`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -714,7 +708,7 @@ export interface UpdateHostStatusParameters {
 const updateHostStatus = async (
   data: UpdateHostStatusParameters
 ): Promise<unknown> => {
-  const response = await fetch(`${ROOT}/api/onboarding/update-host-status`, {
+  const response = await fetch(`${ROOT}/api/host/status`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
