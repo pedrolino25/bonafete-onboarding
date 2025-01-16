@@ -561,16 +561,6 @@ export default function HostInfoSection({
           <OnboardingFormLayout.Subtitle>
             {t('sections.onboarding.host-info-form.id-proof-subtitle')}
           </OnboardingFormLayout.Subtitle>
-          <p>
-            <OnboardingFormLayout.Subtitle>
-              • Nome: Pedro Silva
-            </OnboardingFormLayout.Subtitle>
-          </p>
-          <p>
-            <OnboardingFormLayout.Subtitle>
-              • Data de nascimento: 1991-11-25
-            </OnboardingFormLayout.Subtitle>
-          </p>
         </div>
         <div className="col-span-3 max-sm:col-span-6">
           <StripeDocsInput
@@ -609,16 +599,6 @@ export default function HostInfoSection({
           <OnboardingFormLayout.Subtitle>
             {t('sections.onboarding.host-info-form.address-proof-subtitle')}
           </OnboardingFormLayout.Subtitle>
-          <p>
-            <OnboardingFormLayout.Subtitle>
-              • Nome: Pedro Silva
-            </OnboardingFormLayout.Subtitle>
-          </p>
-          <p>
-            <OnboardingFormLayout.Subtitle>
-              • Endereço: Rua 15 de outubro, lisboa 2770-146
-            </OnboardingFormLayout.Subtitle>
-          </p>
         </div>
         <div className="col-span-6">
           <StripeDocsInput
@@ -644,21 +624,6 @@ export default function HostInfoSection({
             <OnboardingFormLayout.Subtitle>
               {t('sections.onboarding.host-info-form.company-proof-subtitle')}
             </OnboardingFormLayout.Subtitle>
-            <p>
-              <OnboardingFormLayout.Subtitle>
-                • Empresa: Rua 15 de outubro, lisboa 2770-146
-              </OnboardingFormLayout.Subtitle>
-            </p>
-            <p>
-              <OnboardingFormLayout.Subtitle>
-                • Representante: Pedro Silva
-              </OnboardingFormLayout.Subtitle>
-            </p>
-            <p>
-              <OnboardingFormLayout.Subtitle>
-                • Endereço: Rua 15 de outubro, lisboa 2770-146
-              </OnboardingFormLayout.Subtitle>
-            </p>
           </div>
           <div className="col-span-6">
             <StripeDocsInput
@@ -684,16 +649,6 @@ export default function HostInfoSection({
           <p>
             <OnboardingFormLayout.Subtitle>
               {t('sections.onboarding.host-info-form.account-proof-subtitle')}
-            </OnboardingFormLayout.Subtitle>
-          </p>
-          <p>
-            <OnboardingFormLayout.Subtitle>
-              • Titular da conta: Pedro Silva
-            </OnboardingFormLayout.Subtitle>
-          </p>
-          <p>
-            <OnboardingFormLayout.Subtitle>
-              • IBAN: Rua 15 de outubro, lisboa 2770-146
             </OnboardingFormLayout.Subtitle>
           </p>
         </div>

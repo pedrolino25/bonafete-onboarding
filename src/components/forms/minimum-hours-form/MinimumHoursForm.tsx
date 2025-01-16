@@ -53,7 +53,7 @@ export default function MinimumHoursForm({
     }
 
   return (
-    <OnboardingFormLayout.Main>
+    <div className="w-full">
       <OnboardingFormLayout.Title>
         {t('sections.onboarding.rental-form.min-hours')}
       </OnboardingFormLayout.Title>
@@ -82,6 +82,6 @@ export default function MinimumHoursForm({
           </OnboardingFormLayout.Info>
         )}
       </OnboardingFormLayout.Container>
-    </OnboardingFormLayout.Main>
+    </div>
   )
 }

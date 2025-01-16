@@ -302,8 +302,8 @@ export default function OnboardingSection({
                 {section.value === OnboardingSections.Intro && (
                   <OnboardingIntro
                     documentation={{
-                      offers: data?.application.offers,
-                      kyc: data?.application.kyc,
+                      offers: data?.application?.offers || [],
+                      kyc: data?.application?.kyc || [],
                     }}
                     onboardingInfo={data}
                     completed={
