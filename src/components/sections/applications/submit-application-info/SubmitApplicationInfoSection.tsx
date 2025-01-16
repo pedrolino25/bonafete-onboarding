@@ -14,7 +14,7 @@ import {
   LocalityListItemResponse,
   SpaceTargetListItemResponse,
   SpaceTypeListItemResponse,
-} from '@/services/api/static'
+} from '@/services/api/reference-data'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery } from '@tanstack/react-query'
 import { ChevronRight, CircleCheck, LoaderCircle, Search } from 'lucide-react'
@@ -338,8 +338,8 @@ export default function SubmitApplicationInfoSection({
           placeholder={t('table.select-from-list')}
           options={localitiesList?.map((item) => {
             return {
-              value: item.value,
-              label: item.label,
+              value: item.id,
+              label: item.title,
             }
           })}
           value={getValues().locality}

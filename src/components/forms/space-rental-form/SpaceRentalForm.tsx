@@ -1,11 +1,10 @@
 'use client'
 
-import { SelectInput } from '@/components/inputs/select-input/select-input'
 import { OnboardingFormLayout } from '@/components/layouts/onboarding-form'
 import { Button } from '@/components/ui/button'
-import { Option } from '@/components/ui/select'
+import { Switch } from '@/components/ui/switch'
 import { toast } from '@/lib/hooks/use-toast'
-import { BUSINESS_MODEL_OPTIONS, SpaceBusinessModel } from '@/lib/utils/consts'
+import { SpaceBusinessModel } from '@/lib/utils/consts'
 import {
   CancelationPolicy,
   OnboardingSpaceInfo,
@@ -32,57 +31,18 @@ import MinimumHoursForm, {
 } from '../minimum-hours-form/MinimumHoursForm'
 import RentalPriceForm, {
   rentalPriceFormSchema,
-  RentalPriceFormType,
 } from '../rental-price-form/RentalPriceForm'
 import ScheduleForm, { scheduleFormSchema } from '../schedule-form/ScheduleForm'
 
-const optionSchema = z.object({
-  value: z.string().min(1, 'Value is required'),
-  label: z.string().min(1, 'Label is required'),
-  info: z.string().optional(),
-  node: z.any().optional(),
-  disabled: z.any().optional(),
+const spaceRentalFormSchema = z.object({
+  business_model: z.string().min(1),
+  lotation_form: lotationFormSchema,
+  min_hours_form: minimumHoursFormSchema,
+  schedule_form: scheduleFormSchema,
+  price_form: rentalPriceFormSchema,
+  cleaning_fee_form: cleaningFeeFormSchema.optional(),
+  cancellation_policy_form: cancelationPolicyFormSchema,
 })
-
-const spaceRentalFormSchema = z
-  .object({
-    business_model: z.array(optionSchema).min(1),
-    lotation_form: lotationFormSchema.optional(),
-    min_hours_form: minimumHoursFormSchema.optional(),
-    schedule_form: scheduleFormSchema.optional(),
-    price_form: rentalPriceFormSchema,
-    cleaning_fee_form: cleaningFeeFormSchema.optional(),
-    cancellation_policy_form: cancelationPolicyFormSchema,
-  })
-  .refine((data) => {
-    if (
-      data.business_model &&
-      data.business_model[0] &&
-      data.business_model[0].value
-    ) {
-      if (data.business_model[0].value === SpaceBusinessModel.OnlyPackages) {
-        return !!(
-          data.price_form?.price_model?.[0]?.value &&
-          data.cancellation_policy_form?.base_refund &&
-          (data.price_form?.fixed_price_form?.price ||
-            data.price_form?.flexible_price_form?.base_price ||
-            data.price_form?.custom_price_form?.price_1)
-        )
-      } else {
-        return !!(
-          data.lotation_form?.lotation &&
-          data.min_hours_form?.min_hours &&
-          data.schedule_form?.friday_from &&
-          data.price_form?.price_model?.[0]?.value &&
-          data.cancellation_policy_form?.base_refund &&
-          (data.price_form?.fixed_price_form?.price ||
-            data.price_form?.flexible_price_form?.base_price ||
-            data.price_form?.custom_price_form?.price_1)
-        )
-      }
-    }
-    return false
-  })
 
 export type SpaceRentalFormType = z.infer<typeof spaceRentalFormSchema>
 
@@ -119,41 +79,13 @@ export default function SpaceRentalForm({
   const schedule_form = watch('schedule_form')
   const price_form = watch('price_form')
 
-  const requireFullConfiguration =
-    business_model?.length > 0 &&
-    business_model?.[0]?.value !== SpaceBusinessModel.OnlyPackages
-
-  const disableLotationForm = !business_model || business_model?.length === 0
-
   const disableMinHoursForm = !lotation_form
 
   const disableScheduleForm = !min_hours_form
 
-  const disablePriceForm =
-    (!schedule_form && requireFullConfiguration) ||
-    !business_model ||
-    business_model?.length === 0
+  const disablePriceForm = !schedule_form
 
   const disableCleaningFeeForm = !price_form || !price_form?.price_model
-
-  const handleSelectChange =
-    (field: keyof SpaceRentalFormType) => (option: Option[]) => {
-      setValue(field, option, { shouldValidate: true, shouldDirty: true })
-      if (
-        field === 'business_model' &&
-        option[0].value === SpaceBusinessModel.OnlyPackages
-      ) {
-        setValue('schedule_form', undefined, {
-          shouldValidate: true,
-          shouldDirty: true,
-        })
-        setValue('price_form', {} as RentalPriceFormType, {
-          shouldValidate: true,
-          shouldDirty: true,
-        })
-        setResetFormValues(true)
-      }
-    }
 
   const updateSpaceOffersRentalMutation = useMutation({
     mutationFn: updateSpaceOffersRental,
@@ -181,11 +113,12 @@ export default function SpaceRentalForm({
     values: SpaceRentalFormType
   ): CancelationPolicy => {
     return {
-      afterConfimation: parseInt(values.cancellation_policy_form.base_refund),
+      afterConfimation:
+        parseInt(values.cancellation_policy_form.base_refund) / 100,
       period: parseInt(values.cancellation_policy_form.late_cancellation_days),
-      afterPeriod: parseInt(
-        values.cancellation_policy_form.late_cancellation_refund
-      ),
+      afterPeriod:
+        parseInt(values.cancellation_policy_form.late_cancellation_refund) /
+        100,
       space: { id: spaceInfo.space_id },
       createdAt: new Date(),
     } as CancelationPolicy
@@ -386,11 +319,16 @@ export default function SpaceRentalForm({
   const onSubmit = (values: SpaceRentalFormType) => {
     setIsLoading(true)
     const data = {
-      onboarding_id: onboardingId,
-      space_id: spaceInfo.space_id,
-      business_model: values.business_model[0].value,
-      lotation: values.lotation_form?.lotation,
-      min_hours: values.min_hours_form?.min_hours,
+      onboarding_id: onboardingId as string,
+      space_id: spaceInfo.space_id as string,
+      business_model: (business_model
+        ? business_model
+        : SpaceBusinessModel.RentalAndPackages) as SpaceBusinessModel,
+      lotation: parseInt(values.lotation_form.lotation || '1'),
+      min_hours:
+        parseInt(values.min_hours_form.min_hours || '0') === 0
+          ? 1
+          : parseInt(values.min_hours_form?.min_hours),
       prices: getPricesObject(values),
       price_modality: values.price_form.price_model[0]?.value,
       cancellation_policy: getCancelationPolicyObject(values),
@@ -402,75 +340,42 @@ export default function SpaceRentalForm({
 
   return (
     <OnboardingFormLayout.Root>
-      <div className="w-full">
-        <OnboardingFormLayout.Title>
-          {t('columns.business_model')}
-        </OnboardingFormLayout.Title>
-        <OnboardingFormLayout.Subtitle>
-          {t('sections.onboarding.rental-form.business-model-title')}
-        </OnboardingFormLayout.Subtitle>
-        <OnboardingFormLayout.Container>
-          <SelectInput
-            required
-            data-testid="business_model"
-            placeholder={t('table.select-from-list')}
-            options={BUSINESS_MODEL_OPTIONS}
-            value={business_model}
-            onSelect={handleSelectChange('business_model')}
-            useTranslation
-          />
-          {business_model && business_model[0]?.value && (
-            <OnboardingFormLayout.Info>
-              {t(
-                `sections.onboarding.rental-form.explanation-messages.${business_model[0]?.value}`
-              )}
-            </OnboardingFormLayout.Info>
-          )}
-        </OnboardingFormLayout.Container>
-      </div>
-      {requireFullConfiguration && (
-        <LotationForm
-          disabled={disableLotationForm}
-          defaultValues={defaultValues?.lotation_form}
-          onChange={(value) =>
-            setValue('lotation_form', value, {
-              shouldValidate: true,
-              shouldDirty: true,
-            })
-          }
-        />
-      )}
-      {requireFullConfiguration && (
-        <MinimumHoursForm
-          disabled={disableMinHoursForm}
-          defaultValues={defaultValues?.min_hours_form}
-          onChange={(value) =>
-            setValue('min_hours_form', value, {
-              shouldValidate: true,
-              shouldDirty: true,
-            })
-          }
-        />
-      )}
-      {requireFullConfiguration && (
-        <ScheduleForm
-          resetFormValues={resetFormValues}
-          info={{
-            minHours:
-              min_hours_form && min_hours_form.min_hours
-                ? parseInt(min_hours_form?.min_hours)
-                : 1,
-          }}
-          disabled={disableScheduleForm}
-          defaultValues={defaultValues?.schedule_form}
-          onChange={(value) =>
-            setValue('schedule_form', value, {
-              shouldValidate: true,
-              shouldDirty: true,
-            })
-          }
-        />
-      )}
+      <LotationForm
+        defaultValues={defaultValues?.lotation_form}
+        onChange={(value) =>
+          setValue('lotation_form', value, {
+            shouldValidate: true,
+            shouldDirty: true,
+          })
+        }
+      />
+      <MinimumHoursForm
+        disabled={disableMinHoursForm}
+        defaultValues={defaultValues?.min_hours_form}
+        onChange={(value) =>
+          setValue('min_hours_form', value, {
+            shouldValidate: true,
+            shouldDirty: true,
+          })
+        }
+      />
+      <ScheduleForm
+        resetFormValues={resetFormValues}
+        info={{
+          minHours:
+            min_hours_form && min_hours_form.min_hours
+              ? parseInt(min_hours_form?.min_hours)
+              : 1,
+        }}
+        disabled={disableScheduleForm}
+        defaultValues={defaultValues?.schedule_form}
+        onChange={(value) =>
+          setValue('schedule_form', value, {
+            shouldValidate: true,
+            shouldDirty: true,
+          })
+        }
+      />
       <RentalPriceForm
         resetFormValues={resetFormValues}
         info={{
@@ -507,6 +412,33 @@ export default function SpaceRentalForm({
           })
         }
       />
+      <OnboardingFormLayout.Main>
+        <div className="flex gap-6 items-center justify-between">
+          <div>
+            <OnboardingFormLayout.Title>
+              {t('sections.onboarding.rental-form.business-model-title')}
+            </OnboardingFormLayout.Title>
+            <OnboardingFormLayout.Subtitle>
+              {t('sections.onboarding.rental-form.business-model-subtitle')}
+            </OnboardingFormLayout.Subtitle>
+          </div>
+          <Switch
+            onCheckedChange={(val) =>
+              setValue(
+                'business_model',
+                val
+                  ? SpaceBusinessModel.OnlyPackages
+                  : SpaceBusinessModel.RentalAndPackages,
+                {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                }
+              )
+            }
+            checked={business_model === SpaceBusinessModel.OnlyPackages}
+          />
+        </div>
+      </OnboardingFormLayout.Main>
       <div className="w-full flex justify-end pt-4">
         <Button
           className="px-10"

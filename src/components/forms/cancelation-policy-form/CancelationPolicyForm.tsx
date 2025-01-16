@@ -39,7 +39,7 @@ export default function CancelationPolicyForm({
     formState: { isValid, errors },
   } = useForm<CancelationPolicyFormType>({
     resolver: zodResolver(cancelationPolicyFormSchema),
-    defaultValues: defaultValues,
+    defaultValues,
   })
 
   const base_refund = watch('base_refund')
