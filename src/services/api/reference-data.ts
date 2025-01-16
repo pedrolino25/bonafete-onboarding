@@ -84,7 +84,7 @@ export interface PostalCodesListItemResponse {
   id: string
   city: string
   locality: string
-  postal_code: string
+  postalCode: string
   latitude: number
   longitude: number
 }

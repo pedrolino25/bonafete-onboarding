@@ -213,7 +213,7 @@ export default function SpaceInfoSection({
       city_id: values.city
         ? localitiesList?.find(
             (item) => splitCommaGetFirst(item.title) === values.city
-          )?.title
+          )?.id
         : undefined,
       city: values.city,
       latitude: values.latitude ? parseFloat(values.latitude) : undefined,
@@ -242,7 +242,7 @@ export default function SpaceInfoSection({
       setValue(field, value, { shouldValidate: true, shouldDirty: true })
       if (field === 'postal' && value && value.length >= 4) {
         const postalCode = postalCodesList?.find(
-          (item) => item.postal_code.toString() === value.substring(0, 4)
+          (item) => item.postalCode.toString() === value.substring(0, 4)
         )
         if (postalCode) {
           setValue('locality', postalCode?.locality, {
