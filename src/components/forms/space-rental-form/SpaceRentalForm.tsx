@@ -340,25 +340,6 @@ export default function SpaceRentalForm({
 
   return (
     <OnboardingFormLayout.Root>
-      <LotationForm
-        defaultValues={defaultValues?.lotation_form}
-        onChange={(value) =>
-          setValue('lotation_form', value, {
-            shouldValidate: true,
-            shouldDirty: true,
-          })
-        }
-      />
-      <MinimumHoursForm
-        disabled={disableMinHoursForm}
-        defaultValues={defaultValues?.min_hours_form}
-        onChange={(value) =>
-          setValue('min_hours_form', value, {
-            shouldValidate: true,
-            shouldDirty: true,
-          })
-        }
-      />
       <ScheduleForm
         resetFormValues={resetFormValues}
         info={{
@@ -376,22 +357,15 @@ export default function SpaceRentalForm({
           })
         }
       />
-      <RentalPriceForm
-        resetFormValues={resetFormValues}
-        info={{
-          minHour: schedule_form?.min_hour || [],
-          maxHour: schedule_form?.max_hour || [],
-        }}
-        disabled={disablePriceForm}
-        defaultValues={defaultValues?.price_form}
+      <LotationForm
+        defaultValues={defaultValues?.lotation_form}
         onChange={(value) =>
-          setValue('price_form', value, {
+          setValue('lotation_form', value, {
             shouldValidate: true,
             shouldDirty: true,
           })
         }
       />
-
       <CleaningFeeForm
         disabled={disableCleaningFeeForm}
         defaultValues={defaultValues?.cleaning_fee_form}
@@ -439,6 +413,32 @@ export default function SpaceRentalForm({
           />
         </div>
       </OnboardingFormLayout.Main>
+      <MinimumHoursForm
+        disabled={disableMinHoursForm}
+        defaultValues={defaultValues?.min_hours_form}
+        onChange={(value) =>
+          setValue('min_hours_form', value, {
+            shouldValidate: true,
+            shouldDirty: true,
+          })
+        }
+      />
+      <RentalPriceForm
+        resetFormValues={resetFormValues}
+        info={{
+          minHour: schedule_form?.min_hour || [],
+          maxHour: schedule_form?.max_hour || [],
+        }}
+        disabled={disablePriceForm}
+        defaultValues={defaultValues?.price_form}
+        onChange={(value) =>
+          setValue('price_form', value, {
+            shouldValidate: true,
+            shouldDirty: true,
+          })
+        }
+      />
+
       <div className="w-full flex justify-end pt-4">
         <Button
           className="px-10"
