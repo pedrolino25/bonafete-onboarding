@@ -332,7 +332,7 @@ export default function ScheduleForm({
     }
 
   return (
-    <OnboardingFormLayout.Main>
+    <div className="w-full">
       <OnboardingFormLayout.Title>
         {title || t('sections.onboarding.rental-form.schedule')}
       </OnboardingFormLayout.Title>
@@ -585,6 +585,6 @@ export default function ScheduleForm({
           </OnboardingFormLayout.Info>
         )}
       </OnboardingFormLayout.Container>
-    </OnboardingFormLayout.Main>
+    </div>
   )
 }

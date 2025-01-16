@@ -53,7 +53,7 @@ export default function LotationForm({
     }
 
   return (
-    <div className="w-full">
+    <OnboardingFormLayout.Main>
       <OnboardingFormLayout.Title>
         {t('sections.onboarding.rental-form.lotation')}
       </OnboardingFormLayout.Title>
@@ -82,6 +82,6 @@ export default function LotationForm({
           </OnboardingFormLayout.Info>
         )}
       </OnboardingFormLayout.Container>
-    </div>
+    </OnboardingFormLayout.Main>
   )
 }
