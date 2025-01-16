@@ -9,10 +9,10 @@ import { getOnboardingSpaceById } from '@/services/api/onboardings'
 import {
   LocalityListItemResponse,
   PostalCodesListItemResponse,
-  SpaceConvenienceResponse,
+  SpaceConvenienceListItem,
   SpaceTargetListItemResponse,
   SpaceTypeListItemResponse,
-} from '@/services/api/static'
+} from '@/services/api/reference-data'
 import { useQuery } from '@tanstack/react-query'
 import { ChevronLeft } from 'lucide-react'
 import { useTranslations } from 'next-intl'
@@ -34,7 +34,7 @@ export enum EditSpaceSections {
 
 interface EditSpaceSectionProps {
   localitiesList: LocalityListItemResponse[]
-  conveniencesList: SpaceConvenienceResponse
+  conveniencesList: SpaceConvenienceListItem[]
   spaceTypesList: SpaceTypeListItemResponse[]
   spaceTargetsList: SpaceTargetListItemResponse[]
   postalCodesList: PostalCodesListItemResponse[]
@@ -95,16 +95,13 @@ export default function EditSpaceSection({
   })
 
   const [conveniencesOptions] = useState<Option[]>(
-    conveniencesList.conveniences
-      .concat(conveniencesList.equipement)
-      .concat(conveniencesList.accessibility)
-      ?.map((option) => {
-        return {
-          label: option.label,
-          value: option.id,
-          disabled: option.id === '17',
-        }
-      }) as Option[]
+    conveniencesList?.map((option) => {
+      return {
+        label: option.label,
+        value: option.id,
+        disabled: option.id === '17',
+      }
+    }) as Option[]
   )
 
   const handlePageChange = (link: SidebarLink) => {

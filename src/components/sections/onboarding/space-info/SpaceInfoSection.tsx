@@ -13,14 +13,14 @@ import {
   OnboardingSpaceInfo,
   saveOnboardingSpaceInfo,
 } from '@/services/api/onboardings'
-import { verifySpaceTitle } from '@/services/api/spaces'
 import {
   LocalityListItemResponse,
   PostalCodesListItemResponse,
-  SpaceConvenienceResponse,
+  SpaceConvenienceListItem,
   SpaceTargetListItemResponse,
   SpaceTypeListItemResponse,
-} from '@/services/api/static'
+} from '@/services/api/reference-data'
+import { verifySpaceTitle } from '@/services/api/spaces'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import {
@@ -71,7 +71,7 @@ export type SpaceInfoFormType = z.infer<typeof spaceInfoFormSchema>
 interface SpaceInfoSectionProps {
   spaceInfo: OnboardingSpaceInfo
   localitiesList: LocalityListItemResponse[]
-  conveniencesList: SpaceConvenienceResponse
+  conveniencesList: SpaceConvenienceListItem[]
   spaceTypesList: SpaceTypeListItemResponse[]
   spaceTargetsList: SpaceTargetListItemResponse[]
   postalCodesList: PostalCodesListItemResponse[]
@@ -118,16 +118,13 @@ export default function SpaceInfoSection({
   )
 
   const [conveniencesOptions] = useState<Option[]>(
-    conveniencesList.conveniences
-      .concat(conveniencesList.equipement)
-      .concat(conveniencesList.accessibility)
-      ?.map((option) => {
-        return {
-          label: option.label,
-          value: option.id,
-          disabled: option.id === '17',
-        }
-      }) as Option[]
+    conveniencesList?.map((option) => {
+      return {
+        label: option.label,
+        value: option.id,
+        disabled: option.id === '17',
+      }
+    }) as Option[]
   )
 
   const {
@@ -215,8 +212,8 @@ export default function SpaceInfoSection({
       locality: values.locality,
       city_id: values.city
         ? localitiesList?.find(
-            (item) => splitCommaGetFirst(item.label) === values.city
-          )?.value
+            (item) => splitCommaGetFirst(item.title) === values.city
+          )?.title
         : undefined,
       city: values.city,
       latitude: values.latitude ? parseFloat(values.latitude) : undefined,

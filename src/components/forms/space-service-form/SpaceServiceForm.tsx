@@ -16,11 +16,10 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Option } from '@/components/ui/select'
+import { Switch } from '@/components/ui/switch'
 import { toast } from '@/lib/hooks/use-toast'
 import { uploadPictureToS3Bucket } from '@/lib/utils'
 import {
-  PACKAGES_AVAILABLE_OPTIONS,
-  PACKAGES_ONLY_OPTIONS,
   PRICING_MODEL_SERVICES_OPTIONS,
   ServicesPriceModel,
 } from '@/lib/utils/consts'
@@ -33,6 +32,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { Clock, Euro, Users } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { v4 } from 'uuid'
@@ -69,10 +69,10 @@ const spaceServiceFormSchema = z.object({
   description: z.string().optional(),
   price_modality: z.array(optionSchema).min(1),
   price: z.string().min(1),
-  min_hours: z.string().min(1).optional(),
+  min_hours: z.string().min(1),
   min_persons: z.string().min(1).optional(),
-  packages_only: z.array(optionSchema).min(1),
-  packages_available: z.array(optionSchema).min(1),
+  packages_only: z.boolean(),
+  mandatory: z.boolean(),
   photos: z.array(imageTypeSchema).max(4).optional(),
 })
 
@@ -83,6 +83,7 @@ export default function SpaceServiceForm({
   defaultValues,
   refetch,
 }: SpaceServiceFormProps) {
+  const router = useRouter()
   const t = useTranslations()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [openDelete, setOpenDelete] = useState<boolean>(false)
@@ -97,14 +98,8 @@ export default function SpaceServiceForm({
     defaultValues: {
       ...defaultValues,
       description: defaultValues?.description || '',
-      packages_available: defaultValues?.packages_available?.[0]
-        ? defaultValues?.packages_available
-        : [
-            {
-              value: 'true',
-              label: 'packages-available-options.true',
-            },
-          ],
+      packages_only: defaultValues?.packages_only?.toString() === 'true',
+      mandatory: defaultValues?.mandatory?.toString() === 'true',
     },
   })
 
@@ -115,7 +110,7 @@ export default function SpaceServiceForm({
   const min_hours = watch('min_hours')
   const min_persons = watch('min_persons')
   const packages_only = watch('packages_only')
-  const packages_available = watch('packages_available')
+  const mandatory = watch('mandatory')
   const photos = watch('photos')
 
   const handleSelectChange =
@@ -133,12 +128,12 @@ export default function SpaceServiceForm({
   const deleteSpaceServiceMutation = useMutation({
     mutationFn: deleteSpaceService,
     onSuccess: () => {
-      refetch()
       toast({
         variant: 'success',
         title: t('success'),
         description: t('success-messages.delete-service'),
       })
+      router.back()
     },
     onError: () => {
       refetch()
@@ -153,7 +148,6 @@ export default function SpaceServiceForm({
   const updateSpaceServiceMutation = useMutation({
     mutationFn: updateSpaceService,
     onSuccess: () => {
-      refetch()
       setIsLoading(false)
       setOpenDelete(false)
       toast({
@@ -161,6 +155,7 @@ export default function SpaceServiceForm({
         title: t('success'),
         description: t('success-messages.submit'),
       })
+      router.back()
     },
     onError: () => {
       refetch()
@@ -200,10 +195,10 @@ export default function SpaceServiceForm({
       photos: JSON.stringify(pictures),
       price_modality: values.price_modality?.[0]?.value,
       price: values.price,
-      min_hours: values.min_hours,
-      min_persons: values.min_persons,
-      packages_only: values.packages_only?.[0]?.value,
-      packages_available: values.packages_available?.[0]?.value,
+      min_hours: values.min_hours === '0' ? '1' : values.min_hours,
+      min_persons: values.min_persons === '0' ? '1' : values.min_persons,
+      packages_only: values.packages_only ? 'true' : 'false',
+      mandatory: values.mandatory ? 'true' : 'false',
       service_id: values.services_form?.services?.[0]?.value,
     })
   }
@@ -242,21 +237,18 @@ export default function SpaceServiceForm({
             onSelect={handleSelectChange('price_modality')}
             useTranslation
           />
-          {(price_modality?.[0]?.value === ServicesPriceModel.Hourly ||
-            price_modality?.[0]?.value === ServicesPriceModel.HourlyPerson) && (
-            <TextInput
-              data-testid="min_hours"
-              value={min_hours}
-              onChange={handleChange('min_hours')}
-              type="number"
-              placeholder={t(`sections.onboarding.services-form.unit-hourly`)}
-              fixedEndAdornment={
-                <div className="px-3 pt-2.5 text-sm">
-                  <Clock className="h-4 w-4" />
-                </div>
-              }
-            />
-          )}
+          <TextInput
+            data-testid="min_hours"
+            value={min_hours}
+            onChange={handleChange('min_hours')}
+            type="number"
+            placeholder={t(`sections.onboarding.services-form.unit-hourly`)}
+            fixedEndAdornment={
+              <div className="px-3 pt-2.5 text-sm">
+                <Clock className="h-4 w-4" />
+              </div>
+            }
+          />
           {(price_modality?.[0]?.value === ServicesPriceModel.Person ||
             price_modality?.[0]?.value === ServicesPriceModel.HourlyPerson) && (
             <TextInput
@@ -299,13 +291,17 @@ export default function SpaceServiceForm({
                   '$2',
                   price_modality?.[0]?.value === ServicesPriceModel.HourlyPerson
                     ? min_persons || ''
-                    : min_hours || min_persons || ''
+                    : price_modality?.[0]?.value === ServicesPriceModel.Person
+                    ? min_persons || ''
+                    : min_hours || ''
                 )
                 .replace(
                   '$3',
                   price_modality?.[0]?.value === ServicesPriceModel.HourlyPerson
                     ? min_hours || ''
-                    : min_hours || min_persons || ''
+                    : price_modality?.[0]?.value === ServicesPriceModel.Person
+                    ? min_persons || ''
+                    : min_hours || ''
                 )}
             </OnboardingFormLayout.Info>
           )}
@@ -313,64 +309,66 @@ export default function SpaceServiceForm({
       </OnboardingFormLayout.Main>
 
       <OnboardingFormLayout.Main>
-        <OnboardingFormLayout.Title>
-          {t('sections.onboarding.services-form.packages-only-title')}
-        </OnboardingFormLayout.Title>
-        <OnboardingFormLayout.Subtitle>
-          {t('sections.onboarding.services-form.packages-only-subtitle')}
-        </OnboardingFormLayout.Subtitle>
-        <OnboardingFormLayout.Container>
-          <SelectInput
-            required
-            data-testid="packages_only"
-            placeholder={t(
-              'sections.onboarding.services-form.select-only-available'
-            )}
-            options={PACKAGES_ONLY_OPTIONS}
-            value={packages_only}
-            onSelect={handleSelectChange('packages_only')}
-            useTranslation
+        <div className="flex gap-6 items-center justify-between">
+          <div>
+            <OnboardingFormLayout.Title>
+              {t('sections.onboarding.services-form.mandatory-title')}
+            </OnboardingFormLayout.Title>
+            <OnboardingFormLayout.Subtitle>
+              {t('sections.onboarding.services-form.mandatory-subtitle')}
+            </OnboardingFormLayout.Subtitle>
+          </div>
+          <Switch
+            onCheckedChange={(val) =>
+              setValue('mandatory', val, {
+                shouldValidate: true,
+                shouldDirty: true,
+              })
+            }
+            checked={mandatory}
           />
-          {packages_only?.[0]?.value && (
+        </div>
+        <OnboardingFormLayout.Container>
+          {mandatory && (
             <OnboardingFormLayout.Info>
               {t(
-                `sections.onboarding.services-form.explanation-messages.packages-only-${packages_only?.[0]?.value}`
+                `sections.onboarding.services-form.explanation-messages.mandatory-${mandatory.toString()}`
               )}
             </OnboardingFormLayout.Info>
           )}
         </OnboardingFormLayout.Container>
       </OnboardingFormLayout.Main>
-      {packages_only?.[0]?.value && packages_only?.[0]?.value === 'false' && (
-        <OnboardingFormLayout.Main>
-          <OnboardingFormLayout.Title>
-            {t('sections.onboarding.services-form.packages-available-title')}
-          </OnboardingFormLayout.Title>
-          <OnboardingFormLayout.Subtitle>
-            {t('sections.onboarding.services-form.packages-available-subtitle')}
-          </OnboardingFormLayout.Subtitle>
-          <OnboardingFormLayout.Container>
-            <SelectInput
-              required
-              data-testid="packages_available"
-              placeholder={t(
-                'sections.onboarding.services-form.select-packages-available'
+      <OnboardingFormLayout.Main>
+        <div className="flex gap-6 items-center justify-between">
+          <div>
+            <OnboardingFormLayout.Title>
+              {t('sections.onboarding.services-form.packages-only-title')}
+            </OnboardingFormLayout.Title>
+            <OnboardingFormLayout.Subtitle>
+              {t('sections.onboarding.services-form.packages-only-subtitle')}
+            </OnboardingFormLayout.Subtitle>
+          </div>
+          <Switch
+            onCheckedChange={(val) =>
+              setValue('packages_only', val, {
+                shouldValidate: true,
+                shouldDirty: true,
+              })
+            }
+            checked={packages_only}
+          />
+        </div>
+        <OnboardingFormLayout.Container>
+          {packages_only && (
+            <OnboardingFormLayout.Info>
+              {t(
+                `sections.onboarding.services-form.explanation-messages.packages-only-${packages_only.toString()}`
               )}
-              options={PACKAGES_AVAILABLE_OPTIONS}
-              value={packages_available}
-              onSelect={handleSelectChange('packages_available')}
-              useTranslation
-            />
-            {packages_available?.[0]?.value && (
-              <OnboardingFormLayout.Info>
-                {t(
-                  `sections.onboarding.services-form.explanation-messages.packages-available-${packages_available?.[0]?.value}`
-                )}
-              </OnboardingFormLayout.Info>
-            )}
-          </OnboardingFormLayout.Container>
-        </OnboardingFormLayout.Main>
-      )}
-      {packages_only?.[0]?.value && packages_only?.[0]?.value === 'false' && (
+            </OnboardingFormLayout.Info>
+          )}
+        </OnboardingFormLayout.Container>
+      </OnboardingFormLayout.Main>
+      {!packages_only && (
         <OnboardingFormLayout.Main>
           <OnboardingFormLayout.Title>
             {t('sections.onboarding.services-form.description-title')}
@@ -393,7 +391,7 @@ export default function SpaceServiceForm({
           </OnboardingFormLayout.Container>
         </OnboardingFormLayout.Main>
       )}
-      {packages_only?.[0]?.value && packages_only?.[0]?.value === 'false' && (
+      {!packages_only && (
         <OnboardingFormLayout.Main>
           <OnboardingFormLayout.Title>
             {t('sections.onboarding.services-form.photos-title')}

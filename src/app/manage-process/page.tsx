@@ -5,7 +5,7 @@ import {
   getSpaceConveniencesList,
   getSpaceTargetsList,
   getSpaceTypesList,
-} from '@/services/api/static'
+} from '@/services/api/reference-data'
 
 export default async function ManageOnboardingProcess() {
   const localitiesList = await getLocalitiesList()

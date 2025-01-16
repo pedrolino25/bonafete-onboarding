@@ -62,6 +62,7 @@ const spacePackageFormSchema = z.object({
   min_hours: z.string().min(1),
   min_persons: z.string().min(1),
   max_persons: z.string().min(1),
+  status: z.string().optional(),
 })
 
 export type PackageServiceType = z.infer<typeof packageServiceSchema>
@@ -106,6 +107,7 @@ export default function SpacePackageForm({
     handleSubmit,
     setValue,
     watch,
+    getValues,
     formState: { isValid, isDirty },
   } = useForm<SpacePackageFormType>({
     resolver: zodResolver(spacePackageFormSchema),

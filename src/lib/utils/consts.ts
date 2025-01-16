@@ -12,6 +12,13 @@ export enum SpacePriceModel {
   HourlyCustom = 'hourly-custom',
 }
 
+export enum SpacePackageStatus {
+  Draft = 'draft',
+  Pending = 'pending',
+  Published = 'published',
+  Archived = 'archived',
+}
+
 export enum ServicesPriceModel {
   Person = 'person',
   Hourly = 'hourly',

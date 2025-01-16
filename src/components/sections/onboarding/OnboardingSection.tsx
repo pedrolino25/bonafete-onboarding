@@ -15,10 +15,10 @@ import {
 import {
   LocalityListItemResponse,
   PostalCodesListItemResponse,
-  SpaceConvenienceResponse,
+  SpaceConvenienceListItem,
   SpaceTargetListItemResponse,
   SpaceTypeListItemResponse,
-} from '@/services/api/static'
+} from '@/services/api/reference-data'
 import { Elements } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
 import { useMutation, useQuery } from '@tanstack/react-query'
@@ -51,7 +51,7 @@ export enum OnboardingSections {
 
 interface OnboardingSectionProps {
   localitiesList: LocalityListItemResponse[]
-  conveniencesList: SpaceConvenienceResponse
+  conveniencesList: SpaceConvenienceListItem[]
   spaceTypesList: SpaceTypeListItemResponse[]
   spaceTargetsList: SpaceTargetListItemResponse[]
   postalCodesList: PostalCodesListItemResponse[]
@@ -82,16 +82,13 @@ export default function OnboardingSection({
   })
 
   const [conveniencesOptions] = useState<Option[]>(
-    conveniencesList.conveniences
-      .concat(conveniencesList.equipement)
-      .concat(conveniencesList.accessibility)
-      ?.map((option) => {
-        return {
-          label: option.label,
-          value: option.id,
-          disabled: option.id === '17',
-        }
-      }) as Option[]
+    conveniencesList?.map((option) => {
+      return {
+        label: option.label,
+        value: option.id,
+        disabled: option.id === '17',
+      }
+    }) as Option[]
   )
 
   const isAnyPendingSection = (values: OnboardingProcessItemResponse) => {

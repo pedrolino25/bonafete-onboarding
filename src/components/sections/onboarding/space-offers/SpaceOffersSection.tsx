@@ -7,6 +7,7 @@ import { OnboardingFormLayout } from '@/components/layouts/onboarding-form'
 import { OnboardingSectionLayout } from '@/components/layouts/onboarding-section'
 import { Button } from '@/components/ui/button'
 import { toast } from '@/lib/hooks/use-toast'
+import { SpacePackageStatus } from '@/lib/utils/consts'
 import {
   allowPackagesConfiguration,
   isSpaceRentalConfigurationComplete,
@@ -178,21 +179,26 @@ export default function SpaceOffersSection({
             {t('sections.onboarding.space-package-subtitle2')}
           </OnboardingFormLayout.Subtitle>
           <div className="w-full grid grid-cols-2 max-sm:grid-cols-1 gap-4 pt-6">
-            {spaceInfo?.packages?.map((spacePackage, index) => {
-              return (
-                <PackageCard
-                  key={index}
-                  complete
-                  onClick={() =>
-                    router.push(
-                      `/manage-process/space-package?space_id=${spaceInfo.space_id}&package_id=${spacePackage.id}`
-                    )
-                  }
-                  title={spacePackage.name}
-                />
-              )
-            })}
-            {(!spaceInfo?.packages || spaceInfo?.packages?.length <= 5) && (
+            {spaceInfo?.packages
+              ?.filter((item) => item.status === SpacePackageStatus.Published)
+              ?.map((spacePackage, index) => {
+                return (
+                  <PackageCard
+                    key={index}
+                    complete
+                    onClick={() =>
+                      router.push(
+                        `/manage-process/space-package?space_id=${spaceInfo.space_id}&package_id=${spacePackage.id}`
+                      )
+                    }
+                    title={spacePackage.name}
+                  />
+                )
+              })}
+            {(!spaceInfo?.packages ||
+              spaceInfo?.packages?.filter(
+                (item) => item.status === SpacePackageStatus.Published
+              )?.length <= 5) && (
               <PackageCard
                 onClick={() =>
                   router.push(

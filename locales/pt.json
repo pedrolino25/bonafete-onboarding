@@ -253,10 +253,12 @@
         "allow_pets": "São permitidos animais de Estimação"
       },
       "rental-form": {
-        "business-model-title": "Defina o modelo de negócio do anfitrição",
+        "business-model-title": "Não é possivel alugar apenas o espaço",
+        "business-model-subtitle": "Quando ativo, não será possivel reservar o espaço sem obter pelo menos 1 serviço",
         "price-model-title": "Defina a modalidade e o preço referente ao aluguer do espaço do anfitrião",
         "price-model": "Modalidade de preço",
         "price": "Preço",
+        "price-subtitle": "Defina preço referente à reserva do espaço",
         "base-price": "Preço base",
         "price-after": "Preço após excedido o limite de horas",
         "time-limit": "Limite de horas até ser cobrado outro valor",
@@ -274,7 +276,7 @@
         "late-cancellation-days": "Dias de tolerância até à data da reserva",
         "late-cancellation-refund": "Reembolso após dias de tolerância",
         "min-hours": "Mínimo de horas",
-        "define-min-hours": "Defina o minimo de horas para reserva",
+        "define-min-hours": "Defina o mínimo de horas para reserva",
         "explanation-messages": {
           "cleaning-fee-undefined": "* Não será cobrada qualquer taxa de limpeza ao cliente",
           "cleaning-fee": "* Será cobrada uma taxa de limpeza ao cliente de $1€ em todas as reservas",
@@ -329,8 +331,10 @@
         "new-service-category": "Categoria",
         "description-title": "Descrição",
         "description-subtitle": "Descreva sucintamente o serviço",
-        "packages-only-title": "Disponível como extra",
-        "packages-only-subtitle": "Defina se este serviço poderá ser obtido como extra ou se apenas está disponivel para pacotes",
+        "mandatory-title": "Obrigatório",
+        "mandatory-subtitle": "Defina se é obrigatório reservar este serviço",
+        "packages-only-title": "Apenas disponível para pacotes",
+        "packages-only-subtitle": "Defina se este serviço ficará disponivel para qualquer reserva ou apenas estará disponivel para pacotes",
         "select-only-available": "Selecione uma opção",
         "packages-available-title": "Disponível para pacotes",
         "packages-available-subtitle": "Defina se este serviço poderá ser obtido como extra em reservas de pacotes ou apenas aluguer do espaço",
@@ -353,7 +357,8 @@
           "packages-available-true": "O serviço extra estará disponível para pacotes",
           "packages-available-false": "O serviço extra estará disponível apenas para aluguer do espaço",
           "packages-only-true": "O serviço estará disponível apenas para pacotes",
-          "packages-only-false": "O serviço poderá ser reservado como extra"
+          "packages-only-false": "O serviço poderá ser reservado como extra",
+          "mandatory-true": "Este serviço é obrigatório, não será possivel reservar o espaço sem este serviço"
         }
       },
       "host-info-form": {

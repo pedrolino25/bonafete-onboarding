@@ -1,6 +1,5 @@
 import { Option } from '@/components/ui/select'
 import { OnboardingSpaceInfo } from '@/services/api/onboardings'
-import { SpaceBusinessModel } from './consts'
 
 interface AvailableHourOptionsProps {
   fromDeviation?: number
@@ -52,47 +51,21 @@ export const getAvailableHourOptions = (
 export const isSpaceRentalConfigurationComplete = (
   space: OnboardingSpaceInfo
 ): boolean => {
-  if (
-    space?.business_model?.[0]?.value === SpaceBusinessModel.OnlyRental &&
+  return !!(
+    space?.business_model &&
     space?.cancellation_policy?.base_refund &&
     (space?.prices?.fixed?.price ||
       space?.prices?.flexible?.base_price ||
       space?.prices?.custom?.price_1) &&
     space?.lotation?.lotation &&
     space?.min_hours?.min_hours
-  ) {
-    return true
-  } else if (
-    space?.business_model?.[0]?.value ===
-      SpaceBusinessModel.RentalAndPackages &&
-    space?.cancellation_policy?.base_refund &&
-    (space?.prices?.fixed?.price ||
-      space?.prices?.flexible?.base_price ||
-      space?.prices?.custom?.price_1) &&
-    space?.lotation?.lotation &&
-    space?.min_hours?.min_hours
-  ) {
-    return true
-  } else if (
-    space?.business_model?.[0]?.value === SpaceBusinessModel.OnlyPackages &&
-    space?.cancellation_policy?.base_refund &&
-    (space?.prices?.fixed?.price ||
-      space?.prices?.flexible?.base_price ||
-      space?.prices?.custom?.price_1)
-  ) {
-    return true
-  }
-  return false
+  )
 }
 
 export const allowPackagesConfiguration = (
   space: OnboardingSpaceInfo
 ): boolean => {
-  return (
-    space?.business_model?.[0]?.value ===
-      SpaceBusinessModel.RentalAndPackages ||
-    space?.business_model?.[0]?.value === SpaceBusinessModel.OnlyPackages
-  )
+  return !!space.services && space.services.length > 1
 }
 
 export const stringToUrl = (data: string) => {
