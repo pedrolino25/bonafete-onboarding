@@ -5,7 +5,7 @@ import {
   getSpaceConveniencesList,
   getSpaceTargetsList,
   getSpaceTypesList,
-} from '@/services/api/static'
+} from '@/services/api/reference-data'
 
 export default async function EditSpace() {
   const localitiesList = await getLocalitiesList()

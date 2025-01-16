@@ -153,7 +153,7 @@ export default function RentalPriceForm({
         {t('sections.onboarding.rental-form.price')}
       </OnboardingFormLayout.Title>
       <OnboardingFormLayout.Subtitle>
-        {t('sections.onboarding.rental-form.price-model-title')}
+        {t('sections.onboarding.rental-form.price-subtitle')}
       </OnboardingFormLayout.Subtitle>
       <OnboardingFormLayout.Container className="!gap-0">
         <SelectInput

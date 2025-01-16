@@ -23,7 +23,7 @@ export default function SpaceServiceSection() {
     },
   })
 
-  const spaceExtra = data?.services?.find((item) => item.id === service_id)
+  const spaceService = data?.services?.find((item) => item.id === service_id)
 
   return (
     <main>
@@ -44,8 +44,8 @@ export default function SpaceServiceSection() {
             <div className="w-full border-b pb-4 px-4 max-sm:px-0">
               <div>
                 <h3 className="text-lg font-semibold text-utility-brand-600">
-                  {spaceExtra?.services_form?.services?.[0]?.label
-                    ? spaceExtra.services_form.services[0].label
+                  {spaceService?.services_form?.services?.[0]?.label
+                    ? spaceService.services_form.services[0].label
                     : t('sections.onboarding.space-service-title')}
                 </h3>
                 <p className="text-sm font-light text-utility-gray-500 pt-1 pr-4">
@@ -56,7 +56,7 @@ export default function SpaceServiceSection() {
             <div className="m-auto max-w-[800px] max-sm:w-full flex flex-col gap-4 pt-8 pb-12">
               <SpaceServiceForm
                 spaceInfo={data}
-                defaultValues={spaceExtra}
+                defaultValues={spaceService}
                 refetch={() => {
                   const previousUrl = document.referrer
                   if (previousUrl) {

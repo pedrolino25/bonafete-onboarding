@@ -12,6 +12,7 @@ import {
   OnboardingFaseStatus,
   OnboardingSections,
 } from '@/components/sections/onboarding/OnboardingSection'
+import { SpaceBusinessModel } from '@/lib/utils/consts'
 import { getCookie } from 'cookies-next'
 import { Cookies } from '../auth'
 import { SpaceStatus } from './spaces'
@@ -154,7 +155,7 @@ export interface OnboardingSpaceInfo {
   longitude?: number
   lotation?: LotationFormType
   min_hours?: MinimumHoursFormType
-  business_model?: { value: string; label: string }[]
+  business_model?: SpaceBusinessModel
   cancellation_policy?: CancelationPolicyFormType
   schedule?: ScheduleFormType
   prices?: {
@@ -385,13 +386,13 @@ export interface CancelationPolicy {
 export interface UpdateSpaceOffersRentalParameters {
   onboarding_id?: string
   space_id: string
-  business_model: string
+  business_model: SpaceBusinessModel
   prices: SpacePrice[]
   price_modality: string
   cancellation_policy: CancelationPolicy
-  lotation?: number
-  min_hours?: number
-  schedule?: SpaceSchedule[]
+  lotation: number
+  min_hours: number
+  schedule: SpaceSchedule[]
 }
 
 const updateSpaceOffersRental = async (
@@ -589,7 +590,7 @@ export interface UpdateSpaceServiceParameters {
   min_hours?: string
   min_persons?: string
   packages_only: string
-  packages_available: string
+  mandatory: string
   service_id: string
 }
 

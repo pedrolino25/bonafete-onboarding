@@ -13,7 +13,7 @@ import {
   LocalityListItemResponse,
   SpaceTargetListItemResponse,
   SpaceTypeListItemResponse,
-} from '@/services/api/static'
+} from '@/services/api/reference-data'
 import { useMutation } from '@tanstack/react-query'
 import { ChevronLeft } from 'lucide-react'
 import { useTranslations } from 'next-intl'

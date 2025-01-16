@@ -3,7 +3,7 @@ import {
   getLocalitiesList,
   getSpaceTargetsList,
   getSpaceTypesList,
-} from '@/services/api/static'
+} from '@/services/api/reference-data'
 
 export default async function SubmitApplication() {
   const localitiesList = await getLocalitiesList()
