@@ -291,7 +291,7 @@ export default function OnboardingSection({
               {t('sections.onboarding.subtitle')}
             </SidebarLayout.Subtitle>
           </SidebarLayout.Header>
-          {data && sections.length > 0 && section && (
+          {data && data.id && sections.length > 0 && section && (
             <SidebarLayout.Main>
               <SidebarLayout.Sidebar
                 onChange={handlePageChange}
