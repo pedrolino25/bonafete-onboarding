@@ -5,7 +5,7 @@ import { SpacesListFilterMenu } from '@/components/menus/SpacesListFilterMenu'
 import { DataTable } from '@/components/table/table'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { SpaceListItemResponse } from '@/services/api/spaces'
+import { SpaceListItemResponse, SpaceStatus } from '@/services/api/spaces'
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -66,11 +66,20 @@ export default function SpacesListSection({
       },
       cell: ({ row }) => {
         return (
-          <Link href={`/edit-space?id=${row.getValue('id')}`}>
-            <span className="text-sm font-medium text-utility-gray-900">
-              {row.getValue('name')}
-            </span>
-          </Link>
+          <>
+            {row.original.status === SpaceStatus.Active ||
+            row.original.status === SpaceStatus.Archived ? (
+              <span className="text-sm font-light text-utility-gray-900">
+                {row.getValue('name')}
+              </span>
+            ) : (
+              <Link href={`/edit-space?id=${row.getValue('id')}`}>
+                <span className="text-sm font-medium text-utility-gray-900">
+                  {row.getValue('name')}
+                </span>
+              </Link>
+            )}
+          </>
         )
       },
     },
@@ -249,7 +258,12 @@ export default function SpacesListSection({
         return (
           <div className="inline-flex gap-x-[4px] items-center justify-end w-[100%]">
             <DataTable.ActionsDropdown
-              actions={['view_space', 'view_host']}
+              actions={
+                row.original.status === SpaceStatus.Active ||
+                row.original.status === SpaceStatus.Archived
+                  ? ['view_host']
+                  : ['view_space', 'view_host']
+              }
               onClick={handleClick}
             />
           </div>
