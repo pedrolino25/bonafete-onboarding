@@ -340,6 +340,16 @@ export default function SpaceRentalForm({
 
   return (
     <OnboardingFormLayout.Root>
+      <MinimumHoursForm
+        disabled={disableMinHoursForm}
+        defaultValues={defaultValues?.min_hours_form}
+        onChange={(value) =>
+          setValue('min_hours_form', value, {
+            shouldValidate: true,
+            shouldDirty: true,
+          })
+        }
+      />
       <ScheduleForm
         resetFormValues={resetFormValues}
         info={{
@@ -413,16 +423,6 @@ export default function SpaceRentalForm({
           />
         </div>
       </OnboardingFormLayout.Main>
-      <MinimumHoursForm
-        disabled={disableMinHoursForm}
-        defaultValues={defaultValues?.min_hours_form}
-        onChange={(value) =>
-          setValue('min_hours_form', value, {
-            shouldValidate: true,
-            shouldDirty: true,
-          })
-        }
-      />
       <RentalPriceForm
         resetFormValues={resetFormValues}
         info={{
