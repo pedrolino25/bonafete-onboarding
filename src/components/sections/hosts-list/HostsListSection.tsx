@@ -237,11 +237,6 @@ export default function HostsListSection({
                 actions={['view_onboarding']}
                 onClick={handleClick}
               />
-            ) : row.original.status === HostStatus.Completed ? (
-              <DataTable.ActionsDropdown
-                actions={['view_host', 'archive', 'suspend']}
-                onClick={handleClick}
-              />
             ) : (
               <DataTable.ActionsDropdown
                 actions={['view_host']}
