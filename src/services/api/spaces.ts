@@ -13,6 +13,7 @@ export interface SpaceListItemResponse {
   host_name: string
   host_id: string
   locality: string
+  status: SpaceStatus
 }
 
 export enum SpaceStatus {
