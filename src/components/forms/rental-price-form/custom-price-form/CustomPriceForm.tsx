@@ -22,7 +22,6 @@ interface CustomPriceFormProps {
   defaultValues?: CustomPriceFormType
   onChange?: (values: CustomPriceFormType) => void
   info?: CustomPriceFormInfoProps
-  resetFormValues?: boolean
 }
 
 const optionSchema = z.object({
@@ -90,7 +89,6 @@ export default function CustomPriceForm({
   defaultValues,
   onChange,
   info,
-  resetFormValues,
 }: CustomPriceFormProps) {
   const t = useTranslations()
   const scheduleDefined =
@@ -118,39 +116,16 @@ export default function CustomPriceForm({
   const [timeFromOptions3, setTimeFromOptions3] = useState<Option[]>([])
   const [timeFromOptions4, setTimeFromOptions4] = useState<Option[]>([])
   const [timeFromOptions5, setTimeFromOptions5] = useState<Option[]>([])
-  const [initialMinHour] = useState<string | undefined>(
-    info?.minHour?.[0]?.value
-  )
-  const [initialMaxHour] = useState<string | undefined>(
-    info?.maxHour?.[0]?.value
-  )
 
   const {
     setValue,
     getValues,
     watch,
-    reset,
     formState: { errors, isValid },
   } = useForm<CustomPriceFormType>({
     resolver: zodResolver(customPriceFormSchema),
     defaultValues,
   })
-
-  useEffect(() => {
-    if (
-      resetFormValues ||
-      initialMinHour !== info?.minHour?.[0]?.value ||
-      initialMaxHour !== info?.maxHour?.[0]?.value
-    ) {
-      reset()
-    }
-  }, [
-    resetFormValues,
-    initialMinHour,
-    initialMaxHour,
-    info?.minHour?.[0]?.value,
-    info?.maxHour?.[0]?.value,
-  ])
 
   const handleSelectChange =
     (field: keyof CustomPriceFormType) => (option: Option[]) => {

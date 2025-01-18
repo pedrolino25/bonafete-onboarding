@@ -126,7 +126,7 @@ export default function SpacePhotosSection({
       className="w-full max-sm:border-t max-sm:px-2 py-4"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <div className="w-full border-b pb-4 flex justify-between items-center max-sm:flex-col">
+      <div className="w-full border-b px-6 max-sm:px-4 pb-4 flex justify-between items-center max-sm:flex-col">
         <div className="w-full">
           <OnboardingSectionLayout.Title>
             {t('sections.onboarding.space-photos-title')}

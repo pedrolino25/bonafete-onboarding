@@ -1,9 +1,7 @@
 'use client'
 
-import { SpaceRentalFormType } from '@/components/forms/space-rental-form/SpaceRentalForm'
 import { SidebarLayout, SidebarLink } from '@/components/layouts/sidebar'
 import { Navbar } from '@/components/navigation/Navbar'
-import OnboardingIntro from '@/components/sections/onboarding/intro/IntroSection'
 import { Button } from '@/components/ui/button'
 import { Option } from '@/components/ui/select'
 import { toast } from '@/lib/hooks/use-toast'
@@ -27,6 +25,9 @@ import { useTranslations } from 'next-intl'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import HostInfoSection from './host-info/HostInfoSection'
+import SpaceCancellationPolicySection, {
+  CancellationPolicyFormType,
+} from './space-cancellation-policy/SpaceCancellationPolicySection'
 import SpaceInfoSection, {
   SpaceInfoFormType,
 } from './space-info/SpaceInfoSection'
@@ -34,6 +35,9 @@ import SpaceOffersSection from './space-offers/SpaceOffersSection'
 import SpacePhotosSection, {
   SpacePhotosFormType,
 } from './space-photos/SpacePhotosSection'
+import SpaceRulesSection, {
+  SpaceRulesFormType,
+} from './space-rules/SpaceRulesSection'
 
 export enum OnboardingFaseStatus {
   Init = 'init',
@@ -42,10 +46,11 @@ export enum OnboardingFaseStatus {
 }
 
 export enum OnboardingSections {
-  Intro = 'intro',
   SpaceInfo = 'space-info',
   Photos = 'photos',
   Offers = 'offers',
+  Rules = 'rules',
+  CancellationPolicy = 'cancellation-policy',
   HostInfo = 'host-info',
 }
 
@@ -71,6 +76,7 @@ export default function OnboardingSection({
   const router = useRouter()
   const params = useSearchParams()
   const id = params.get('id') as string
+  const sectionParameter = params.get('section') as string
   const [section, setSection] = useState<SidebarLink>()
   const [sections, setSections] = useState<SidebarLink[]>([])
 
@@ -102,7 +108,9 @@ export default function OnboardingSection({
       (values.fase4 !== OnboardingFaseStatus.Completed &&
         values.fase4 !== OnboardingFaseStatus.Incomplete) ||
       (values.fase5 !== OnboardingFaseStatus.Completed &&
-        values.fase5 !== OnboardingFaseStatus.Incomplete)
+        values.fase5 !== OnboardingFaseStatus.Incomplete) ||
+      (values.fase6 !== OnboardingFaseStatus.Completed &&
+        values.fase6 !== OnboardingFaseStatus.Incomplete)
     ) {
       return true
     }
@@ -110,6 +118,15 @@ export default function OnboardingSection({
   }
 
   const getSection = (values: OnboardingProcessItemResponse) => {
+    if (sectionParameter === OnboardingSections.Offers) {
+      return {
+        value: OnboardingSections.Offers,
+        label: t(`sections.onboarding.navigation.${OnboardingSections.Offers}`),
+        disabled: false,
+        complete: false,
+        incomplete: data && data.fase3 === OnboardingFaseStatus.Incomplete,
+      }
+    }
     if (
       values.fase1 === OnboardingFaseStatus.Completed ||
       (values.fase1 === OnboardingFaseStatus.Incomplete &&
@@ -125,35 +142,56 @@ export default function OnboardingSection({
           (values.fase3 === OnboardingFaseStatus.Incomplete &&
             isAnyPendingSection(values))
         ) {
-          if (values.fase4 === OnboardingFaseStatus.Completed) {
+          if (
+            values.fase4 === OnboardingFaseStatus.Completed ||
+            (values.fase4 === OnboardingFaseStatus.Incomplete &&
+              isAnyPendingSection(values))
+          ) {
             if (
               values.fase5 === OnboardingFaseStatus.Completed ||
               (values.fase5 === OnboardingFaseStatus.Incomplete &&
                 isAnyPendingSection(values))
             ) {
-              return {
-                value: OnboardingSections.HostInfo,
-                label: t(
-                  `sections.onboarding.navigation.${OnboardingSections.HostInfo}`
-                ),
-                disabled: false,
-                complete: true,
+              if (
+                values.fase6 === OnboardingFaseStatus.Completed ||
+                (values.fase6 === OnboardingFaseStatus.Incomplete &&
+                  isAnyPendingSection(values))
+              ) {
+                return {
+                  value: OnboardingSections.HostInfo,
+                  label: t(
+                    `sections.onboarding.navigation.${OnboardingSections.HostInfo}`
+                  ),
+                  disabled: false,
+                  complete: true,
+                }
+              } else {
+                return {
+                  value: OnboardingSections.HostInfo,
+                  label: t(
+                    `sections.onboarding.navigation.${OnboardingSections.HostInfo}`
+                  ),
+                  disabled: false,
+                  complete: false,
+                }
               }
             } else {
               return {
-                value: OnboardingSections.HostInfo,
+                value: OnboardingSections.CancellationPolicy,
                 label: t(
-                  `sections.onboarding.navigation.${OnboardingSections.HostInfo}`
+                  `sections.onboarding.navigation.${OnboardingSections.CancellationPolicy}`
                 ),
                 disabled: false,
                 complete: false,
+                incomplete:
+                  data && data.fase5 === OnboardingFaseStatus.Incomplete,
               }
             }
           } else {
             return {
-              value: OnboardingSections.Offers,
+              value: OnboardingSections.Rules,
               label: t(
-                `sections.onboarding.navigation.${OnboardingSections.Offers}`
+                `sections.onboarding.navigation.${OnboardingSections.Rules}`
               ),
               disabled: false,
               complete: false,
@@ -163,9 +201,9 @@ export default function OnboardingSection({
           }
         } else {
           return {
-            value: OnboardingSections.Photos,
+            value: OnboardingSections.Offers,
             label: t(
-              `sections.onboarding.navigation.${OnboardingSections.Photos}`
+              `sections.onboarding.navigation.${OnboardingSections.Offers}`
             ),
             disabled: false,
             complete: false,
@@ -174,9 +212,9 @@ export default function OnboardingSection({
         }
       } else {
         return {
-          value: OnboardingSections.SpaceInfo,
+          value: OnboardingSections.Photos,
           label: t(
-            `sections.onboarding.navigation.${OnboardingSections.SpaceInfo}`
+            `sections.onboarding.navigation.${OnboardingSections.Photos}`
           ),
           disabled: false,
           complete: false,
@@ -185,7 +223,7 @@ export default function OnboardingSection({
       }
     } else {
       return {
-        value: OnboardingSections.Intro,
+        value: OnboardingSections.SpaceInfo,
         label: t('sections.onboarding.navigation.intro'),
         disabled: false,
         complete: false,
@@ -198,21 +236,21 @@ export default function OnboardingSection({
     if (data) {
       setSections([
         {
-          value: OnboardingSections.Intro,
-          label: t('sections.onboarding.navigation.intro'),
+          value: OnboardingSections.SpaceInfo,
+          label: t('sections.onboarding.navigation.space-info'),
           disabled: false,
           complete: data && data.fase1 === OnboardingFaseStatus.Completed,
         },
         {
-          value: OnboardingSections.SpaceInfo,
-          label: t('sections.onboarding.navigation.space-info'),
+          value: OnboardingSections.Photos,
+          label: t('sections.onboarding.navigation.photos'),
           disabled: data && data.fase1 !== OnboardingFaseStatus.Completed,
           complete: data && data.fase2 === OnboardingFaseStatus.Completed,
           incomplete: data && data.fase2 === OnboardingFaseStatus.Incomplete,
         },
         {
-          value: OnboardingSections.Photos,
-          label: t('sections.onboarding.navigation.photos'),
+          value: OnboardingSections.Offers,
+          label: t('sections.onboarding.navigation.offers'),
           disabled:
             data &&
             data.fase2 !== OnboardingFaseStatus.Completed &&
@@ -221,8 +259,8 @@ export default function OnboardingSection({
           incomplete: data && data.fase3 === OnboardingFaseStatus.Incomplete,
         },
         {
-          value: OnboardingSections.Offers,
-          label: t('sections.onboarding.navigation.offers'),
+          value: OnboardingSections.Rules,
+          label: t('sections.onboarding.navigation.rules'),
           disabled:
             data &&
             data.fase3 !== OnboardingFaseStatus.Completed &&
@@ -230,9 +268,10 @@ export default function OnboardingSection({
           complete: data && data.fase4 === OnboardingFaseStatus.Completed,
           incomplete: data && data.fase4 === OnboardingFaseStatus.Incomplete,
         },
+
         {
-          value: OnboardingSections.HostInfo,
-          label: t('sections.onboarding.navigation.host-info'),
+          value: OnboardingSections.CancellationPolicy,
+          label: t('sections.onboarding.navigation.cancellation-policy'),
           disabled:
             data &&
             data.fase4 !== OnboardingFaseStatus.Completed &&
@@ -240,13 +279,31 @@ export default function OnboardingSection({
           complete: data && data.fase5 === OnboardingFaseStatus.Completed,
           incomplete: data && data.fase5 === OnboardingFaseStatus.Incomplete,
         },
+        {
+          value: OnboardingSections.HostInfo,
+          label: t('sections.onboarding.navigation.host-info'),
+          disabled:
+            data &&
+            data.fase5 !== OnboardingFaseStatus.Completed &&
+            data.fase5 !== OnboardingFaseStatus.Incomplete,
+          complete: data && data.fase6 === OnboardingFaseStatus.Completed,
+          incomplete: data && data.fase6 === OnboardingFaseStatus.Incomplete,
+        },
       ])
-      setSection(getSection(data))
+      const link = getSection(data)
+      setSection(link)
+      const searchParams = new URLSearchParams(params.toString())
+      searchParams.set('section', link.value)
+      router.replace(`?${searchParams.toString()}`)
     }
   }, [data])
 
   const handlePageChange = (link: SidebarLink) => {
     setSection(link)
+    const searchParams = new URLSearchParams(params.toString())
+    searchParams.set('section', link.value)
+    searchParams.delete('sub-section')
+    router.replace(`?${searchParams.toString()}`)
   }
 
   const updateOnboardingStatusMutation = useMutation({
@@ -299,19 +356,6 @@ export default function OnboardingSection({
                 items={sections}
               />
               <SidebarLayout.Container>
-                {section.value === OnboardingSections.Intro && (
-                  <OnboardingIntro
-                    documentation={{
-                      offers: data?.application?.offers || [],
-                      kyc: data?.application?.kyc || [],
-                    }}
-                    onboardingInfo={data}
-                    completed={
-                      data && data.fase1 === OnboardingFaseStatus.Completed
-                    }
-                    refetch={refetch}
-                  />
-                )}
                 {section.value === OnboardingSections.SpaceInfo && (
                   <SpaceInfoSection
                     onboardingId={data.id}
@@ -379,14 +423,21 @@ export default function OnboardingSection({
                         city: data.space?.city,
                         latitude: data.space?.latitude?.toString(),
                         longitude: data.space?.longitude?.toString(),
+                        schedule_form: data?.space?.schedule,
+                        lotation_form: data?.space?.lotation?.lotation
+                          ? data?.space?.lotation
+                          : {
+                              lotation:
+                                data?.application.max_of_persons?.toString(),
+                            },
                       } as SpaceInfoFormType
                     }
                     completed={
-                      data && data.fase2 === OnboardingFaseStatus.Completed
+                      data && data.fase1 === OnboardingFaseStatus.Completed
                     }
                     refetch={refetch}
                     showUpdateOnboardingStatus={
-                      data.fase2 === OnboardingFaseStatus.Completed
+                      data.fase1 === OnboardingFaseStatus.Completed
                     }
                     onUpdateOnboardingStatus={() => {
                       updateOnboardingStatusMutation.mutate({
@@ -430,7 +481,7 @@ export default function OnboardingSection({
                       } as SpacePhotosFormType
                     }
                     completed={
-                      data && data.fase3 === OnboardingFaseStatus.Completed
+                      data && data.fase2 === OnboardingFaseStatus.Completed
                     }
                     refetch={refetch}
                   />
@@ -439,55 +490,51 @@ export default function OnboardingSection({
                   <SpaceOffersSection
                     onboardingId={data.id}
                     spaceInfo={data.space}
-                    showUpdateOnboardingStatus={
-                      data.fase4 !== OnboardingFaseStatus.Incomplete
+                    completed={
+                      data && data.fase3 === OnboardingFaseStatus.Completed
                     }
-                    onUpdateOnboardingStatus={() => {
-                      updateOnboardingStatusMutation.mutate({
-                        onboarding_id: data.id,
-                        flow: OnboardingSections.Offers,
-                        status: OnboardingFaseStatus.Incomplete,
-                      })
-                    }}
+                    refetch={refetch}
+                  />
+                )}
+                {section.value === OnboardingSections.Rules && (
+                  <SpaceRulesSection
+                    onboardingId={data.id}
+                    spaceInfo={data.space}
                     defaultValues={
                       {
-                        business_model: data?.space?.business_model
-                          ? data?.space?.business_model
-                          : data?.application.type?.id
-                          ? [
-                              {
-                                value: data?.application.business_model,
-                                label: `business-model-options.${data?.application.business_model}`,
-                              },
-                            ]
-                          : [],
-                        lotation_form: data?.space?.lotation?.lotation
-                          ? data?.space?.lotation
-                          : {
-                              lotation:
-                                data?.application.max_of_persons?.toString(),
-                            },
-                        min_hours_form: data?.space?.min_hours?.min_hours
-                          ? data?.space?.min_hours
-                          : undefined,
-                        schedule_form: data?.space?.schedule,
-                        cancellation_policy_form: data?.space
-                          ?.cancellation_policy || {
-                          base_refund: '50',
-                          late_cancellation_days: '2',
-                          late_cancellation_refund: '0',
-                        },
-                        price_form: {
-                          price_model: data?.space?.prices?.priceModel || [],
-                          fixed_price_form: data?.space?.prices?.fixed,
-                          flexible_price_form: data?.space?.prices?.flexible,
-                          custom_price_form: data?.space?.prices?.custom,
-                        },
-                        cleaning_fee_form: data?.space?.cleaning_fee,
-                      } as SpaceRentalFormType
+                        allow_pets: data.space?.allow_pets,
+                        allow_alcool: data.space?.allow_alcool,
+                        allow_smoking: data.space?.allow_smoking,
+                        allow_high_sound: data.space?.allow_high_sound,
+                        has_security_cameras: 'false',
+                        rules: data.space?.rules,
+                      } as SpaceRulesFormType
                     }
                     completed={
                       data && data.fase4 === OnboardingFaseStatus.Completed
+                    }
+                    refetch={refetch}
+                  />
+                )}
+
+                {section.value === OnboardingSections.CancellationPolicy && (
+                  <SpaceCancellationPolicySection
+                    onboardingId={data.id}
+                    spaceInfo={data.space}
+                    defaultValues={
+                      {
+                        base_refund:
+                          data.space.cancellation_policy?.base_refund,
+                        late_cancellation_days:
+                          data.space.cancellation_policy
+                            ?.late_cancellation_days,
+                        late_cancellation_refund:
+                          data.space.cancellation_policy
+                            ?.late_cancellation_refund,
+                      } as CancellationPolicyFormType
+                    }
+                    completed={
+                      data && data.fase5 === OnboardingFaseStatus.Completed
                     }
                     refetch={refetch}
                   />
@@ -497,7 +544,7 @@ export default function OnboardingSection({
                     <HostInfoSection
                       onboardingInfo={data}
                       completed={
-                        data && data.fase5 === OnboardingFaseStatus.Completed
+                        data && data.fase6 === OnboardingFaseStatus.Completed
                       }
                       refetch={refetch}
                     />

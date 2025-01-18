@@ -1,6 +1,5 @@
 'use client'
 
-import { SpaceRentalFormType } from '@/components/forms/space-rental-form/SpaceRentalForm'
 import { SidebarLayout, SidebarLink } from '@/components/layouts/sidebar'
 import { Navbar } from '@/components/navigation/Navbar'
 import { Button } from '@/components/ui/button'
@@ -18,6 +17,9 @@ import { ChevronLeft } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
+import SpaceCancellationPolicySection, {
+  CancellationPolicyFormType,
+} from '../onboarding/space-cancellation-policy/SpaceCancellationPolicySection'
 import SpaceInfoSection, {
   SpaceInfoFormType,
 } from '../onboarding/space-info/SpaceInfoSection'
@@ -25,11 +27,16 @@ import SpaceOffersSection from '../onboarding/space-offers/SpaceOffersSection'
 import SpacePhotosSection, {
   SpacePhotosFormType,
 } from '../onboarding/space-photos/SpacePhotosSection'
+import SpaceRulesSection, {
+  SpaceRulesFormType,
+} from '../onboarding/space-rules/SpaceRulesSection'
 
 export enum EditSpaceSections {
   SpaceInfo = 'space-info',
   Photos = 'photos',
   Offers = 'offers',
+  Rules = 'rules',
+  CancellationPolicy = 'cancellation-policy',
 }
 
 interface EditSpaceSectionProps {
@@ -85,6 +92,20 @@ export default function EditSpaceSection({
       complete: false,
       incomplete: false,
     },
+    {
+      value: EditSpaceSections.Rules,
+      label: t('sections.onboarding.navigation.rules'),
+      disabled: false,
+      complete: false,
+      incomplete: false,
+    },
+    {
+      value: EditSpaceSections.CancellationPolicy,
+      label: t('sections.onboarding.navigation.cancellation-policy'),
+      disabled: false,
+      complete: false,
+      incomplete: false,
+    },
   ])
 
   const { data, refetch } = useQuery({
@@ -106,6 +127,10 @@ export default function EditSpaceSection({
 
   const handlePageChange = (link: SidebarLink) => {
     setSection(link)
+    const searchParams = new URLSearchParams(params.toString())
+    searchParams.set('section', link.value)
+    searchParams.delete('sub-section')
+    router.replace(`?${searchParams.toString()}`)
   }
 
   return (
@@ -181,12 +206,6 @@ export default function EditSpaceSection({
                         title: data?.title,
                         tour: data?.tour,
                         description: data?.description,
-                        allow_pets: data?.allow_pets,
-                        allow_alcool: data?.allow_alcool,
-                        allow_smoking: data?.allow_smoking,
-                        allow_high_sound: data?.allow_high_sound,
-                        has_security_cameras: 'false',
-                        rules: data?.rules,
                         valid_url: data.title ? 'unique' : '',
                         street: data?.street,
                         postal: data?.postal,
@@ -219,35 +238,36 @@ export default function EditSpaceSection({
                   />
                 )}
                 {section.value === EditSpaceSections.Offers && (
-                  <SpaceOffersSection
+                  <SpaceOffersSection spaceInfo={data} refetch={refetch} />
+                )}
+                {section.value === EditSpaceSections.Rules && (
+                  <SpaceRulesSection
                     spaceInfo={data}
                     defaultValues={
                       {
-                        business_model: data?.business_model
-                          ? data?.business_model
-                          : [],
-                        lotation_form: data?.lotation?.lotation
-                          ? data?.lotation
-                          : {
-                              lotation: undefined,
-                            },
-                        min_hours_form: data?.min_hours?.min_hours
-                          ? data?.min_hours
-                          : undefined,
-                        schedule_form: data?.schedule,
-                        cancellation_policy_form: data?.cancellation_policy || {
-                          base_refund: '50',
-                          late_cancellation_days: '2',
-                          late_cancellation_refund: '0',
-                        },
-                        price_form: {
-                          price_model: data?.prices?.priceModel || [],
-                          fixed_price_form: data?.prices?.fixed,
-                          flexible_price_form: data?.prices?.flexible,
-                          custom_price_form: data?.prices?.custom,
-                        },
-                        cleaning_fee_form: data?.cleaning_fee,
-                      } as SpaceRentalFormType
+                        allow_pets: data?.allow_pets,
+                        allow_alcool: data?.allow_alcool,
+                        allow_smoking: data?.allow_smoking,
+                        allow_high_sound: data?.allow_high_sound,
+                        has_security_cameras: 'false',
+                        rules: data?.rules,
+                      } as SpaceRulesFormType
+                    }
+                    refetch={refetch}
+                  />
+                )}
+
+                {section.value === EditSpaceSections.CancellationPolicy && (
+                  <SpaceCancellationPolicySection
+                    spaceInfo={data}
+                    defaultValues={
+                      {
+                        base_refund: data.cancellation_policy?.base_refund,
+                        late_cancellation_days:
+                          data.cancellation_policy?.late_cancellation_days,
+                        late_cancellation_refund:
+                          data.cancellation_policy?.late_cancellation_refund,
+                      } as CancellationPolicyFormType
                     }
                     refetch={refetch}
                   />

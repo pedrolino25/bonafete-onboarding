@@ -1,217 +1,171 @@
-import PackageCard from '@/components/cards/package-card'
-import SpaceServiceCard from '@/components/cards/space-service-card'
-import SpaceRentalForm, {
-  SpaceRentalFormType,
-} from '@/components/forms/space-rental-form/SpaceRentalForm'
-import { OnboardingFormLayout } from '@/components/layouts/onboarding-form'
-import { OnboardingSectionLayout } from '@/components/layouts/onboarding-section'
-import { Button } from '@/components/ui/button'
-import { toast } from '@/lib/hooks/use-toast'
-import { SpacePackageStatus } from '@/lib/utils/consts'
-import {
-  allowPackagesConfiguration,
-  isSpaceRentalConfigurationComplete,
-} from '@/lib/utils/functions'
-import {
-  OnboardingSpaceInfo,
-  updateOffersOnboardingStatus,
-  updateOnboardingStatus,
-} from '@/services/api/onboardings'
-import { useMutation } from '@tanstack/react-query'
-import { Info, Send } from 'lucide-react'
+'use client'
+
+import { SidebarLayout, SidebarLink } from '@/components/layouts/sidebar'
+import { OnboardingSpaceInfo } from '@/services/api/onboardings'
 import { useTranslations } from 'next-intl'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { OnboardingSections } from '../OnboardingSection'
+import SpaceGeneralConfigurationSection, {
+  SpaceGeneralConfigurationFormType,
+} from './space-general-config/SpaceGeneralConfigurationSection'
+import SpacePackagesSection from './space-packages/SpacePackagesSection'
+import SpaceRentalSection, {
+  SpaceRentalFormType,
+} from './space-rental/SpaceRentalSection'
+import SpaceServicesSection from './space-services/SpaceServicesSection'
+
+export enum SpaceOffersFaseStatus {
+  Init = 'init',
+  Incomplete = 'incomplete',
+  Completed = 'completed',
+}
+
+export enum SpaceOffersSections {
+  GeneralConfiguration = 'general-config',
+  Rental = 'rental',
+  Services = 'services',
+  Packages = 'packages',
+}
 
 interface SpaceOffersSectionProps {
   spaceInfo: OnboardingSpaceInfo
   onboardingId?: string
-  defaultValues?: SpaceRentalFormType
-  showUpdateOnboardingStatus?: boolean
   completed?: boolean
   refetch: () => void
-  onUpdateOnboardingStatus?: () => void
 }
 
 export default function SpaceOffersSection({
   spaceInfo,
   onboardingId,
-  defaultValues,
-  showUpdateOnboardingStatus,
-  onUpdateOnboardingStatus,
+  completed,
   refetch,
 }: SpaceOffersSectionProps) {
-  const router = useRouter()
   const t = useTranslations()
-  const isRentalConfigurationComplete =
-    isSpaceRentalConfigurationComplete(spaceInfo)
-  const allowPackageConfig = allowPackagesConfiguration(spaceInfo)
+  const router = useRouter()
+  const params = useSearchParams()
 
-  const updateOnboardingStatusMutation = useMutation({
-    mutationFn: updateOnboardingStatus,
-    onSuccess: () => {
-      refetch?.()
-      toast({
-        variant: 'success',
-        title: t('success'),
-        description: t('success-messages.submit'),
-      })
+  const [section, setSection] = useState<SidebarLink>()
+  const [sections] = useState<SidebarLink[]>([
+    {
+      value: SpaceOffersSections.GeneralConfiguration,
+      label: t('sections.onboarding.offers.navigation.general-config'),
+      disabled: false,
+      complete: false,
     },
-    onError: () => {
-      toast({
-        variant: 'destructive',
-        title: t('error'),
-        description: t('error-messages.submit'),
-      })
+    {
+      value: SpaceOffersSections.Rental,
+      label: t('sections.onboarding.offers.navigation.rental'),
+      disabled: false,
+      complete: false,
     },
-  })
+    {
+      value: SpaceOffersSections.Services,
+      label: t('sections.onboarding.offers.navigation.services'),
+      disabled: false,
+      complete: false,
+    },
+    {
+      value: SpaceOffersSections.Packages,
+      label: t('sections.onboarding.offers.navigation.packages'),
+      disabled: (spaceInfo?.services?.length || 0) < 2,
+      complete: false,
+    },
+  ])
 
-  const updateOffersOnboardingStatusMutation = useMutation({
-    mutationFn: updateOffersOnboardingStatus,
-    onSuccess: () => {
-      refetch?.()
-      toast({
-        variant: 'success',
-        title: t('success'),
-        description: t('success-messages.submit'),
-      })
-    },
-    onError: () => {
-      toast({
-        variant: 'destructive',
-        title: t('error'),
-        description: t('error-messages.submit'),
-      })
-    },
-  })
+  useEffect(() => {
+    const searchParams = new URLSearchParams(params.toString())
+    const link = {
+      value:
+        searchParams.get('sub-section') ||
+        SpaceOffersSections.GeneralConfiguration,
+      label: t(
+        `sections.onboarding.offers.navigation.${
+          searchParams.get('sub-section') ||
+          SpaceOffersSections.GeneralConfiguration
+        }`
+      ),
+      disabled: false,
+      complete: false,
+      incomplete: false,
+    }
+    setSection(link)
+    searchParams.set('section', OnboardingSections.Offers)
+    searchParams.set('sub-section', link.value)
+    router.replace(`?${searchParams.toString()}`)
+  }, [])
+
+  const handlePageChange = (link: SidebarLink) => {
+    setSection(link)
+    const searchParams = new URLSearchParams(params.toString())
+    searchParams.set('sub-section', link.value)
+    router.replace(`?${searchParams.toString()}`)
+  }
 
   return (
-    <div className="w-full max-sm:border-t max-sm:px-1 py-4">
-      <div className="w-full border-b pb-4 flex justify-between items-center max-sm:flex-col">
-        <div className="w-full">
-          <OnboardingSectionLayout.Title>
-            {t('sections.onboarding.space-offers-title')}
-          </OnboardingSectionLayout.Title>
-          <OnboardingSectionLayout.Subtitle>
-            {t('sections.onboarding.space-offers-subtitle')}
-          </OnboardingSectionLayout.Subtitle>
-        </div>
-        <div className="flex justify-between items-center gap-4 max-sm:justify-end max-sm:items-start max-sm:pt-4 max-sm:w-full">
-          {showUpdateOnboardingStatus && (
-            <Button
-              startAdornment={<Info className="h-4 w-4" />}
-              color="secondary"
-              variant="fill"
-              loading={updateOnboardingStatusMutation.isPending}
-              onClick={() => onUpdateOnboardingStatus?.()}
-            >
-              {t('button-actions.update-needed')}
-            </Button>
-          )}
-          {onboardingId && (
-            <Button
-              type="submit"
-              loading={updateOffersOnboardingStatusMutation.isPending}
-              startAdornment={<Send className="h-4 w-4" />}
-              onClick={() =>
-                updateOffersOnboardingStatusMutation.mutate({
-                  onboarding_id: onboardingId,
-                  space_id: spaceInfo?.space_id,
-                })
-              }
-            >
-              {t('button-actions.submit')}
-            </Button>
-          )}
-        </div>
-      </div>
-      <div className="w-9/12 max-w-[700px] max-sm:w-full flex flex-col gap-2 pt-4 pl-6 max-sm:pl-0 pb-12">
-        <div className="w-full pb-6">
-          <SpaceRentalForm
-            onboardingId={onboardingId}
-            spaceInfo={spaceInfo}
-            refetch={refetch}
-            defaultValues={defaultValues}
+    <SidebarLayout.Root>
+      {spaceInfo && sections.length > 0 && section && (
+        <SidebarLayout.Main>
+          <SidebarLayout.Sidebar
+            onChange={handlePageChange}
+            value={section}
+            items={sections}
           />
-        </div>
-
-        <div className="w-full pt-4 pb-6 border-t">
-          <OnboardingFormLayout.Title>
-            {t('sections.onboarding.space-service-title2')}
-          </OnboardingFormLayout.Title>
-          <OnboardingFormLayout.Subtitle>
-            {t('sections.onboarding.space-service-subtitle2')}
-          </OnboardingFormLayout.Subtitle>
-          <div className="w-full grid grid-cols-2 max-sm:grid-cols-1 gap-4 pt-6">
-            {spaceInfo?.services?.map((spaceService, index) => {
-              return (
-                <SpaceServiceCard
-                  key={index}
-                  complete
-                  onClick={() =>
-                    router.push(
-                      `/manage-process/space-service?space_id=${spaceInfo.space_id}&service_id=${spaceService.id}`
-                    )
-                  }
-                  title={spaceService.services_form?.services?.[0]?.label}
-                />
-              )
-            })}
-
-            {(!spaceInfo?.services || spaceInfo?.services?.length <= 10) && (
-              <SpaceServiceCard
-                onClick={() =>
-                  router.push(
-                    `/manage-process/space-service?space_id=${spaceInfo.space_id}`
-                  )
+          <SidebarLayout.Container>
+            {section.value === SpaceOffersSections.GeneralConfiguration && (
+              <SpaceGeneralConfigurationSection
+                spaceInfo={spaceInfo}
+                onboardingId={onboardingId}
+                defaultValues={
+                  {
+                    business_model: spaceInfo?.business_model
+                      ? spaceInfo?.business_model
+                      : [],
+                    min_hours: spaceInfo?.min_hours
+                      ? spaceInfo?.min_hours?.toString()
+                      : undefined,
+                    cleaning_fee: spaceInfo?.cleaning_fee?.toString(),
+                  } as SpaceGeneralConfigurationFormType
                 }
-                title={t('sections.onboarding.add-service')}
-                disabled={!isRentalConfigurationComplete}
+                completed={completed}
+                refetch={refetch}
               />
             )}
-          </div>
-        </div>
-
-        <div className="w-full pt-4 pb-6 border-t">
-          <OnboardingFormLayout.Title>
-            {t('sections.onboarding.space-package-title2')}
-          </OnboardingFormLayout.Title>
-          <OnboardingFormLayout.Subtitle>
-            {t('sections.onboarding.space-package-subtitle2')}
-          </OnboardingFormLayout.Subtitle>
-          <div className="w-full grid grid-cols-2 max-sm:grid-cols-1 gap-4 pt-6">
-            {spaceInfo?.packages
-              ?.filter((item) => item.status === SpacePackageStatus.Published)
-              ?.map((spacePackage, index) => {
-                return (
-                  <PackageCard
-                    key={index}
-                    complete
-                    onClick={() =>
-                      router.push(
-                        `/manage-process/space-package?space_id=${spaceInfo.space_id}&package_id=${spacePackage.id}`
-                      )
-                    }
-                    title={spacePackage.name}
-                  />
-                )
-              })}
-            {(!spaceInfo?.packages ||
-              spaceInfo?.packages?.filter(
-                (item) => item.status === SpacePackageStatus.Published
-              )?.length <= 5) && (
-              <PackageCard
-                onClick={() =>
-                  router.push(
-                    `/manage-process/space-package?space_id=${spaceInfo.space_id}`
-                  )
+            {section.value === SpaceOffersSections.Rental && (
+              <SpaceRentalSection
+                spaceInfo={spaceInfo}
+                onboardingId={onboardingId}
+                defaultValues={
+                  {
+                    price_form: {
+                      price_model: spaceInfo?.prices?.priceModel || [],
+                      fixed_price_form: spaceInfo?.prices?.fixed,
+                      flexible_price_form: spaceInfo?.prices?.flexible,
+                      custom_price_form: spaceInfo?.prices?.custom,
+                    },
+                  } as SpaceRentalFormType
                 }
-                title={t('sections.onboarding.add-package')}
-                disabled={!isRentalConfigurationComplete || !allowPackageConfig}
+                completed={completed}
+                refetch={refetch}
               />
             )}
-          </div>
-        </div>
-      </div>
-    </div>
+            {section.value === SpaceOffersSections.Services && (
+              <SpaceServicesSection
+                spaceInfo={spaceInfo}
+                onboardingId={onboardingId}
+                refetch={refetch}
+              />
+            )}
+            {section.value === SpaceOffersSections.Packages && (
+              <SpacePackagesSection
+                spaceInfo={spaceInfo}
+                onboardingId={onboardingId}
+                refetch={refetch}
+              />
+            )}
+          </SidebarLayout.Container>
+        </SidebarLayout.Main>
+      )}
+    </SidebarLayout.Root>
   )
 }

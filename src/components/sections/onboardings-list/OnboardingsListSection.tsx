@@ -254,6 +254,13 @@ export default function OnboardingsListSection({
             ) : (
               <CircleX className="h-4 w-4 text-utility-gray-300" />
             )}
+            {row.original.fase6 === OnboardingFaseStatus.Incomplete ? (
+              <CircleAlert className="h-4 w-4 text-utility-warning-400" />
+            ) : row.original.fase6 === OnboardingFaseStatus.Completed ? (
+              <CircleCheck className="h-4 w-4 text-utility-success-500" />
+            ) : (
+              <CircleX className="h-4 w-4 text-utility-gray-300" />
+            )}
           </div>
         )
       },

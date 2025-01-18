@@ -1,7 +1,6 @@
 'use client'
 
 import { SelectInput } from '@/components/inputs/select-input/select-input'
-import { OnboardingFormLayout } from '@/components/layouts/onboarding-form'
 import { Option } from '@/components/ui/select'
 import { PRICE_MODEL_OPTIONS } from '@/lib/utils/consts'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -58,7 +57,6 @@ export default function RentalPriceForm({
   onChange,
   disabled = false,
   info,
-  resetFormValues,
 }: RentalPriceFormProps) {
   const t = useTranslations()
 
@@ -81,12 +79,6 @@ export default function RentalPriceForm({
   const fixed_price_form = watch('fixed_price_form')
   const flexible_price_form = watch('flexible_price_form')
   const custom_price_form = watch('custom_price_form')
-
-  useEffect(() => {
-    if (resetFormValues) {
-      reset()
-    }
-  }, [resetFormValues])
 
   useEffect(() => {
     if (isValid) {
@@ -148,62 +140,53 @@ export default function RentalPriceForm({
     }
 
   return (
-    <OnboardingFormLayout.Main>
-      <OnboardingFormLayout.Title>
-        {t('sections.onboarding.rental-form.price')}
-      </OnboardingFormLayout.Title>
-      <OnboardingFormLayout.Subtitle>
-        {t('sections.onboarding.rental-form.price-subtitle')}
-      </OnboardingFormLayout.Subtitle>
-      <OnboardingFormLayout.Container className="!gap-0">
-        <SelectInput
-          required
-          data-testid="price_model"
-          placeholder={t('sections.onboarding.rental-form.price-model')}
-          options={PRICE_MODEL_OPTIONS}
-          value={price_model || []}
-          onSelect={handleSelectChange('price_model')}
-          useTranslation
-          disabled={disabled}
+    <div className="w-full">
+      <SelectInput
+        labelSmall
+        required
+        label={t('sections.onboarding.rental-form.price-model')}
+        data-testid="price_model"
+        placeholder={t('sections.onboarding.rental-form.price-model')}
+        options={PRICE_MODEL_OPTIONS}
+        value={price_model || []}
+        onSelect={handleSelectChange('price_model')}
+        useTranslation
+        disabled={disabled}
+      />
+      {showFixed && (
+        <FixedPriceForm
+          defaultValues={defaultValues?.fixed_price_form}
+          onChange={(value) =>
+            setValue('fixed_price_form', value, {
+              shouldValidate: true,
+              shouldDirty: true,
+            })
+          }
         />
-        {showFixed && (
-          <FixedPriceForm
-            resetFormValues={resetFormValues}
-            defaultValues={defaultValues?.fixed_price_form}
-            onChange={(value) =>
-              setValue('fixed_price_form', value, {
-                shouldValidate: true,
-                shouldDirty: true,
-              })
-            }
-          />
-        )}
-        {showFlexible && (
-          <FlexiblePriceForm
-            resetFormValues={resetFormValues}
-            defaultValues={defaultValues?.flexible_price_form}
-            onChange={(value) =>
-              setValue('flexible_price_form', value, {
-                shouldValidate: true,
-                shouldDirty: true,
-              })
-            }
-          />
-        )}
-        {showCustom && (
-          <CustomPriceForm
-            resetFormValues={resetFormValues}
-            defaultValues={defaultValues?.custom_price_form}
-            info={info}
-            onChange={(value) =>
-              setValue('custom_price_form', value, {
-                shouldValidate: true,
-                shouldDirty: true,
-              })
-            }
-          />
-        )}
-      </OnboardingFormLayout.Container>
-    </OnboardingFormLayout.Main>
+      )}
+      {showFlexible && (
+        <FlexiblePriceForm
+          defaultValues={defaultValues?.flexible_price_form}
+          onChange={(value) =>
+            setValue('flexible_price_form', value, {
+              shouldValidate: true,
+              shouldDirty: true,
+            })
+          }
+        />
+      )}
+      {showCustom && (
+        <CustomPriceForm
+          defaultValues={defaultValues?.custom_price_form}
+          info={info}
+          onChange={(value) =>
+            setValue('custom_price_form', value, {
+              shouldValidate: true,
+              shouldDirty: true,
+            })
+          }
+        />
+      )}
+    </div>
   )
 }

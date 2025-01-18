@@ -8,7 +8,7 @@ function Root({
   children,
   className,
 }: React.InputHTMLAttributes<HTMLDivElement>) {
-  return <div className={cn('w-full px-1', className)}>{children}</div>
+  return <div className={cn('w-full', className)}>{children}</div>
 }
 
 function Header({
@@ -16,8 +16,10 @@ function Header({
   className,
 }: React.InputHTMLAttributes<HTMLDivElement>) {
   return (
-    <div className="px-6 w-full">
-      <div className={cn('border-b py-6 w-full', className)}>{children}</div>
+    <div className="w-full">
+      <div className={cn('border-b py-6 px-6 w-full', className)}>
+        {children}
+      </div>
     </div>
   )
 }
@@ -27,12 +29,7 @@ function Main({
   className,
 }: React.InputHTMLAttributes<HTMLDivElement>) {
   return (
-    <div
-      className={cn(
-        'w-full pt-4 pr-6 flex max-sm:flex-col max-sm:pr-2',
-        className
-      )}
-    >
+    <div className={cn('w-full flex max-sm:flex-col', className)}>
       {children}
     </div>
   )
@@ -42,7 +39,16 @@ function Container({
   children,
   className,
 }: React.InputHTMLAttributes<HTMLDivElement>) {
-  return <div className={cn('w-full pl-2 pt-2', className)}>{children}</div>
+  return (
+    <div
+      className={cn(
+        'w-full border-l min-h-[calc(100svh-153px)] max-sm:min-h-0',
+        className
+      )}
+    >
+      {children}
+    </div>
+  )
 }
 
 function Title({
@@ -87,7 +93,7 @@ function Sidebar({ items, value, onChange }: SidebarProps) {
   const t = useTranslations()
 
   return (
-    <div className="group justify-between flex flex-col gap-4 transition-all duration-200 ease-out w-fit max-sm:w-full h-full pr-4 max-sm:pr-0">
+    <div className="group justify-between flex flex-col gap-4 transition-all duration-200 ease-out w-fit max-sm:w-full h-full pb-6">
       <div>
         <nav className="grid gap-1 px-2 pt-2">
           {items.map((item) => (

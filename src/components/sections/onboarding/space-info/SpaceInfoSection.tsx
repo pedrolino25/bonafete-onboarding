@@ -1,17 +1,24 @@
 'use client'
+import LotationForm, {
+  lotationFormSchema,
+} from '@/components/forms/lotation-form/LotationForm'
+import ScheduleForm, {
+  scheduleFormSchema,
+} from '@/components/forms/schedule-form/ScheduleForm'
 import { MapInput } from '@/components/inputs/map-input/map-input'
 import { SelectInput } from '@/components/inputs/select-input/select-input'
 import { TextEditorInput } from '@/components/inputs/text-editor-input/text-editor-input'
 import { TextInput } from '@/components/inputs/text-input/text-input'
+import { EditSpaceSectionLayout } from '@/components/layouts/edit-space-section'
 import { OnboardingSectionLayout } from '@/components/layouts/onboarding-section'
 import { Button } from '@/components/ui/button'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Option } from '@/components/ui/select'
 import { toast } from '@/lib/hooks/use-toast'
 import { cn, splitCommaGetFirst } from '@/lib/utils'
 import {
   OnboardingSpaceInfo,
   saveOnboardingSpaceInfo,
+  SpaceSchedule,
 } from '@/services/api/onboardings'
 import {
   LocalityListItemResponse,
@@ -52,18 +59,14 @@ const spaceInfoFormSchema = z.object({
   tour: z.string().optional(),
   description: z.string().min(12),
   valid_url: z.string().min(1),
-  allow_pets: z.string().min(1),
-  allow_alcool: z.string().min(1),
-  allow_smoking: z.string().min(1),
-  allow_high_sound: z.string().min(1),
-  has_security_cameras: z.string().min(1),
-  rules: z.string().min(12),
   street: z.string().min(1),
   postal: z.string().min(1),
   locality: z.string().min(1),
   city: z.string().min(1),
   latitude: z.string(),
   longitude: z.string(),
+  schedule_form: scheduleFormSchema,
+  lotation_form: lotationFormSchema,
 })
 
 export type SpaceInfoFormType = z.infer<typeof spaceInfoFormSchema>
@@ -131,7 +134,7 @@ export default function SpaceInfoSection({
     handleSubmit,
     setValue,
     getValues,
-    formState: { isValid, isDirty, errors },
+    formState: { isValid, isDirty },
   } = useForm<SpaceInfoFormType>({
     mode: 'onChange',
     resolver: zodResolver(spaceInfoFormSchema),
@@ -173,6 +176,87 @@ export default function SpaceInfoSection({
     spaceInfo?.title || ''
   )
 
+  const getSpaceScheduleObject = (
+    values: SpaceInfoFormType
+  ): SpaceSchedule[] => {
+    let schedule: SpaceSchedule[] = []
+    if (values.schedule_form) {
+      schedule = [
+        {
+          weekDay: 'monday',
+          timeStart:
+            values.schedule_form.monday_from[0].value === '--:--'
+              ? 'Fechado'
+              : values.schedule_form.monday_from[0].value,
+          timeEnd: values.schedule_form.monday_to?.[0]?.value || '',
+          space: { id: spaceInfo.space_id },
+          createdAt: new Date(),
+        },
+        {
+          weekDay: 'tuesday',
+          timeStart:
+            values.schedule_form.tuesday_from[0].value === '--:--'
+              ? 'Fechado'
+              : values.schedule_form.tuesday_from[0].value,
+          timeEnd: values.schedule_form.tuesday_to?.[0]?.value || '',
+          space: { id: spaceInfo.space_id },
+          createdAt: new Date(),
+        },
+        {
+          weekDay: 'wednesday',
+          timeStart:
+            values.schedule_form.wednesday_from[0].value === '--:--'
+              ? 'Fechado'
+              : values.schedule_form.wednesday_from[0].value,
+          timeEnd: values.schedule_form.wednesday_to?.[0]?.value || '',
+          space: { id: spaceInfo.space_id },
+          createdAt: new Date(),
+        },
+        {
+          weekDay: 'thursday',
+          timeStart:
+            values.schedule_form.thursday_from[0].value === '--:--'
+              ? 'Fechado'
+              : values.schedule_form.thursday_from[0].value,
+          timeEnd: values.schedule_form.thursday_to?.[0]?.value || '',
+          space: { id: spaceInfo.space_id },
+          createdAt: new Date(),
+        },
+        {
+          weekDay: 'friday',
+          timeStart:
+            values.schedule_form.friday_from[0].value === '--:--'
+              ? 'Fechado'
+              : values.schedule_form.friday_from[0].value,
+          timeEnd: values.schedule_form.friday_to?.[0]?.value || '',
+          space: { id: spaceInfo.space_id },
+          createdAt: new Date(),
+        },
+        {
+          weekDay: 'saturday',
+          timeStart:
+            values.schedule_form.saturday_from[0].value === '--:--'
+              ? 'Fechado'
+              : values.schedule_form.saturday_from[0].value,
+          timeEnd: values.schedule_form.saturday_to?.[0]?.value || '',
+          space: { id: spaceInfo.space_id },
+          createdAt: new Date(),
+        },
+        {
+          weekDay: 'sunday',
+          timeStart:
+            values.schedule_form.sunday_from[0].value === '--:--'
+              ? 'Fechado'
+              : values.schedule_form.sunday_from[0].value,
+          timeEnd: values.schedule_form.sunday_to?.[0]?.value || '',
+          space: { id: spaceInfo.space_id },
+          createdAt: new Date(),
+        },
+      ]
+    }
+    return schedule
+  }
+
   const onSubmit = (values: SpaceInfoFormType) => {
     saveOnboardingSpaceInfoMutation.mutate({
       space_id: spaceInfo.space_id,
@@ -201,12 +285,6 @@ export default function SpaceInfoSection({
       title: values.title || '',
       tour: values.tour || '',
       description: values.description || '',
-      allow_pets: values.allow_pets || '',
-      allow_alcool: values.allow_alcool || '',
-      allow_smoking: values.allow_smoking || '',
-      allow_high_sound: values.allow_high_sound || '',
-      has_security_cameras: values.has_security_cameras || '',
-      rules: values.rules || '',
       street: values.street,
       postal: values.postal,
       locality: values.locality,
@@ -218,6 +296,8 @@ export default function SpaceInfoSection({
       city: values.city,
       latitude: values.latitude ? parseFloat(values.latitude) : undefined,
       longitude: values.longitude ? parseFloat(values.longitude) : undefined,
+      schedule: getSpaceScheduleObject(values),
+      lotation: parseInt(values.lotation_form.lotation || '1'),
     })
   }
 
@@ -275,7 +355,7 @@ export default function SpaceInfoSection({
       className="w-full max-sm:border-t max-sm:px-1 py-4"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <div className="w-full border-b pb-4 flex justify-between items-center max-sm:flex-col">
+      <div className="w-full border-b px-6 max-sm:px-4 pb-4 flex justify-between items-center max-sm:flex-col">
         <div className="w-full">
           <OnboardingSectionLayout.Title>
             {t('sections.onboarding.space-info-title')}
@@ -310,317 +390,303 @@ export default function SpaceInfoSection({
           </Button>
         </div>
       </div>
-      <div className="w-9/12 max-w-[700px] max-sm:w-full flex flex-col gap-8 pt-8 pl-6 max-sm:pl-0 pb-12">
-        <SelectInput
-          required
-          data-testid="type"
-          label={t('columns.type')}
-          placeholder={t('table.select-from-list')}
-          options={spaceTypesOptions}
-          value={getValues().type}
-          onSelect={handleSelectChange('type')}
-        />
-        <SelectInput
-          required
-          data-testid="targets"
-          label={t('columns.targets')}
-          placeholder={t('table.select-from-list')}
-          options={spaceTargetsOptions}
-          value={getValues().targets}
-          onSelect={handleSelectChange('targets')}
-          multiple
-        />
-        <SelectInput
-          required
-          data-testid="conveniences"
-          label={t('columns.conveniences')}
-          placeholder={t('table.select-from-list')}
-          options={conveniencesOptions}
-          value={getValues().conveniences}
-          onSelect={handleSelectChange('conveniences')}
-          multiple
-        />
-        <TextInput
-          required
-          label={t('columns.name')}
-          placeholder={t('columns.name')}
-          value={getValues().title}
-          onChange={handleChange('title')}
-          fixedEndAdornment={
-            <Button
-              size="xs"
-              variant="ghost"
-              color="secondary"
-              onClick={() => {
-                if (lastVerification !== getValues().title) {
-                  setLastVerification(getValues().title)
-                  refetchVerifySpace()
-                }
-              }}
-              disabled={
-                isLoading ||
-                !getValues().title ||
-                lastVerification === getValues().title
-              }
-            >
-              {isLoading ? (
-                <LoaderCircle className="h-4 w-4 animate-spin text-utility-gray-500" />
-              ) : data === 'unique' ? (
-                <CircleCheck className="h-4 w-4 text-utility-success-500" />
-              ) : data === 'exists' ? (
-                <CircleX className="h-4 w-4 text-utility-error-500" />
-              ) : (
-                <Search
-                  className={cn(
-                    'h-4 w-4 text-utility-gray-700',
+      <div className="w-full">
+        <EditSpaceSectionLayout.Container>
+          <EditSpaceSectionLayout.Header>
+            <EditSpaceSectionLayout.Title>
+              {t('sections.onboarding.about-title')}
+            </EditSpaceSectionLayout.Title>
+            <EditSpaceSectionLayout.Subtitle>
+              {t('sections.onboarding.about-subtitle')}
+            </EditSpaceSectionLayout.Subtitle>
+          </EditSpaceSectionLayout.Header>
+          <EditSpaceSectionLayout.Content>
+            <SelectInput
+              required
+              labelSmall
+              data-testid="type"
+              label={t('columns.type')}
+              placeholder={t('table.select-from-list')}
+              options={spaceTypesOptions}
+              value={getValues().type}
+              onSelect={handleSelectChange('type')}
+            />
+            <TextInput
+              required
+              labelSmall
+              label={t('columns.name')}
+              placeholder={t('columns.name')}
+              value={getValues().title}
+              onChange={handleChange('title')}
+              fixedEndAdornment={
+                <Button
+                  size="xs"
+                  variant="ghost"
+                  color="secondary"
+                  onClick={() => {
+                    if (lastVerification !== getValues().title) {
+                      setLastVerification(getValues().title)
+                      refetchVerifySpace()
+                    }
+                  }}
+                  disabled={
                     isLoading ||
-                      !getValues().title ||
-                      lastVerification === getValues().title
-                      ? 'text-utility-gray-400'
-                      : undefined,
-                    !isLoading &&
-                      lastVerification !== getValues().title &&
-                      getValues().title
-                      ? 'animate-bounce'
-                      : undefined
+                    !getValues().title ||
+                    lastVerification === getValues().title
+                  }
+                >
+                  {isLoading ? (
+                    <LoaderCircle className="h-4 w-4 animate-spin text-utility-gray-500" />
+                  ) : data === 'unique' ? (
+                    <CircleCheck className="h-4 w-4 text-utility-success-500" />
+                  ) : data === 'exists' ? (
+                    <CircleX className="h-4 w-4 text-utility-error-500" />
+                  ) : (
+                    <Search
+                      className={cn(
+                        'h-4 w-4 text-utility-gray-700',
+                        isLoading ||
+                          !getValues().title ||
+                          lastVerification === getValues().title
+                          ? 'text-utility-gray-400'
+                          : undefined,
+                        !isLoading &&
+                          lastVerification !== getValues().title &&
+                          getValues().title
+                          ? 'animate-bounce'
+                          : undefined
+                      )}
+                    />
                   )}
-                />
-              )}
-            </Button>
-          }
-        />
-        <TextEditorInput
-          label={t('columns.description')}
-          value={getValues().description}
-          onChange={(val) =>
-            setValue('description', val, {
-              shouldValidate: true,
-              shouldDirty: true,
-            })
-          }
-          placeholder={t('columns.description')}
-          required
-        />
+                </Button>
+              }
+            />
+            <TextEditorInput
+              label={t('columns.description')}
+              labelSmall
+              value={getValues().description}
+              onChange={(val) =>
+                setValue('description', val, {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                })
+              }
+              placeholder={t('columns.description')}
+              required
+            />
+          </EditSpaceSectionLayout.Content>
+        </EditSpaceSectionLayout.Container>
 
-        <div className="grid">
-          <span className="text-sm font-medium text-utility-gray-700 mb-1.5">
-            {t('columns.address')}
-            {'*'}
-          </span>
-          <div className="w-full flex flex-col gap-2">
-            <div className="flex w-full gap-2">
-              <div className="w-2/3">
-                <TextInput
-                  placeholder={t('columns.street')}
-                  value={getValues().street}
-                  onChange={handleChange('street')}
-                />
-              </div>
-              <div className="w-1/3">
-                <TextInput
-                  placeholder={t('columns.postal')}
-                  value={getValues().postal}
-                  onChange={handleChange('postal')}
-                  className="w-full"
-                  type="number"
-                />
-              </div>
-            </div>
-            <div className="flex w-full gap-2">
-              <div className="w-full">
-                <TextInput
-                  placeholder={t('columns.locality')}
-                  value={getValues().locality}
-                  disabled
-                />
-              </div>
-              <div className="w-full">
-                <TextInput
-                  placeholder={t('columns.city')}
-                  value={getValues().city}
-                  disabled
-                />
-              </div>
-            </div>
-            {getValues().latitude && getValues().longitude && (
-              <>
-                <div className="w-full h-96">
-                  <MapInput
-                    latitude={parseFloat(getValues().latitude)}
-                    longitude={parseFloat(getValues().longitude)}
-                    zoom={14}
-                    onMove={(val) => {
-                      setValue('latitude', val.latitude.toString(), {
-                        shouldDirty: true,
-                        shouldValidate: true,
-                      })
-                      setValue('longitude', val.longitude.toString(), {
-                        shouldDirty: true,
-                        shouldValidate: true,
-                      })
-                    }}
-                  />
+        <EditSpaceSectionLayout.Container>
+          <EditSpaceSectionLayout.Header>
+            <EditSpaceSectionLayout.Title>
+              {t('sections.onboarding.conveniences-title')}
+            </EditSpaceSectionLayout.Title>
+            <EditSpaceSectionLayout.Subtitle>
+              {t('sections.onboarding.conveniences-subtitle')}
+            </EditSpaceSectionLayout.Subtitle>
+          </EditSpaceSectionLayout.Header>
+          <EditSpaceSectionLayout.Content>
+            <SelectInput
+              labelSmall
+              required
+              data-testid="conveniences"
+              label={t('columns.conveniences')}
+              placeholder={t('table.select-from-list')}
+              options={conveniencesOptions}
+              value={getValues().conveniences}
+              onSelect={handleSelectChange('conveniences')}
+              multiple
+            />
+          </EditSpaceSectionLayout.Content>
+        </EditSpaceSectionLayout.Container>
+
+        <EditSpaceSectionLayout.Container>
+          <EditSpaceSectionLayout.Header>
+            <EditSpaceSectionLayout.Title>
+              {t('sections.onboarding.targets-title')}
+            </EditSpaceSectionLayout.Title>
+            <EditSpaceSectionLayout.Subtitle>
+              {t('sections.onboarding.targets-subtitle')}
+            </EditSpaceSectionLayout.Subtitle>
+          </EditSpaceSectionLayout.Header>
+          <EditSpaceSectionLayout.Content>
+            <SelectInput
+              required
+              labelSmall
+              data-testid="targets"
+              label={t('columns.targets')}
+              placeholder={t('table.select-from-list')}
+              options={spaceTargetsOptions}
+              value={getValues().targets}
+              onSelect={handleSelectChange('targets')}
+              multiple
+            />
+          </EditSpaceSectionLayout.Content>
+        </EditSpaceSectionLayout.Container>
+
+        <EditSpaceSectionLayout.Container>
+          <EditSpaceSectionLayout.Header>
+            <EditSpaceSectionLayout.Title>
+              {t('sections.onboarding.address-title')}
+            </EditSpaceSectionLayout.Title>
+            <EditSpaceSectionLayout.Subtitle>
+              {t('sections.onboarding.address-subtitle')}
+            </EditSpaceSectionLayout.Subtitle>
+          </EditSpaceSectionLayout.Header>
+          <EditSpaceSectionLayout.Content>
+            <div className="grid">
+              <span className="text-xs font-light text-utility-gray-600 mb-1.5">
+                {t('columns.address')}
+                {'*'}
+              </span>
+              <div className="w-full flex flex-col gap-2">
+                <div className="flex w-full gap-2">
+                  <div className="w-2/3">
+                    <TextInput
+                      placeholder={t('columns.street')}
+                      value={getValues().street}
+                      onChange={handleChange('street')}
+                    />
+                  </div>
+                  <div className="w-1/3">
+                    <TextInput
+                      placeholder={t('columns.postal')}
+                      value={getValues().postal}
+                      onChange={handleChange('postal')}
+                      className="w-full"
+                      type="number"
+                    />
+                  </div>
                 </div>
                 <div className="flex w-full gap-2">
                   <div className="w-full">
                     <TextInput
-                      placeholder={t('columns.latitude')}
-                      value={getValues().latitude}
-                      onChange={handleChange('latitude')}
-                      disabled={!getValues().locality}
-                      type="number"
+                      placeholder={t('columns.locality')}
+                      value={getValues().locality}
+                      disabled
                     />
                   </div>
                   <div className="w-full">
                     <TextInput
-                      placeholder={t('columns.longitude')}
-                      value={getValues().longitude}
-                      onChange={handleChange('longitude')}
-                      disabled={!getValues().locality}
-                      type="number"
+                      placeholder={t('columns.city')}
+                      value={getValues().city}
+                      disabled
                     />
                   </div>
                 </div>
-              </>
-            )}
-          </div>
-        </div>
-        <div className="flex flex-col w-full gap-4">
-          <TextEditorInput
-            label={t('columns.rules')}
-            value={getValues().rules}
-            onChange={(val) =>
-              setValue('rules', val, {
-                shouldValidate: true,
-                shouldDirty: true,
-              })
-            }
-            placeholder={t('columns.rules')}
-            required
-          />
-          <div className="flex flex-col w-full gap-3">
-            <div className="flex items-center justify-between max-w-[430px] max-sm:max-w-full">
-              <span className="text-sm font-normal text-utility-gray-700">
-                {t('sections.onboarding.rules.allow_alcool')}
-              </span>
-              <RadioGroup
-                onValueChange={(val) =>
-                  setValue('allow_alcool', val, {
-                    shouldValidate: true,
-                    shouldDirty: true,
-                  })
-                }
-                defaultValue={getValues().allow_alcool}
-                className="flex gap-2 items-center"
-              >
-                <div className="flex gap-1 items-center">
-                  <RadioGroupItem value="true" />
-                  <span className="text-sm font-bold text-utility-gray-700">
-                    {t('actions.yes')}
-                  </span>
-                </div>
-                <div className="flex gap-1 items-center">
-                  <RadioGroupItem value="false" />
-                  <span className="text-sm font-bold text-utility-gray-700">
-                    {t('actions.no')}
-                  </span>
-                </div>
-              </RadioGroup>
+                {getValues().latitude && getValues().longitude && (
+                  <>
+                    <div className="w-full h-96">
+                      <MapInput
+                        latitude={parseFloat(getValues().latitude)}
+                        longitude={parseFloat(getValues().longitude)}
+                        zoom={14}
+                        onMove={(val) => {
+                          setValue('latitude', val.latitude.toString(), {
+                            shouldDirty: true,
+                            shouldValidate: true,
+                          })
+                          setValue('longitude', val.longitude.toString(), {
+                            shouldDirty: true,
+                            shouldValidate: true,
+                          })
+                        }}
+                      />
+                    </div>
+                    <div className="flex w-full gap-2">
+                      <div className="w-full">
+                        <TextInput
+                          placeholder={t('columns.latitude')}
+                          value={getValues().latitude}
+                          onChange={handleChange('latitude')}
+                          disabled={!getValues().locality}
+                          type="number"
+                        />
+                      </div>
+                      <div className="w-full">
+                        <TextInput
+                          placeholder={t('columns.longitude')}
+                          value={getValues().longitude}
+                          onChange={handleChange('longitude')}
+                          disabled={!getValues().locality}
+                          type="number"
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
+          </EditSpaceSectionLayout.Content>
+        </EditSpaceSectionLayout.Container>
 
-            <div className="flex items-center justify-between max-w-[430px] max-sm:max-w-full">
-              <span className="text-sm font-normal text-utility-gray-700">
-                {t('sections.onboarding.rules.allow_smoking')}
-              </span>
-              <RadioGroup
-                onValueChange={(val) =>
-                  setValue('allow_smoking', val, {
-                    shouldValidate: true,
-                    shouldDirty: true,
-                  })
-                }
-                defaultValue={getValues().allow_smoking}
-                className="flex gap-2 items-center"
-              >
-                <div className="flex gap-1 items-center">
-                  <RadioGroupItem value="true" />
-                  <span className="text-sm font-bold text-utility-gray-700">
-                    {t('actions.yes')}
-                  </span>
-                </div>
-                <div className="flex gap-1 items-center">
-                  <RadioGroupItem value="false" />
-                  <span className="text-sm font-bold text-utility-gray-700">
-                    {t('actions.no')}
-                  </span>
-                </div>
-              </RadioGroup>
-            </div>
+        <EditSpaceSectionLayout.Container>
+          <EditSpaceSectionLayout.Header>
+            <EditSpaceSectionLayout.Title>
+              {t('sections.onboarding.lotation-title')}
+            </EditSpaceSectionLayout.Title>
+            <EditSpaceSectionLayout.Subtitle>
+              {t('sections.onboarding.lotation-subtitle')}
+            </EditSpaceSectionLayout.Subtitle>
+          </EditSpaceSectionLayout.Header>
+          <EditSpaceSectionLayout.Content>
+            <LotationForm
+              defaultValues={defaultValues?.lotation_form}
+              onChange={(value) =>
+                setValue('lotation_form', value, {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                })
+              }
+            />
+          </EditSpaceSectionLayout.Content>
+        </EditSpaceSectionLayout.Container>
 
-            <div className="flex items-center justify-between max-w-[430px] max-sm:max-w-full">
-              <span className="text-sm font-normal text-utility-gray-700">
-                {t('sections.onboarding.rules.allow_high_sound')}
-              </span>
-              <RadioGroup
-                onValueChange={(val) =>
-                  setValue('allow_high_sound', val, {
-                    shouldValidate: true,
-                    shouldDirty: true,
-                  })
-                }
-                defaultValue={getValues().allow_high_sound}
-                className="flex gap-2 items-center"
-              >
-                <div className="flex gap-1 items-center">
-                  <RadioGroupItem value="true" />
-                  <span className="text-sm font-bold text-utility-gray-700">
-                    {t('actions.yes')}
-                  </span>
-                </div>
-                <div className="flex gap-1 items-center">
-                  <RadioGroupItem value="false" />
-                  <span className="text-sm font-bold text-utility-gray-700">
-                    {t('actions.no')}
-                  </span>
-                </div>
-              </RadioGroup>
-            </div>
-            <div className="flex items-center justify-between max-w-[430px] max-sm:max-w-full">
-              <span className="text-sm font-normal text-utility-gray-700">
-                {t('sections.onboarding.rules.allow_pets')}
-              </span>
-              <RadioGroup
-                onValueChange={(val) =>
-                  setValue('allow_pets', val, {
-                    shouldValidate: true,
-                    shouldDirty: true,
-                  })
-                }
-                defaultValue={getValues().allow_pets}
-                className="flex gap-2 items-center"
-              >
-                <div className="flex gap-1 items-center">
-                  <RadioGroupItem value="true" />
-                  <span className="text-sm font-bold text-utility-gray-700">
-                    {t('actions.yes')}
-                  </span>
-                </div>
-                <div className="flex gap-1 items-center">
-                  <RadioGroupItem value="false" />
-                  <span className="text-sm font-bold text-utility-gray-700">
-                    {t('actions.no')}
-                  </span>
-                </div>
-              </RadioGroup>
-            </div>
-          </div>
-        </div>
-        <TextInput
-          label={t('columns.tour')}
-          placeholder={t('columns.tour')}
-          value={getValues().tour}
-          onChange={handleChange('tour')}
-        />
+        <EditSpaceSectionLayout.Container>
+          <EditSpaceSectionLayout.Header>
+            <EditSpaceSectionLayout.Title>
+              {t('sections.onboarding.schedule-title')}
+            </EditSpaceSectionLayout.Title>
+            <EditSpaceSectionLayout.Subtitle>
+              {t('sections.onboarding.schedule-subtitle')}
+            </EditSpaceSectionLayout.Subtitle>
+          </EditSpaceSectionLayout.Header>
+          <EditSpaceSectionLayout.Content>
+            <ScheduleForm
+              info={{
+                minHours: 1,
+              }}
+              defaultValues={defaultValues?.schedule_form}
+              onChange={(value) =>
+                setValue('schedule_form', value, {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                })
+              }
+            />
+          </EditSpaceSectionLayout.Content>
+        </EditSpaceSectionLayout.Container>
+
+        <EditSpaceSectionLayout.Container>
+          <EditSpaceSectionLayout.Header>
+            <EditSpaceSectionLayout.Title>
+              {t('sections.onboarding.tour-title')}
+            </EditSpaceSectionLayout.Title>
+            <EditSpaceSectionLayout.Subtitle>
+              {t('sections.onboarding.tour-subtitle')}
+            </EditSpaceSectionLayout.Subtitle>
+          </EditSpaceSectionLayout.Header>
+          <EditSpaceSectionLayout.Content>
+            <TextInput
+              labelSmall
+              label={t('columns.tour')}
+              placeholder={t('columns.tour')}
+              value={getValues().tour}
+              onChange={handleChange('tour')}
+            />
+          </EditSpaceSectionLayout.Content>
+        </EditSpaceSectionLayout.Container>
       </div>
     </form>
   )

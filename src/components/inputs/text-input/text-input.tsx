@@ -1,12 +1,14 @@
 'use client'
 
 import { Input } from '@/components/ui/input'
+import { cn } from '@/lib/utils'
 import { Info } from 'lucide-react'
 import * as React from 'react'
 
 export interface TextInputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string
+  labelSmall?: boolean
   hint?: string
   info?: string
   error?: string
@@ -24,6 +26,7 @@ export const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(
   (
     {
       label,
+      labelSmall,
       hint,
       info,
       error,
@@ -42,7 +45,10 @@ export const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(
         {label && (
           <label
             data-testid="label"
-            className="text-sm font-medium text-utility-gray-700 mb-1.5"
+            className={cn(
+              'text-sm font-medium text-utility-gray-700 p-0 m-0 mb-1.5',
+              labelSmall && 'text-xs font-light text-utility-gray-600'
+            )}
           >
             {label}
             {required && '*'}
