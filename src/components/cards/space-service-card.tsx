@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { Check, Info } from 'lucide-react'
+import { HandPlatter, Info } from 'lucide-react'
 import { ReactNode } from 'react'
 
 interface SpaceServiceCardProps {
@@ -34,7 +34,7 @@ export default function SpaceServiceCard({
         <div className="h-20 px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             {complete ? (
-              <Check className="h-4 w-4 text-utility-success-500" />
+              <HandPlatter className="h-6 w-6 text-utility-gray-600" />
             ) : (
               <Info
                 className={cn(

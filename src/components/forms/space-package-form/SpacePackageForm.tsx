@@ -26,7 +26,7 @@ import {
 } from '@/services/api/onboardings'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { Clock, UsersRound } from 'lucide-react'
+import { Clock, Pencil, Plus, Trash, UsersRound } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -331,10 +331,16 @@ export default function SpacePackageForm({
         </div>
 
         <Button
-          className="px-10"
           disabled={!isValid || isLoading || !isDirty}
           loading={isLoading}
           onClick={handleSubmit(onSubmit)}
+          endAdornment={
+            defaultValues ? (
+              <Pencil className="h-4 w-4" />
+            ) : (
+              <Plus className="h-4 w-4" />
+            )
+          }
         >
           {defaultValues ? t('button-actions.edit') : t('button-actions.add')}
         </Button>
@@ -578,6 +584,7 @@ export default function SpacePackageForm({
                     onClick={handleDelete}
                     color="destructive"
                     variant="outline"
+                    endAdornment={<Trash className="w-4 h-4" />}
                   >
                     {t('button-actions.remove')}
                   </Button>

@@ -54,6 +54,11 @@ const getOnboardingsProcessesListByStatus = async (
       Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
     },
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -72,6 +77,11 @@ const archiveOnboardingProcess = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -91,6 +101,11 @@ const reasignOnboardingProcess = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -110,6 +125,11 @@ const scheduleOnboardingProcess = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -239,6 +259,11 @@ const getOnboardingProcessesById = async (
       Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
     },
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -252,6 +277,11 @@ const getOnboardingSpaceById = async (
       Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
     },
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -291,6 +321,11 @@ const saveOnboardingSpaceInfo = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -316,6 +351,11 @@ const saveOnboardingSpaceRules = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -341,6 +381,11 @@ const saveOnboardingSpaceGeneralConfiguration = async (
       body: JSON.stringify(data),
     }
   )
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -362,6 +407,11 @@ const saveOnboardingSpaceRental = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -382,6 +432,11 @@ const saveOnboardingSpaceCancellationPolicy = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -402,6 +457,11 @@ const saveOnboardingSpacePhotos = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -422,6 +482,11 @@ const updateOnboardingStatus = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -473,6 +538,11 @@ const updateSpaceOffersRental = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -495,6 +565,11 @@ const getServicesList = async (): Promise<ServiceListItemResponse[]> => {
       Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
     },
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -525,6 +600,11 @@ const getSpaceServicesList = async (
       Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
     },
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -563,24 +643,11 @@ const addService = async (
     },
     body: JSON.stringify(data),
   })
-  return response.json()
-}
 
-interface ExtraListItemProps {
-  extra: string
-}
-
-const addExtra = async (
-  data: ExtraListItemProps
-): Promise<OnboardingProcessListItemResponse> => {
-  const response = await fetch(`${ROOT}/static/extras-list`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
-    },
-    body: JSON.stringify(data),
-  })
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -608,6 +675,11 @@ const updateSpacePackage = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -626,6 +698,11 @@ const deleteSpacePackage = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -655,6 +732,11 @@ const updateSpaceService = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -673,6 +755,11 @@ const deleteSpaceService = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -711,6 +798,11 @@ const updateHostInfo = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -725,6 +817,11 @@ const uploadStripeDocument = async (data: FormData): Promise<unknown> => {
       body: data,
     }
   )
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -742,6 +839,11 @@ const updateIbanDocument = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -767,6 +869,11 @@ const updateHostStatus = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -805,6 +912,11 @@ const finishOnboarding = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -828,11 +940,15 @@ const getStatistics = async (): Promise<StatisticsResponse> => {
       Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
     },
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
 export {
-  addExtra,
   addService,
   archiveOnboardingProcess,
   deleteSpacePackage,
