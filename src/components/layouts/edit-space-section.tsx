@@ -1,6 +1,35 @@
 'use client'
 import { cn } from '@/lib/utils'
 
+function HeaderTitle({
+  children,
+  className,
+}: React.InputHTMLAttributes<HTMLHeadingElement>) {
+  return (
+    <h3
+      className={cn('text-lg font-semibold text-utility-gray-700', className)}
+    >
+      {children}
+    </h3>
+  )
+}
+
+function HeaderSubtitle({
+  children,
+  className,
+}: React.InputHTMLAttributes<HTMLParagraphElement>) {
+  return (
+    <p
+      className={cn(
+        'text-sm font-light text-utility-gray-500 pt-1 pr-4',
+        className
+      )}
+    >
+      {children}
+    </p>
+  )
+}
+
 function Title({
   children,
   className,
@@ -79,6 +108,8 @@ function Content({
 }
 
 export const EditSpaceSectionLayout = {
+  HeaderTitle,
+  HeaderSubtitle,
   Title,
   Subtitle,
   Container,

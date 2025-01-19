@@ -1,7 +1,7 @@
 'use client'
 import { SelectInput } from '@/components/inputs/select-input/select-input'
 import { TextInput } from '@/components/inputs/text-input/text-input'
-import { OnboardingSectionLayout } from '@/components/layouts/onboarding-section'
+import { EditSpaceSectionLayout } from '@/components/layouts/edit-space-section'
 import { Button } from '@/components/ui/button'
 import { Option } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
@@ -256,12 +256,12 @@ export default function SubmitApplicationInfoSection({
     >
       <div className="w-full border-b pb-4 flex justify-between items-center max-sm:flex-col">
         <div className="w-full">
-          <OnboardingSectionLayout.Title>
+          <EditSpaceSectionLayout.HeaderTitle>
             {t('sections.onboarding.application-info-title')}
-          </OnboardingSectionLayout.Title>
-          <OnboardingSectionLayout.Subtitle>
+          </EditSpaceSectionLayout.HeaderTitle>
+          <EditSpaceSectionLayout.HeaderSubtitle>
             {t('sections.onboarding.application-info-subtitle')}
-          </OnboardingSectionLayout.Subtitle>
+          </EditSpaceSectionLayout.HeaderSubtitle>
         </div>
         <div className="flex justify-between items-center gap-4 max-sm:justify-end max-sm:items-start max-sm:pt-4 max-sm:w-full">
           <Button
