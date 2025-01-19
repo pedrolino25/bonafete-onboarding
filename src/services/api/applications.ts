@@ -49,6 +49,11 @@ const getApplicationsListByStatus = async (
       },
     }
   )
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -68,6 +73,11 @@ const acceptApplication = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -86,6 +96,11 @@ const rejectApplication = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -105,6 +120,11 @@ const reasignApplication = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -124,6 +144,11 @@ const scheduleApplication = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -142,6 +167,11 @@ const startOnboardingProcess = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -172,6 +202,11 @@ const getUserApplications = async (
       },
     }
   )
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -200,6 +235,11 @@ const submitApplication = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 

@@ -12,7 +12,6 @@ import z from 'zod'
 interface FixedPriceFormProps {
   defaultValues?: FixedPriceFormType
   onChange?: (values: FixedPriceFormType) => void
-  resetFormValues?: boolean
 }
 
 export const fixedPriceFormSchema = z.object({
@@ -24,7 +23,6 @@ export type FixedPriceFormType = z.infer<typeof fixedPriceFormSchema>
 export default function FixedPriceForm({
   defaultValues,
   onChange,
-  resetFormValues,
 }: FixedPriceFormProps) {
   const t = useTranslations()
 
@@ -32,16 +30,11 @@ export default function FixedPriceForm({
     setValue,
     getValues,
     watch,
-    reset,
     formState: { errors, isValid },
   } = useForm<FixedPriceFormType>({
     resolver: zodResolver(fixedPriceFormSchema),
     defaultValues,
   })
-
-  useEffect(() => {
-    if (resetFormValues) reset()
-  }, [resetFormValues])
 
   const handleChange =
     (field: keyof FixedPriceFormType) =>
@@ -62,7 +55,9 @@ export default function FixedPriceForm({
     <OnboardingFormLayout.Container>
       <TextInput
         data-testid="price"
-        placeholder={t('sections.onboarding.rental-form.price')}
+        labelSmall
+        label={t('sections.onboarding.rental-form.price')}
+        placeholder={'0'}
         value={getValues('price')}
         onChange={handleChange('price')}
         type="number"

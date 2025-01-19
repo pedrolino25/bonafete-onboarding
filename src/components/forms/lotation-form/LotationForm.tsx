@@ -1,7 +1,6 @@
 'use client'
 
 import { TextInput } from '@/components/inputs/text-input/text-input'
-import { OnboardingFormLayout } from '@/components/layouts/onboarding-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useTranslations } from 'next-intl'
 import { useEffect } from 'react'
@@ -53,35 +52,23 @@ export default function LotationForm({
     }
 
   return (
-    <OnboardingFormLayout.Main>
-      <OnboardingFormLayout.Title>
-        {t('sections.onboarding.rental-form.lotation')}
-      </OnboardingFormLayout.Title>
-      <OnboardingFormLayout.Subtitle>
-        {t('sections.onboarding.rental-form.define-lotation')}
-      </OnboardingFormLayout.Subtitle>
-      <OnboardingFormLayout.Container>
-        <TextInput
-          data-testid="lotation"
-          placeholder={t('sections.onboarding.rental-form.lotation')}
-          value={getValues('lotation')}
-          onChange={handleChange('lotation')}
-          type="number"
-          disabled={disabled}
-          error={
-            errors.lotation?.message
-              ? t(`error-messages.${errors.lotation?.message}`)
-              : undefined
-          }
-        />
-        {isValid && (
-          <OnboardingFormLayout.Info>
-            {t(
-              'sections.onboarding.rental-form.explanation-messages.lotation'
-            ).replace('$1', lotation)}
-          </OnboardingFormLayout.Info>
-        )}
-      </OnboardingFormLayout.Container>
-    </OnboardingFormLayout.Main>
+    <div className="w-full">
+      <TextInput
+        label={t('columns.max_of_persons')}
+        labelSmall
+        required
+        data-testid="lotation"
+        placeholder={t('sections.onboarding.rental-form.lotation')}
+        value={getValues('lotation')}
+        onChange={handleChange('lotation')}
+        type="number"
+        disabled={disabled}
+        error={
+          errors.lotation?.message
+            ? t(`error-messages.${errors.lotation?.message}`)
+            : undefined
+        }
+      />
+    </div>
   )
 }

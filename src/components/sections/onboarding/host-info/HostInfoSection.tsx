@@ -2,7 +2,7 @@
 import { SelectInput } from '@/components/inputs/select-input/select-input'
 import { StripeDocsInput } from '@/components/inputs/stripe-docs-input/stripe-docs-input'
 import { TextInput } from '@/components/inputs/text-input/text-input'
-import { OnboardingFormLayout } from '@/components/layouts/onboarding-form'
+import { EditSpaceSectionLayout } from '@/components/layouts/edit-space-section'
 import { OnboardingSectionLayout } from '@/components/layouts/onboarding-section'
 import { Button } from '@/components/ui/button'
 import { Option } from '@/components/ui/select'
@@ -216,7 +216,7 @@ export default function HostInfoSection({
       className="w-full max-sm:border-t max-sm:px-1 py-4"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <div className="w-full border-b pb-4 flex justify-between items-center max-sm:flex-col">
+      <div className="w-full border-b px-6 max-sm:px-4 pb-4 flex justify-between items-center max-sm:flex-col">
         <div className="w-full">
           <OnboardingSectionLayout.Title>
             {t('sections.onboarding.host-info-title')}
@@ -226,7 +226,7 @@ export default function HostInfoSection({
           </OnboardingSectionLayout.Subtitle>
         </div>
         <div className="flex justify-between items-center gap-4 max-sm:justify-end max-sm:items-start max-sm:pt-4 max-sm:w-full">
-          {onboardingInfo.fase5 === OnboardingFaseStatus.Completed && (
+          {onboardingInfo.fase6 === OnboardingFaseStatus.Completed && (
             <Button
               startAdornment={<Info className="h-4 w-4" />}
               color="secondary"
@@ -242,6 +242,19 @@ export default function HostInfoSection({
               {t('button-actions.update-needed')}
             </Button>
           )}
+          <Button
+            className="px-10"
+            disabled={
+              !isValid ||
+              isLoading ||
+              !isDirty ||
+              !!onboardingInfo.host?.account_id
+            }
+            loading={isLoading}
+            onClick={handleSubmit(onSubmit)}
+          >
+            {t('button-actions.submit')}
+          </Button>
           {isComplete && (
             <Button
               startAdornment={<Send className="h-4 w-4" />}
@@ -272,400 +285,396 @@ export default function HostInfoSection({
         </div>
       </div>
 
-      <div className="w-9/12 max-w-[700px] max-sm:w-full grid grid-cols-6 gap-4 pt-4 pl-6 max-sm:pl-0 pb-6 border-b">
-        <div className="col-span-6 pb-4">
-          <OnboardingFormLayout.Title>
-            {t('sections.onboarding.host-info-form.fiscal-data-title')}
-          </OnboardingFormLayout.Title>
-          <OnboardingFormLayout.Subtitle>
-            {t('sections.onboarding.host-info-form.fiscal-data-subtitle')}
-          </OnboardingFormLayout.Subtitle>
-        </div>
-        <div className="col-span-3 max-sm:col-span-6">
-          <TextInput
-            data-testid="nif"
-            label={t('sections.onboarding.host-info-form.account_type')}
-            value={onboardingInfo.application.account_type}
-            disabled={true}
-          />
-        </div>
-        <div className="col-span-3 max-sm:col-span-6">
-          <TextInput
-            data-testid="nif"
-            label={t('sections.onboarding.host-info-form.certificate')}
-            value={onboardingInfo.application.certificate}
-            disabled={true}
-          />
-        </div>
-        <div className="col-span-3 max-sm:col-span-6">
-          <SelectInput
-            data-testid="company_type"
-            label={t('sections.onboarding.host-info-form.company-type')}
-            placeholder={t('sections.onboarding.host-info-form.company-type')}
-            options={COMPANY_TYPE_OPTIONS}
-            value={getValues().company_type}
-            onSelect={handleSelectChange('company_type')}
-            disabled={!!onboardingInfo.host?.account_id}
-            useTranslation
-          />
-        </div>
-        <div className="col-span-3 max-sm:col-span-6">
-          <TextInput
-            data-testid="nif"
-            label={t('sections.onboarding.host-info-form.nif')}
-            placeholder={t('sections.onboarding.host-info-form.nif')}
-            value={getValues().nif}
-            onChange={handleChange('nif')}
-            disabled={
-              !getValues().company_type || !!onboardingInfo.host?.account_id
-            }
-          />
-        </div>
+      <div className="w-full">
+        <EditSpaceSectionLayout.Container>
+          <EditSpaceSectionLayout.Header>
+            <EditSpaceSectionLayout.Title>
+              {t('sections.onboarding.host-info-form.fiscal-data-title')}
+            </EditSpaceSectionLayout.Title>
+            <EditSpaceSectionLayout.Subtitle>
+              {t('sections.onboarding.host-info-form.fiscal-data-subtitle')}
+            </EditSpaceSectionLayout.Subtitle>
+          </EditSpaceSectionLayout.Header>
+          <EditSpaceSectionLayout.Content>
+            <div className="w-full flex flex-col gap-4">
+              <TextInput
+                labelSmall
+                data-testid="nif"
+                label={t('sections.onboarding.host-info-form.account_type')}
+                value={onboardingInfo.application.account_type}
+                disabled={true}
+              />
+              <TextInput
+                labelSmall
+                data-testid="nif"
+                label={t('sections.onboarding.host-info-form.certificate')}
+                value={onboardingInfo.application.certificate}
+                disabled={true}
+              />
+              <SelectInput
+                labelSmall
+                data-testid="company_type"
+                label={t('sections.onboarding.host-info-form.company-type')}
+                placeholder={t(
+                  'sections.onboarding.host-info-form.company-type'
+                )}
+                options={COMPANY_TYPE_OPTIONS}
+                value={getValues().company_type}
+                onSelect={handleSelectChange('company_type')}
+                disabled={!!onboardingInfo.host?.account_id}
+                useTranslation
+              />
+              <TextInput
+                labelSmall
+                data-testid="nif"
+                label={t('sections.onboarding.host-info-form.nif')}
+                placeholder={t('sections.onboarding.host-info-form.nif')}
+                value={getValues().nif}
+                onChange={handleChange('nif')}
+                disabled={
+                  !getValues().company_type || !!onboardingInfo.host?.account_id
+                }
+              />
+            </div>
+          </EditSpaceSectionLayout.Content>
+        </EditSpaceSectionLayout.Container>
+
         {getValues().company_type?.[0]?.value === CompanyType.Company && (
-          <>
-            <div className="col-span-6">
-              <TextInput
-                data-testid="company_name"
-                label={t('sections.onboarding.host-info-form.company-name')}
-                placeholder={t(
-                  'sections.onboarding.host-info-form.company-name'
-                )}
-                value={getValues().company_name}
-                onChange={handleChange('company_name')}
-                disabled={!!onboardingInfo.host?.account_id}
-              />
-            </div>
-            <div className="col-span-3 max-sm:col-span-6">
-              <TextInput
-                data-testid="company_phone"
-                label={t('sections.onboarding.host-info-form.phone')}
-                placeholder={t('sections.onboarding.host-info-form.phone')}
-                value={getValues().company_phone}
-                onChange={handleChange('company_phone')}
-                disabled={!!onboardingInfo.host?.account_id}
-                type="number"
-              />
-            </div>
-            <div className="col-span-3 max-sm:col-span-6">
-              <TextInput
-                data-testid="company_email"
-                label={t('sections.onboarding.host-info-form.email')}
-                placeholder={t('sections.onboarding.host-info-form.email')}
-                value={getValues().company_email}
-                onChange={handleChange('company_email')}
-                disabled={!!onboardingInfo.host?.account_id}
-              />
-            </div>
-            <div className="col-span-6">
-              <TextInput
-                data-testid="company_address"
-                label={t('sections.onboarding.host-info-form.address')}
-                placeholder={t('sections.onboarding.host-info-form.address')}
-                value={getValues().company_address}
-                onChange={handleChange('company_address')}
-                disabled={!!onboardingInfo.host?.account_id}
-              />
-            </div>
-            <div className="col-span-4 max-sm:col-span-6">
-              <TextInput
-                data-testid="company_city"
-                label={t('sections.onboarding.host-info-form.city')}
-                placeholder={t('sections.onboarding.host-info-form.city')}
-                value={getValues().company_city}
-                onChange={handleChange('company_city')}
-                disabled={!!onboardingInfo.host?.account_id}
-              />
-            </div>
-            <div className="col-span-2 max-sm:col-span-6">
-              <TextInput
-                data-testid="company_postal_code"
-                label={t('sections.onboarding.host-info-form.postal-code')}
-                placeholder={t(
-                  'sections.onboarding.host-info-form.postal-code'
-                )}
-                value={getValues().company_postal_code}
-                onChange={handleChange('company_postal_code')}
-                disabled={!!onboardingInfo.host?.account_id}
-              />
-            </div>
-          </>
+          <EditSpaceSectionLayout.Container>
+            <EditSpaceSectionLayout.Header>
+              <EditSpaceSectionLayout.Title>
+                {t('sections.onboarding.company-title')}
+              </EditSpaceSectionLayout.Title>
+              <EditSpaceSectionLayout.Subtitle>
+                {t('sections.onboarding.company-subtitle')}
+              </EditSpaceSectionLayout.Subtitle>
+            </EditSpaceSectionLayout.Header>
+            <EditSpaceSectionLayout.Content>
+              <div className="w-full flex flex-col gap-4">
+                <TextInput
+                  labelSmall
+                  data-testid="company_name"
+                  label={t('sections.onboarding.host-info-form.company-name')}
+                  placeholder={t(
+                    'sections.onboarding.host-info-form.company-name'
+                  )}
+                  value={getValues().company_name}
+                  onChange={handleChange('company_name')}
+                  disabled={!!onboardingInfo.host?.account_id}
+                />
+                <TextInput
+                  labelSmall
+                  data-testid="company_phone"
+                  label={t('sections.onboarding.host-info-form.phone')}
+                  placeholder={t('sections.onboarding.host-info-form.phone')}
+                  value={getValues().company_phone}
+                  onChange={handleChange('company_phone')}
+                  disabled={!!onboardingInfo.host?.account_id}
+                  type="number"
+                />
+                <TextInput
+                  labelSmall
+                  data-testid="company_email"
+                  label={t('sections.onboarding.host-info-form.email')}
+                  placeholder={t('sections.onboarding.host-info-form.email')}
+                  value={getValues().company_email}
+                  onChange={handleChange('company_email')}
+                  disabled={!!onboardingInfo.host?.account_id}
+                />
+                <TextInput
+                  labelSmall
+                  data-testid="company_address"
+                  label={t('sections.onboarding.host-info-form.address')}
+                  placeholder={t('sections.onboarding.host-info-form.address')}
+                  value={getValues().company_address}
+                  onChange={handleChange('company_address')}
+                  disabled={!!onboardingInfo.host?.account_id}
+                />
+                <TextInput
+                  labelSmall
+                  data-testid="company_city"
+                  label={t('sections.onboarding.host-info-form.city')}
+                  placeholder={t('sections.onboarding.host-info-form.city')}
+                  value={getValues().company_city}
+                  onChange={handleChange('company_city')}
+                  disabled={!!onboardingInfo.host?.account_id}
+                />
+                <TextInput
+                  labelSmall
+                  data-testid="company_postal_code"
+                  label={t('sections.onboarding.host-info-form.postal-code')}
+                  placeholder={t(
+                    'sections.onboarding.host-info-form.postal-code'
+                  )}
+                  value={getValues().company_postal_code}
+                  onChange={handleChange('company_postal_code')}
+                  disabled={!!onboardingInfo.host?.account_id}
+                />
+              </div>
+            </EditSpaceSectionLayout.Content>
+          </EditSpaceSectionLayout.Container>
         )}
       </div>
 
-      <div className="w-9/12 max-w-[700px] max-sm:w-full grid grid-cols-6 gap-4 pt-4 pl-6 max-sm:pl-0 pb-6 border-b">
-        <div className="col-span-6 pb-4">
-          <OnboardingFormLayout.Title>
+      <EditSpaceSectionLayout.Container>
+        <EditSpaceSectionLayout.Header>
+          <EditSpaceSectionLayout.Title>
             {t('sections.onboarding.host-info-form.representative-title')}
-          </OnboardingFormLayout.Title>
-          <OnboardingFormLayout.Subtitle>
+          </EditSpaceSectionLayout.Title>
+          <EditSpaceSectionLayout.Subtitle>
             {t('sections.onboarding.host-info-form.representative-subtitle')}
-          </OnboardingFormLayout.Subtitle>
-        </div>
-        <div className="col-span-3 max-sm:col-span-6">
-          <TextInput
-            data-testid="first_name"
-            label={t('sections.onboarding.host-info-form.first-name')}
-            placeholder={t('sections.onboarding.host-info-form.first-name')}
-            value={getValues().first_name}
-            onChange={handleChange('first_name')}
-            disabled={!!onboardingInfo.host?.account_id}
-          />
-        </div>
-        <div className="col-span-3 max-sm:col-span-6">
-          <TextInput
-            data-testid="last_name"
-            label={t('sections.onboarding.host-info-form.last-name')}
-            placeholder={t('sections.onboarding.host-info-form.last-name')}
-            value={getValues().last_name}
-            onChange={handleChange('last_name')}
-            disabled={!!onboardingInfo.host?.account_id}
-          />
-        </div>
-        <div className="col-span-2 max-sm:col-span-6">
-          <TextInput
-            data-testid="birth_date"
-            label={t('sections.onboarding.host-info-form.birth-date')}
-            placeholder={t('table.select-date')}
-            defaultValue={getValues().birth_date}
-            onChange={handleChange('birth_date')}
-            type="date"
-            disabled={!!onboardingInfo.host?.account_id}
-          />
-        </div>
-        <div className="col-span-2 max-sm:col-span-6">
-          <TextInput
-            data-testid="email"
-            label={t('sections.onboarding.host-info-form.email')}
-            placeholder={t('sections.onboarding.host-info-form.email')}
-            value={getValues().email}
-            onChange={handleChange('email')}
-            disabled={!!onboardingInfo.host?.account_id}
-          />
-        </div>
-        <div className="col-span-2 max-sm:col-span-6">
-          <TextInput
-            data-testid="phone"
-            label={t('sections.onboarding.host-info-form.phone')}
-            placeholder={t('sections.onboarding.host-info-form.phone')}
-            value={getValues().phone}
-            onChange={handleChange('phone')}
-            type="number"
-            disabled={!!onboardingInfo.host?.account_id}
-          />
-        </div>
-        <div className="col-span-6">
-          <TextInput
-            data-testid="address"
-            label={t('sections.onboarding.host-info-form.address')}
-            placeholder={t('sections.onboarding.host-info-form.address')}
-            value={getValues().address}
-            onChange={handleChange('address')}
-            disabled={!!onboardingInfo.host?.account_id}
-          />
-        </div>
-        <div className="col-span-4 max-sm:col-span-6">
-          <TextInput
-            data-testid="city"
-            label={t('sections.onboarding.host-info-form.city')}
-            placeholder={t('sections.onboarding.host-info-form.city')}
-            value={getValues().city}
-            onChange={handleChange('city')}
-            disabled={!!onboardingInfo.host?.account_id}
-          />
-        </div>
-        <div className="col-span-2 max-sm:col-span-6">
-          <TextInput
-            data-testid="postal_code"
-            label={t('sections.onboarding.host-info-form.postal-code')}
-            placeholder={t('sections.onboarding.host-info-form.postal-code')}
-            value={getValues().postal_code}
-            onChange={handleChange('postal_code')}
-            disabled={!!onboardingInfo.host?.account_id}
-          />
-        </div>
-      </div>
-      <div className="w-9/12 max-w-[700px] max-sm:w-full grid grid-cols-6 gap-4 pt-4 pl-6 max-sm:pl-0 pb-6 border-b">
-        <div className="col-span-6 pb-4">
-          <OnboardingFormLayout.Title>
-            {t('sections.onboarding.host-info-form.account-title')}
-          </OnboardingFormLayout.Title>
-          <OnboardingFormLayout.Subtitle>
-            {t('sections.onboarding.host-info-form.account-subtitle')}
-          </OnboardingFormLayout.Subtitle>
-        </div>
-        <div className="col-span-6">
-          <TextInput
-            data-testid="account_owner"
-            label={t('sections.onboarding.host-info-form.account-owner')}
-            placeholder={t('sections.onboarding.host-info-form.account-owner')}
-            value={getValues().account_owner}
-            onChange={handleChange('account_owner')}
-            disabled={!!onboardingInfo.host?.account_id}
-          />
-        </div>
-        <div className="col-span-6">
-          <TextInput
-            data-testid="iban"
-            label={t('sections.onboarding.host-info-form.iban')}
-            placeholder={t('sections.onboarding.host-info-form.iban')}
-            value={getValues().iban}
-            onChange={handleChange('iban')}
-            fixedEndAdornment={
-              !getValues().account_token ? (
-                <Button
-                  size="xs"
-                  variant="ghost"
-                  color="secondary"
-                  className="pt-3"
-                  onClick={() => {
-                    if (getValues().iban) {
-                      submitBankAccount()
-                    }
-                  }}
-                  disabled={
-                    !getValues().iban ||
-                    getValues().iban?.length < 25 ||
-                    getValues().iban?.length > 25 ||
-                    getValues().iban?.substring(0, 2) !== 'PT' ||
-                    !!onboardingInfo.host?.account_id
-                  }
-                >
-                  {t('button-actions.validate')}
-                </Button>
-              ) : undefined
-            }
-          />
-        </div>
-        <div className="col-span-6 w-full flex justify-end pt-4">
-          <Button
-            className="px-10"
-            disabled={
-              !isValid ||
-              isLoading ||
-              !isDirty ||
-              !!onboardingInfo.host?.account_id
-            }
-            loading={isLoading}
-            onClick={handleSubmit(onSubmit)}
-          >
-            {t('button-actions.submit')}
-          </Button>
-        </div>
-      </div>
-
-      <div className="w-9/12 max-w-[700px] max-sm:w-full grid grid-cols-6 gap-4 pt-4 pl-6 max-sm:pl-0 pb-6 border-b">
-        <div className="col-span-6 pb-4">
-          <OnboardingFormLayout.Title>
-            {t('sections.onboarding.host-info-form.id-proof-title')}
-          </OnboardingFormLayout.Title>
-          <OnboardingFormLayout.Subtitle>
-            {t('sections.onboarding.host-info-form.id-proof-subtitle')}
-          </OnboardingFormLayout.Subtitle>
-        </div>
-        <div className="col-span-3 max-sm:col-span-6">
-          <StripeDocsInput
-            label="Frente do documento"
-            complete={onboardingInfo?.host?.requirements?.identity_proof?.front}
-            info={{
-              account_id: onboardingInfo.host?.account_id as string,
-              person_id: onboardingInfo.host?.person_id as string,
-              verification_type: 'document',
-              file_type: 'front',
-              is_company: getValues().company_type?.[0]?.value === 'company',
-            }}
-            onSuccess={() => refetch?.()}
-          />
-        </div>
-        <div className="col-span-3 max-sm:col-span-6">
-          <StripeDocsInput
-            label="Verso do documento"
-            complete={onboardingInfo?.host?.requirements?.identity_proof?.back}
-            info={{
-              account_id: onboardingInfo.host?.account_id as string,
-              person_id: onboardingInfo.host?.person_id as string,
-              verification_type: 'document',
-              file_type: 'back',
-              is_company: getValues().company_type?.[0]?.value === 'company',
-            }}
-            onSuccess={() => refetch?.()}
-          />
-        </div>
-      </div>
-      <div className="w-9/12 max-w-[700px] max-sm:w-full grid grid-cols-6 gap-4 pt-4 pl-6 max-sm:pl-0 pb-6 border-b">
-        <div className="col-span-6 pb-4">
-          <OnboardingFormLayout.Title>
-            {t('sections.onboarding.host-info-form.address-proof-title')}
-          </OnboardingFormLayout.Title>
-          <OnboardingFormLayout.Subtitle>
-            {t('sections.onboarding.host-info-form.address-proof-subtitle')}
-          </OnboardingFormLayout.Subtitle>
-        </div>
-        <div className="col-span-6">
-          <StripeDocsInput
-            complete={onboardingInfo?.host?.requirements?.address_proof}
-            info={{
-              account_id: onboardingInfo.host?.account_id as string,
-              person_id: onboardingInfo.host?.person_id as string,
-              verification_type: 'additional_document',
-              file_type: 'front',
-              is_company: getValues().company_type?.[0]?.value === 'company',
-            }}
-            onSuccess={() => refetch?.()}
-          />
-        </div>
-      </div>
-
-      {getValues().company_type?.[0]?.value === 'company' && (
-        <div className="w-9/12 max-w-[700px] max-sm:w-full grid grid-cols-6 gap-4 pt-4 pl-6 max-sm:pl-0 pb-6 border-b">
-          <div className="col-span-6 pb-4">
-            <OnboardingFormLayout.Title>
-              {t('sections.onboarding.host-info-form.company-proof-title')}
-            </OnboardingFormLayout.Title>
-            <OnboardingFormLayout.Subtitle>
-              {t('sections.onboarding.host-info-form.company-proof-subtitle')}
-            </OnboardingFormLayout.Subtitle>
+          </EditSpaceSectionLayout.Subtitle>
+        </EditSpaceSectionLayout.Header>
+        <EditSpaceSectionLayout.Content>
+          <div className="w-full flex flex-col gap-4">
+            <TextInput
+              data-testid="first_name"
+              label={t('sections.onboarding.host-info-form.first-name')}
+              placeholder={t('sections.onboarding.host-info-form.first-name')}
+              value={getValues().first_name}
+              onChange={handleChange('first_name')}
+              disabled={!!onboardingInfo.host?.account_id}
+            />
+            <TextInput
+              data-testid="last_name"
+              label={t('sections.onboarding.host-info-form.last-name')}
+              placeholder={t('sections.onboarding.host-info-form.last-name')}
+              value={getValues().last_name}
+              onChange={handleChange('last_name')}
+              disabled={!!onboardingInfo.host?.account_id}
+            />
+            <TextInput
+              data-testid="birth_date"
+              label={t('sections.onboarding.host-info-form.birth-date')}
+              placeholder={t('table.select-date')}
+              defaultValue={getValues().birth_date}
+              onChange={handleChange('birth_date')}
+              type="date"
+              disabled={!!onboardingInfo.host?.account_id}
+            />
+            <TextInput
+              data-testid="email"
+              label={t('sections.onboarding.host-info-form.email')}
+              placeholder={t('sections.onboarding.host-info-form.email')}
+              value={getValues().email}
+              onChange={handleChange('email')}
+              disabled={!!onboardingInfo.host?.account_id}
+            />
+            <TextInput
+              data-testid="phone"
+              label={t('sections.onboarding.host-info-form.phone')}
+              placeholder={t('sections.onboarding.host-info-form.phone')}
+              value={getValues().phone}
+              onChange={handleChange('phone')}
+              type="number"
+              disabled={!!onboardingInfo.host?.account_id}
+            />
+            <TextInput
+              data-testid="address"
+              label={t('sections.onboarding.host-info-form.address')}
+              placeholder={t('sections.onboarding.host-info-form.address')}
+              value={getValues().address}
+              onChange={handleChange('address')}
+              disabled={!!onboardingInfo.host?.account_id}
+            />
+            <TextInput
+              data-testid="city"
+              label={t('sections.onboarding.host-info-form.city')}
+              placeholder={t('sections.onboarding.host-info-form.city')}
+              value={getValues().city}
+              onChange={handleChange('city')}
+              disabled={!!onboardingInfo.host?.account_id}
+            />
+            <TextInput
+              data-testid="postal_code"
+              label={t('sections.onboarding.host-info-form.postal-code')}
+              placeholder={t('sections.onboarding.host-info-form.postal-code')}
+              value={getValues().postal_code}
+              onChange={handleChange('postal_code')}
+              disabled={!!onboardingInfo.host?.account_id}
+            />
           </div>
-          <div className="col-span-6">
+        </EditSpaceSectionLayout.Content>
+      </EditSpaceSectionLayout.Container>
+
+      <EditSpaceSectionLayout.Container>
+        <EditSpaceSectionLayout.Header>
+          <EditSpaceSectionLayout.Title>
+            {t('sections.onboarding.host-info-form.account-title')}
+          </EditSpaceSectionLayout.Title>
+          <EditSpaceSectionLayout.Subtitle>
+            {t('sections.onboarding.host-info-form.account-subtitle')}
+          </EditSpaceSectionLayout.Subtitle>
+        </EditSpaceSectionLayout.Header>
+        <EditSpaceSectionLayout.Content>
+          <div className="w-full flex flex-col gap-4">
+            <TextInput
+              data-testid="account_owner"
+              label={t('sections.onboarding.host-info-form.account-owner')}
+              placeholder={t(
+                'sections.onboarding.host-info-form.account-owner'
+              )}
+              value={getValues().account_owner}
+              onChange={handleChange('account_owner')}
+              disabled={!!onboardingInfo.host?.account_id}
+            />
+            <TextInput
+              data-testid="iban"
+              label={t('sections.onboarding.host-info-form.iban')}
+              placeholder={t('sections.onboarding.host-info-form.iban')}
+              value={getValues().iban}
+              onChange={handleChange('iban')}
+              fixedEndAdornment={
+                !getValues().account_token ? (
+                  <Button
+                    size="xs"
+                    variant="ghost"
+                    color="secondary"
+                    className="pt-3"
+                    onClick={() => {
+                      if (getValues().iban) {
+                        submitBankAccount()
+                      }
+                    }}
+                    disabled={
+                      !getValues().iban ||
+                      getValues().iban?.length < 25 ||
+                      getValues().iban?.length > 25 ||
+                      getValues().iban?.substring(0, 2) !== 'PT' ||
+                      !!onboardingInfo.host?.account_id
+                    }
+                  >
+                    {t('button-actions.validate')}
+                  </Button>
+                ) : undefined
+              }
+            />
+          </div>
+        </EditSpaceSectionLayout.Content>
+      </EditSpaceSectionLayout.Container>
+
+      <EditSpaceSectionLayout.Container>
+        <EditSpaceSectionLayout.Header>
+          <EditSpaceSectionLayout.Title>
+            {t('sections.onboarding.host-info-form.id-proof-title')}
+          </EditSpaceSectionLayout.Title>
+          <EditSpaceSectionLayout.Subtitle>
+            {t('sections.onboarding.host-info-form.id-proof-subtitle')}
+          </EditSpaceSectionLayout.Subtitle>
+        </EditSpaceSectionLayout.Header>
+        <EditSpaceSectionLayout.Content>
+          <div className="w-full flex flex-col gap-4">
             <StripeDocsInput
-              complete={onboardingInfo?.host?.requirements?.company_proof}
+              label="Frente do documento"
+              complete={
+                onboardingInfo?.host?.requirements?.identity_proof?.front
+              }
               info={{
                 account_id: onboardingInfo.host?.account_id as string,
                 person_id: onboardingInfo.host?.person_id as string,
-                verification_type: 'company_registration',
+                verification_type: 'document',
+                file_type: 'front',
+                is_company: getValues().company_type?.[0]?.value === 'company',
+              }}
+              onSuccess={() => refetch?.()}
+            />
+            <StripeDocsInput
+              label="Verso do documento"
+              complete={
+                onboardingInfo?.host?.requirements?.identity_proof?.back
+              }
+              info={{
+                account_id: onboardingInfo.host?.account_id as string,
+                person_id: onboardingInfo.host?.person_id as string,
+                verification_type: 'document',
+                file_type: 'back',
+                is_company: getValues().company_type?.[0]?.value === 'company',
+              }}
+              onSuccess={() => refetch?.()}
+            />
+          </div>
+        </EditSpaceSectionLayout.Content>
+      </EditSpaceSectionLayout.Container>
+
+      <EditSpaceSectionLayout.Container>
+        <EditSpaceSectionLayout.Header>
+          <EditSpaceSectionLayout.Title>
+            {t('sections.onboarding.host-info-form.address-proof-title')}
+          </EditSpaceSectionLayout.Title>
+          <EditSpaceSectionLayout.Subtitle>
+            {t('sections.onboarding.host-info-form.address-proof-subtitle')}
+          </EditSpaceSectionLayout.Subtitle>
+        </EditSpaceSectionLayout.Header>
+        <EditSpaceSectionLayout.Content>
+          <div className="w-full flex flex-col gap-4">
+            <StripeDocsInput
+              complete={onboardingInfo?.host?.requirements?.address_proof}
+              info={{
+                account_id: onboardingInfo.host?.account_id as string,
+                person_id: onboardingInfo.host?.person_id as string,
+                verification_type: 'additional_document',
                 file_type: 'front',
                 is_company: getValues().company_type?.[0]?.value === 'company',
               }}
               onSuccess={() => refetch?.()}
             />
           </div>
-        </div>
+        </EditSpaceSectionLayout.Content>
+      </EditSpaceSectionLayout.Container>
+      {getValues().company_type?.[0]?.value === 'company' && (
+        <EditSpaceSectionLayout.Container>
+          <EditSpaceSectionLayout.Header>
+            <EditSpaceSectionLayout.Title>
+              {t('sections.onboarding.host-info-form.company-proof-title')}
+            </EditSpaceSectionLayout.Title>
+            <EditSpaceSectionLayout.Subtitle>
+              {t('sections.onboarding.host-info-form.company-proof-subtitle')}
+            </EditSpaceSectionLayout.Subtitle>
+          </EditSpaceSectionLayout.Header>
+          <EditSpaceSectionLayout.Content>
+            <div className="w-full flex flex-col gap-4">
+              <StripeDocsInput
+                complete={onboardingInfo?.host?.requirements?.company_proof}
+                info={{
+                  account_id: onboardingInfo.host?.account_id as string,
+                  person_id: onboardingInfo.host?.person_id as string,
+                  verification_type: 'company_registration',
+                  file_type: 'front',
+                  is_company:
+                    getValues().company_type?.[0]?.value === 'company',
+                }}
+                onSuccess={() => refetch?.()}
+              />
+            </div>
+          </EditSpaceSectionLayout.Content>
+        </EditSpaceSectionLayout.Container>
       )}
 
-      <div className="w-9/12 max-w-[700px] max-sm:w-full grid grid-cols-6 gap-4 pt-4 pl-6 max-sm:pl-0 pb-6">
-        <div className="col-span-6 pb-4">
-          <OnboardingFormLayout.Title>
+      <EditSpaceSectionLayout.Container>
+        <EditSpaceSectionLayout.Header>
+          <EditSpaceSectionLayout.Title>
             {t('sections.onboarding.host-info-form.account-proof-title')}
-          </OnboardingFormLayout.Title>
-          <p>
-            <OnboardingFormLayout.Subtitle>
-              {t('sections.onboarding.host-info-form.account-proof-subtitle')}
-            </OnboardingFormLayout.Subtitle>
-          </p>
-        </div>
-        <div className="col-span-6">
-          <StripeDocsInput
-            complete={onboardingInfo?.host?.requirements?.iban_proof}
-            info={{
-              account_id: onboardingInfo.host?.account_id as string,
-              person_id: onboardingInfo.host?.person_id as string,
-              verification_type: 'iban',
-              file_type: 'front',
-              is_company: getValues().company_type?.[0]?.value === 'company',
-            }}
-            onSuccess={() => refetch?.()}
-          />
-        </div>
-      </div>
+          </EditSpaceSectionLayout.Title>
+          <EditSpaceSectionLayout.Subtitle>
+            {t('sections.onboarding.host-info-form.account-proof-subtitle')}
+          </EditSpaceSectionLayout.Subtitle>
+        </EditSpaceSectionLayout.Header>
+        <EditSpaceSectionLayout.Content>
+          <div className="w-full flex flex-col gap-4">
+            <StripeDocsInput
+              complete={onboardingInfo?.host?.requirements?.iban_proof}
+              info={{
+                account_id: onboardingInfo.host?.account_id as string,
+                person_id: onboardingInfo.host?.person_id as string,
+                verification_type: 'iban',
+                file_type: 'front',
+                is_company: getValues().company_type?.[0]?.value === 'company',
+              }}
+              onSuccess={() => refetch?.()}
+            />
+          </div>
+        </EditSpaceSectionLayout.Content>
+      </EditSpaceSectionLayout.Container>
     </form>
   )
 }

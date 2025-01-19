@@ -33,6 +33,11 @@ const getSpacesListByStatus = async (
       Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
     },
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -47,6 +52,11 @@ const verifySpaceTitle = async (title: string, id: string): Promise<string> => {
       },
     }
   )
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -65,6 +75,11 @@ const createSpace = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -84,6 +99,11 @@ const updateSpaceStatus = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 

@@ -1,7 +1,4 @@
-import { CancelationPolicyFormType } from '@/components/forms/cancelation-policy-form/CancelationPolicyForm'
-import { CleaningFeeFormType } from '@/components/forms/cleaning-fee-form/CleaningFeeForm'
 import { LotationFormType } from '@/components/forms/lotation-form/LotationForm'
-import { MinimumHoursFormType } from '@/components/forms/minimum-hours-form/MinimumHoursForm'
 import { CustomPriceFormType } from '@/components/forms/rental-price-form/custom-price-form/CustomPriceForm'
 import { FixedPriceFormType } from '@/components/forms/rental-price-form/fixed-price-form/FixedPriceForm'
 import { FlexiblePriceFormType } from '@/components/forms/rental-price-form/flexible-price-form/FlexiblePriceForm'
@@ -12,6 +9,7 @@ import {
   OnboardingFaseStatus,
   OnboardingSections,
 } from '@/components/sections/onboarding/OnboardingSection'
+import { CancellationPolicyFormType } from '@/components/sections/onboarding/space-cancellation-policy/SpaceCancellationPolicySection'
 import { SpaceBusinessModel } from '@/lib/utils/consts'
 import { getCookie } from 'cookies-next'
 import { Cookies } from '../auth'
@@ -31,6 +29,7 @@ export interface OnboardingProcessListItemResponse {
   fase3: string
   fase4: string
   fase5: string
+  fase6: string
   assigned_user_name: string
   assigned_user_email: string
   assigned_user_id: string
@@ -55,6 +54,11 @@ const getOnboardingsProcessesListByStatus = async (
       Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
     },
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -73,6 +77,11 @@ const archiveOnboardingProcess = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -92,6 +101,11 @@ const reasignOnboardingProcess = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -111,6 +125,11 @@ const scheduleOnboardingProcess = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -154,9 +173,9 @@ export interface OnboardingSpaceInfo {
   latitude?: number
   longitude?: number
   lotation?: LotationFormType
-  min_hours?: MinimumHoursFormType
+  min_hours?: number
   business_model?: SpaceBusinessModel
-  cancellation_policy?: CancelationPolicyFormType
+  cancellation_policy?: CancellationPolicyFormType
   schedule?: ScheduleFormType
   prices?: {
     priceModel?: { value: string; label: string }[]
@@ -164,7 +183,7 @@ export interface OnboardingSpaceInfo {
     flexible?: FlexiblePriceFormType
     custom?: CustomPriceFormType
   }
-  cleaning_fee?: CleaningFeeFormType
+  cleaning_fee?: number
   packages?: SpacePackageFormType[]
   services?: SpaceServiceFormType[]
 }
@@ -222,6 +241,7 @@ export interface OnboardingProcessItemResponse {
   fase3: string
   fase4: string
   fase5: string
+  fase6: string
   schedule_date: string
   created_at: string
   application: ApplicationSpaceInfo
@@ -239,6 +259,11 @@ const getOnboardingProcessesById = async (
       Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
     },
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -252,24 +277,11 @@ const getOnboardingSpaceById = async (
       Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
     },
   })
-  return response.json()
-}
 
-interface SaveOnboardingIntroProps {
-  id: string
-}
-
-const saveOnboardingIntro = async (
-  data: SaveOnboardingIntroProps
-): Promise<unknown> => {
-  const response = await fetch(`${ROOT}/api/onboarding/intro`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
-    },
-    body: JSON.stringify(data),
-  })
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -287,12 +299,6 @@ export interface SaveOnboardingSpaceInfoProps {
   title?: string
   tour?: string
   description?: string
-  allow_pets?: string
-  allow_alcool?: string
-  allow_smoking?: string
-  allow_high_sound?: string
-  has_security_cameras?: string
-  rules?: string
   street?: string
   postal?: string
   locality?: string
@@ -300,6 +306,8 @@ export interface SaveOnboardingSpaceInfoProps {
   city?: string
   latitude?: number
   longitude?: number
+  schedule?: SpaceSchedule[]
+  lotation?: number
 }
 
 const saveOnboardingSpaceInfo = async (
@@ -313,6 +321,122 @@ const saveOnboardingSpaceInfo = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
+  return response.json()
+}
+
+export interface SaveOnboardingSpaceRulesProps {
+  space_id: string
+  onboarding_id?: string
+  allow_pets?: string
+  allow_alcool?: string
+  allow_smoking?: string
+  allow_high_sound?: string
+  has_security_cameras?: string
+  rules?: string
+}
+
+const saveOnboardingSpaceRules = async (
+  data: SaveOnboardingSpaceRulesProps
+): Promise<unknown> => {
+  const response = await fetch(`${ROOT}/api/space/rules`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+    body: JSON.stringify(data),
+  })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
+  return response.json()
+}
+
+export interface SaveOnboardingSpaceGeneralConfigurationProps {
+  space_id: string
+  onboarding_id?: string
+  business_model: SpaceBusinessModel
+  min_hours: number
+  cleaning_fee: SpacePrice
+}
+
+const saveOnboardingSpaceGeneralConfiguration = async (
+  data: SaveOnboardingSpaceGeneralConfigurationProps
+): Promise<unknown> => {
+  const response = await fetch(
+    `${ROOT}/api/space/offers/general-configuration`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+      },
+      body: JSON.stringify(data),
+    }
+  )
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
+  return response.json()
+}
+
+export interface SaveOnboardingSpaceRentalProps {
+  space_id: string
+  onboarding_id?: string
+  prices: SpacePrice[]
+  price_modality: string
+}
+
+const saveOnboardingSpaceRental = async (
+  data: SaveOnboardingSpaceRentalProps
+): Promise<unknown> => {
+  const response = await fetch(`${ROOT}/api/space/offers/rental`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+    body: JSON.stringify(data),
+  })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
+  return response.json()
+}
+
+export interface SaveOnboardingSpaceCancellationPolicyProps {
+  space_id: string
+  onboarding_id?: string
+  cancellation_policy: CancelationPolicy
+}
+
+const saveOnboardingSpaceCancellationPolicy = async (
+  data: SaveOnboardingSpaceCancellationPolicyProps
+): Promise<unknown> => {
+  const response = await fetch(`${ROOT}/api/space/cancellation-policy`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
+    },
+    body: JSON.stringify(data),
+  })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -333,6 +457,11 @@ const saveOnboardingSpacePhotos = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -353,6 +482,11 @@ const updateOnboardingStatus = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -390,9 +524,7 @@ export interface UpdateSpaceOffersRentalParameters {
   prices: SpacePrice[]
   price_modality: string
   cancellation_policy: CancelationPolicy
-  lotation: number
   min_hours: number
-  schedule: SpaceSchedule[]
 }
 
 const updateSpaceOffersRental = async (
@@ -406,6 +538,11 @@ const updateSpaceOffersRental = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -428,6 +565,11 @@ const getServicesList = async (): Promise<ServiceListItemResponse[]> => {
       Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
     },
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -458,6 +600,11 @@ const getSpaceServicesList = async (
       Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
     },
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -496,28 +643,16 @@ const addService = async (
     },
     body: JSON.stringify(data),
   })
-  return response.json()
-}
 
-interface ExtraListItemProps {
-  extra: string
-}
-
-const addExtra = async (
-  data: ExtraListItemProps
-): Promise<OnboardingProcessListItemResponse> => {
-  const response = await fetch(`${ROOT}/static/extras-list`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
-    },
-    body: JSON.stringify(data),
-  })
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
 export interface UpdateSpacePackageParameters {
+  onboarding_id?: string
   space_id: string
   id?: string
   name: string
@@ -532,7 +667,7 @@ export interface UpdateSpacePackageParameters {
 const updateSpacePackage = async (
   data: UpdateSpacePackageParameters
 ): Promise<unknown> => {
-  const response = await fetch(`${ROOT}/api/space/package`, {
+  const response = await fetch(`${ROOT}/api/space/offers/package`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -540,6 +675,11 @@ const updateSpacePackage = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -550,7 +690,7 @@ export interface DeleteSpacePackageParameters {
 const deleteSpacePackage = async (
   data: DeleteSpacePackageParameters
 ): Promise<unknown> => {
-  const response = await fetch(`${ROOT}/api/space/package`, {
+  const response = await fetch(`${ROOT}/api/space/offers/package`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
@@ -558,29 +698,16 @@ const deleteSpacePackage = async (
     },
     body: JSON.stringify(data),
   })
-  return response.json()
-}
 
-export interface UpdateOffersOnboardingStatusParameters {
-  space_id: string
-  onboarding_id: string
-}
-
-const updateOffersOnboardingStatus = async (
-  data: UpdateOffersOnboardingStatusParameters
-): Promise<unknown> => {
-  const response = await fetch(`${ROOT}/api/onboarding/space/status`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
-    },
-    body: JSON.stringify(data),
-  })
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
 export interface UpdateSpaceServiceParameters {
+  onboarding_id?: string
   space_id: string
   id?: string
   description?: string
@@ -597,7 +724,7 @@ export interface UpdateSpaceServiceParameters {
 const updateSpaceService = async (
   data: UpdateSpaceServiceParameters
 ): Promise<unknown> => {
-  const response = await fetch(`${ROOT}/api/space/service`, {
+  const response = await fetch(`${ROOT}/api/space/offers/service`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -605,6 +732,11 @@ const updateSpaceService = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -615,7 +747,7 @@ export interface DeleteSpaceServiceParameters {
 const deleteSpaceService = async (
   data: DeleteSpaceServiceParameters
 ): Promise<unknown> => {
-  const response = await fetch(`${ROOT}/api/space/service`, {
+  const response = await fetch(`${ROOT}/api/space/offers/service`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
@@ -623,6 +755,11 @@ const deleteSpaceService = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -661,6 +798,11 @@ const updateHostInfo = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -675,6 +817,11 @@ const uploadStripeDocument = async (data: FormData): Promise<unknown> => {
       body: data,
     }
   )
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -692,6 +839,11 @@ const updateIbanDocument = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -717,6 +869,11 @@ const updateHostStatus = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -755,6 +912,11 @@ const finishOnboarding = async (
     },
     body: JSON.stringify(data),
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -778,11 +940,15 @@ const getStatistics = async (): Promise<StatisticsResponse> => {
       Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
     },
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
 export {
-  addExtra,
   addService,
   archiveOnboardingProcess,
   deleteSpacePackage,
@@ -795,14 +961,16 @@ export {
   getSpaceServicesList,
   getStatistics,
   reasignOnboardingProcess,
-  saveOnboardingIntro,
+  saveOnboardingSpaceCancellationPolicy,
+  saveOnboardingSpaceGeneralConfiguration,
   saveOnboardingSpaceInfo,
   saveOnboardingSpacePhotos,
+  saveOnboardingSpaceRental,
+  saveOnboardingSpaceRules,
   scheduleOnboardingProcess,
   updateHostInfo,
   updateHostStatus,
   updateIbanDocument,
-  updateOffersOnboardingStatus,
   updateOnboardingStatus,
   updateSpaceOffersRental,
   updateSpacePackage,

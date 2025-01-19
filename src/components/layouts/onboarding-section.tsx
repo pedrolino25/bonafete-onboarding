@@ -7,7 +7,7 @@ function Title({
 }: React.InputHTMLAttributes<HTMLHeadingElement>) {
   return (
     <h3
-      className={cn('text-lg font-semibold text-utility-brand-600', className)}
+      className={cn('text-lg font-semibold text-utility-gray-700', className)}
     >
       {children}
     </h3>

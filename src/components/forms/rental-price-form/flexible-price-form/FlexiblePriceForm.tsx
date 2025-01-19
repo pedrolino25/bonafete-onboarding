@@ -12,7 +12,6 @@ import z from 'zod'
 interface FlexiblePriceFormProps {
   defaultValues?: FlexiblePriceFormType
   onChange?: (values: FlexiblePriceFormType) => void
-  resetFormValues?: boolean
 }
 
 export const flexiblePriceFormSchema = z.object({
@@ -26,7 +25,6 @@ export type FlexiblePriceFormType = z.infer<typeof flexiblePriceFormSchema>
 export default function FlexiblePriceForm({
   defaultValues,
   onChange,
-  resetFormValues,
 }: FlexiblePriceFormProps) {
   const t = useTranslations()
 
@@ -34,16 +32,11 @@ export default function FlexiblePriceForm({
     setValue,
     getValues,
     watch,
-    reset,
     formState: { errors, isValid },
   } = useForm<FlexiblePriceFormType>({
     resolver: zodResolver(flexiblePriceFormSchema),
     defaultValues,
   })
-
-  useEffect(() => {
-    if (resetFormValues) reset()
-  }, [resetFormValues])
 
   const handleChange =
     (field: keyof FlexiblePriceFormType) =>
@@ -68,8 +61,10 @@ export default function FlexiblePriceForm({
         data-testid="base_price"
         value={getValues('base_price')}
         onChange={handleChange('base_price')}
+        placeholder={'0'}
         type="number"
-        placeholder={t('sections.onboarding.rental-form.base-price')}
+        labelSmall
+        label={t('sections.onboarding.rental-form.base-price')}
         fixedEndAdornment={
           <div className="px-3 pt-2.5 text-sm">
             <Euro className="h-4 w-4" />
@@ -83,7 +78,9 @@ export default function FlexiblePriceForm({
       />
       <TextInput
         data-testid="time_limit"
-        placeholder={t('sections.onboarding.rental-form.time-limit')}
+        labelSmall
+        label={t('sections.onboarding.rental-form.time-limit')}
+        placeholder={'0'}
         value={getValues('time_limit')}
         onChange={handleChange('time_limit')}
         type="number"
@@ -100,7 +97,9 @@ export default function FlexiblePriceForm({
       />
       <TextInput
         data-testid="price_after"
-        placeholder={t('sections.onboarding.rental-form.price-after')}
+        labelSmall
+        label={t('sections.onboarding.rental-form.price-after')}
+        placeholder={'0'}
         value={getValues('price_after')}
         onChange={handleChange('price_after')}
         type="number"

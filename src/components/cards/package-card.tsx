@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { Check, Info } from 'lucide-react'
+import { Box, Plus } from 'lucide-react'
 import { ReactNode } from 'react'
 
 interface PackageCardProps {
@@ -34,11 +34,11 @@ export default function PackageCard({
         <div className="px-4 py-4 flex items-center justify-between h-20">
           <div className="flex items-center gap-2">
             {complete ? (
-              <Check className="h-4 w-4 text-utility-success-500" />
+              <Box className="h-6 w-6 text-utility-gray-600" />
             ) : (
-              <Info
+              <Plus
                 className={cn(
-                  'h-4 w-4 text-utility-gray-500',
+                  'h-6 w-6 text-utility-gray-600',
                   disabled && 'text-utility-gray-400'
                 )}
               />
