@@ -2,7 +2,7 @@
 
 import { SelectInput } from '@/components/inputs/select-input/select-input'
 import { TextInput } from '@/components/inputs/text-input/text-input'
-import { OnboardingFormLayout } from '@/components/layouts/onboarding-form'
+import { EditSpaceFormsLayout } from '@/components/layouts/edit-space-forms'
 import { Option } from '@/components/ui/select'
 import { HOURS } from '@/lib/utils/consts'
 import { getAvailableHourOptions } from '@/lib/utils/functions'
@@ -504,7 +504,7 @@ export default function CustomPriceForm({
   }
 
   return (
-    <OnboardingFormLayout.Container>
+    <EditSpaceFormsLayout.Container>
       <div className="w-full grid grid-cols-3 gap-2">
         <SelectInput
           data-testid="time_from_1"
@@ -736,12 +736,12 @@ export default function CustomPriceForm({
         />
       </div>
       {isValid && (
-        <OnboardingFormLayout.Info>
+        <EditSpaceFormsLayout.Info>
           {t(
             'sections.onboarding.rental-form.explanation-messages.hourly-custom-price'
           ).replace('$1', extractHourlyPricesMessage(getValues()))}
-        </OnboardingFormLayout.Info>
+        </EditSpaceFormsLayout.Info>
       )}
-    </OnboardingFormLayout.Container>
+    </EditSpaceFormsLayout.Container>
   )
 }

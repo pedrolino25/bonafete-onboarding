@@ -1,6 +1,6 @@
 'use client'
 import { ImageInput } from '@/components/inputs/image-input/image-input'
-import { OnboardingSectionLayout } from '@/components/layouts/onboarding-section'
+import { EditSpaceSectionLayout } from '@/components/layouts/edit-space-section'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Button } from '@/components/ui/button'
 import {
@@ -128,12 +128,12 @@ export default function SpacePhotosSection({
     >
       <div className="w-full border-b px-6 max-sm:px-4 pb-4 flex justify-between items-center max-sm:flex-col">
         <div className="w-full">
-          <OnboardingSectionLayout.Title>
+          <EditSpaceSectionLayout.HeaderTitle>
             {t('sections.onboarding.space-photos-title')}
-          </OnboardingSectionLayout.Title>
-          <OnboardingSectionLayout.Subtitle>
+          </EditSpaceSectionLayout.HeaderTitle>
+          <EditSpaceSectionLayout.HeaderSubtitle>
             {t('sections.onboarding.space-photos-subtitle')}
-          </OnboardingSectionLayout.Subtitle>
+          </EditSpaceSectionLayout.HeaderSubtitle>
         </div>
         <div className="flex justify-between items-center gap-4 max-sm:justify-end max-sm:items-start max-sm:pt-4 max-sm:w-full">
           {showUpdateOnboardingStatus && (

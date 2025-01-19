@@ -1,7 +1,7 @@
 'use client'
 
 import { TextInput } from '@/components/inputs/text-input/text-input'
-import { OnboardingFormLayout } from '@/components/layouts/onboarding-form'
+import { EditSpaceFormsLayout } from '@/components/layouts/edit-space-forms'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Clock, Euro } from 'lucide-react'
 import { useTranslations } from 'next-intl'
@@ -56,7 +56,7 @@ export default function FlexiblePriceForm({
   }, [isValid, base_price, time_limit, price_after])
 
   return (
-    <OnboardingFormLayout.Container>
+    <EditSpaceFormsLayout.Container>
       <TextInput
         data-testid="base_price"
         value={getValues('base_price')}
@@ -115,15 +115,15 @@ export default function FlexiblePriceForm({
         }
       />
       {isValid && (
-        <OnboardingFormLayout.Info>
+        <EditSpaceFormsLayout.Info>
           {t(
             'sections.onboarding.rental-form.explanation-messages.hourly-flexible-price'
           )
             .replace('$1', base_price)
             .replace('$2', time_limit)
             .replace('$3', price_after)}
-        </OnboardingFormLayout.Info>
+        </EditSpaceFormsLayout.Info>
       )}
-    </OnboardingFormLayout.Container>
+    </EditSpaceFormsLayout.Container>
   )
 }

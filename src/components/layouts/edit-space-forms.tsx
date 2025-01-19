@@ -65,7 +65,7 @@ function Subtitle({
   )
 }
 
-export const OnboardingFormLayout = {
+export const EditSpaceFormsLayout = {
   Root,
   Container,
   Title,
