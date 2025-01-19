@@ -2,7 +2,7 @@
 
 import { SelectInput } from '@/components/inputs/select-input/select-input'
 import { TextInput } from '@/components/inputs/text-input/text-input'
-import { OnboardingFormLayout } from '@/components/layouts/onboarding-form'
+import { EditSpaceSectionLayout } from '@/components/layouts/edit-space-section'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -149,88 +149,92 @@ export default function ServicesForm({
 
   return (
     <div className="w-full">
-      <OnboardingFormLayout.Title>
-        {t('sections.onboarding.services-form.service-title')}
-      </OnboardingFormLayout.Title>
-      <OnboardingFormLayout.Subtitle>
-        {t('sections.onboarding.services-form.service-subtitle')}
-      </OnboardingFormLayout.Subtitle>
-      <OnboardingFormLayout.Container>
-        <div className="w-full flex gap-2">
-          <SelectInput
-            required
-            data-testid="services"
-            placeholder={t('table.select-from-list')}
-            options={
-              servicesList?.map((item: ServiceListItemResponse) => {
-                return {
-                  value: item.id,
-                  label: item.value,
-                  info: item.serviceCategory.value,
-                }
-              }) || []
-            }
-            value={services}
-            onSelect={handleSelectChange('services')}
-          />
-          <Button
-            className="px-3"
-            endAdornment={<Plus className="w-4 h-4" />}
-            onClick={() => setOpenAddService(true)}
-            color="secondary"
-          >
-            {t('button-actions.create')}
-          </Button>
-        </div>
+      <EditSpaceSectionLayout.Container>
+        <EditSpaceSectionLayout.Header>
+          <EditSpaceSectionLayout.Title>
+            {t('sections.onboarding.services-form.service-title')}
+          </EditSpaceSectionLayout.Title>
+          <EditSpaceSectionLayout.Subtitle>
+            {t('sections.onboarding.services-form.service-subtitle')}
+          </EditSpaceSectionLayout.Subtitle>
+        </EditSpaceSectionLayout.Header>
+        <EditSpaceSectionLayout.Content>
+          <div className="w-full flex gap-2 items-end">
+            <SelectInput
+              labelSmall
+              label={t('sections.onboarding.services-form.service-title')}
+              required
+              data-testid="services"
+              placeholder={t('table.select-from-list')}
+              options={
+                servicesList?.map((item: ServiceListItemResponse) => {
+                  return {
+                    value: item.id,
+                    label: item.value,
+                    info: item.serviceCategory.value,
+                  }
+                }) || []
+              }
+              value={services}
+              onSelect={handleSelectChange('services')}
+            />
+            <Button
+              className="px-3"
+              endAdornment={<Plus className="w-4 h-4" />}
+              onClick={() => setOpenAddService(true)}
+              color="secondary"
+            >
+              {t('button-actions.create')}
+            </Button>
+          </div>
+        </EditSpaceSectionLayout.Content>
+      </EditSpaceSectionLayout.Container>
 
-        <Dialog open={openAddService} onOpenChange={setOpenAddService}>
-          <DialogContent className="sm:max-w-[425px] max-sm:max-w-100svw">
-            <DialogHeader>
-              <DialogTitle>
-                {t('sections.onboarding.services-form.new-service-title')}
-              </DialogTitle>
-              <DialogDescription className="pt-2 pb-6">
-                {t('sections.onboarding.services-form.new-service-subtitle')}
-              </DialogDescription>
-            </DialogHeader>
-            <div className="w-full flex flex-col gap-4">
-              <TextInput
-                data-testid="new_service"
-                value={new_service}
-                onChange={handleChange('new_service')}
-                placeholder={t('sections.onboarding.services-form.new-service')}
-              />
-              <SelectInput
-                data-testid="new_service_category"
-                placeholder={t(
-                  'sections.onboarding.services-form.new-service-category'
-                )}
-                options={
-                  servicesList ? getServicesCategories(servicesList) : []
-                }
-                value={new_service_category || []}
-                onSelect={handleSelectChange('new_service_category')}
-              />
-            </div>
-            <DialogFooter>
-              <Button
-                color="secondary"
-                disabled={isLoading}
-                onClick={() => setOpenAddService(false)}
-              >
-                {t('button-actions.cancel')}
-              </Button>
-              <Button
-                disabled={!new_service || !new_service_category || isLoading}
-                loading={isLoading}
-                onClick={handleAddService}
-              >
-                {t('button-actions.add')}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </OnboardingFormLayout.Container>
+      <Dialog open={openAddService} onOpenChange={setOpenAddService}>
+        <DialogContent className="sm:max-w-[425px] max-sm:max-w-100svw">
+          <DialogHeader>
+            <DialogTitle>
+              {t('sections.onboarding.services-form.new-service-title')}
+            </DialogTitle>
+            <DialogDescription className="pt-2 pb-6">
+              {t('sections.onboarding.services-form.new-service-subtitle')}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="w-full flex flex-col gap-4">
+            <TextInput
+              data-testid="new_service"
+              value={new_service}
+              onChange={handleChange('new_service')}
+              placeholder={t('sections.onboarding.services-form.new-service')}
+            />
+            <SelectInput
+              data-testid="new_service_category"
+              placeholder={t(
+                'sections.onboarding.services-form.new-service-category'
+              )}
+              options={servicesList ? getServicesCategories(servicesList) : []}
+              value={new_service_category || []}
+              onSelect={handleSelectChange('new_service_category')}
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              color="secondary"
+              disabled={isLoading}
+              onClick={() => setOpenAddService(false)}
+            >
+              {t('button-actions.cancel')}
+            </Button>
+            <Button
+              disabled={!new_service || !new_service_category || isLoading}
+              loading={isLoading}
+              onClick={handleAddService}
+            >
+              {t('button-actions.add')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

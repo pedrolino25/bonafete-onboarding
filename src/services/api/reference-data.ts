@@ -20,6 +20,11 @@ const getLocalitiesList = async (): Promise<LocalityListItemResponse[]> => {
       Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
     },
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -40,6 +45,11 @@ const getSpaceConveniencesList = async (): Promise<
       Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
     },
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -57,6 +67,11 @@ const getSpaceTypesList = async (): Promise<SpaceTypeListItemResponse[]> => {
       Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
     },
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -77,6 +92,11 @@ const getSpaceTargetsList = async (): Promise<
       Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
     },
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 
@@ -97,6 +117,11 @@ const getPostalCodesList = async (): Promise<PostalCodesListItemResponse[]> => {
       Autorization: getCookie(Cookies.SESSION_COOKIE) as string,
     },
   })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message)
+  }
   return response.json()
 }
 

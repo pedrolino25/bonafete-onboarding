@@ -36,8 +36,8 @@ export function MapInput({
     if (!fixed) {
       setViewState(e.viewState)
       onMove?.({
-        latitude: e.target._markers[0]._lngLat.lat,
-        longitude: e.target._markers[0]._lngLat.lng,
+        latitude: e.target._markers?.[0]?._lngLat.lat,
+        longitude: e.target._markers?.[0]?._lngLat.lng,
       })
     }
   }

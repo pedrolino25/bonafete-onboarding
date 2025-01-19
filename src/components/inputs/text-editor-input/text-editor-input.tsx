@@ -1,8 +1,10 @@
 import { QuillEditor } from '@/components/ui/text-editor'
+import { cn } from '@/lib/utils'
 import * as React from 'react'
 
 export interface TextEditorInputProps {
   label?: string
+  labelSmall?: boolean
   hint?: string
   info?: string
   error?: string
@@ -21,6 +23,7 @@ export const TextEditorInput = React.forwardRef<
   (
     {
       label,
+      labelSmall,
       hint,
       info,
       error,
@@ -37,7 +40,10 @@ export const TextEditorInput = React.forwardRef<
         {label && (
           <label
             data-testid="label"
-            className="text-sm font-medium text-utility-gray-700 mb-1.5"
+            className={cn(
+              'text-sm font-medium text-utility-gray-700 p-0 m-0 mb-1.5',
+              labelSmall && 'text-xs font-light text-utility-gray-600'
+            )}
           >
             {label}
             {required && '*'}

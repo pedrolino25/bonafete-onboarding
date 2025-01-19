@@ -48,17 +48,14 @@ export const getAvailableHourOptions = (
   }
 }
 
-export const isSpaceRentalConfigurationComplete = (
+export const isSpaceOffersConfigurationComplete = (
   space: OnboardingSpaceInfo
 ): boolean => {
   return !!(
-    space?.business_model &&
-    space?.cancellation_policy?.base_refund &&
-    (space?.prices?.fixed?.price ||
-      space?.prices?.flexible?.base_price ||
-      space?.prices?.custom?.price_1) &&
-    space?.lotation?.lotation &&
-    space?.min_hours?.min_hours
+    space?.prices?.fixed?.price ||
+    space?.prices?.flexible?.base_price ||
+    space?.prices?.custom?.price_1 ||
+    (space?.services?.length || 0) > 0
   )
 }
 
