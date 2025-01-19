@@ -1,7 +1,7 @@
 'use client'
 
 import { TextInput } from '@/components/inputs/text-input/text-input'
-import { OnboardingFormLayout } from '@/components/layouts/onboarding-form'
+import { EditSpaceFormsLayout } from '@/components/layouts/edit-space-forms'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Euro } from 'lucide-react'
 import { useTranslations } from 'next-intl'
@@ -52,7 +52,7 @@ export default function FixedPriceForm({
   }, [isValid, price])
 
   return (
-    <OnboardingFormLayout.Container>
+    <EditSpaceFormsLayout.Container>
       <TextInput
         data-testid="price"
         labelSmall
@@ -73,12 +73,12 @@ export default function FixedPriceForm({
         }
       />
       {isValid && (
-        <OnboardingFormLayout.Info>
+        <EditSpaceFormsLayout.Info>
           {t(
             'sections.onboarding.rental-form.explanation-messages.hourly-fixed-price'
           ).replace('$1', price)}
-        </OnboardingFormLayout.Info>
+        </EditSpaceFormsLayout.Info>
       )}
-    </OnboardingFormLayout.Container>
+    </EditSpaceFormsLayout.Container>
   )
 }

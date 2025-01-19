@@ -3,7 +3,6 @@ import { SelectInput } from '@/components/inputs/select-input/select-input'
 import { StripeDocsInput } from '@/components/inputs/stripe-docs-input/stripe-docs-input'
 import { TextInput } from '@/components/inputs/text-input/text-input'
 import { EditSpaceSectionLayout } from '@/components/layouts/edit-space-section'
-import { OnboardingSectionLayout } from '@/components/layouts/onboarding-section'
 import { Button } from '@/components/ui/button'
 import { Option } from '@/components/ui/select'
 import { toast } from '@/lib/hooks/use-toast'
@@ -218,12 +217,12 @@ export default function HostInfoSection({
     >
       <div className="w-full border-b px-6 max-sm:px-4 pb-4 flex justify-between items-center max-sm:flex-col">
         <div className="w-full">
-          <OnboardingSectionLayout.Title>
+          <EditSpaceSectionLayout.HeaderTitle>
             {t('sections.onboarding.host-info-title')}
-          </OnboardingSectionLayout.Title>
-          <OnboardingSectionLayout.Subtitle>
+          </EditSpaceSectionLayout.HeaderTitle>
+          <EditSpaceSectionLayout.HeaderSubtitle>
             {t('sections.onboarding.host-info-subtitle')}
-          </OnboardingSectionLayout.Subtitle>
+          </EditSpaceSectionLayout.HeaderSubtitle>
         </div>
         <div className="flex justify-between items-center gap-4 max-sm:justify-end max-sm:items-start max-sm:pt-4 max-sm:w-full">
           {onboardingInfo.fase6 === OnboardingFaseStatus.Completed && (

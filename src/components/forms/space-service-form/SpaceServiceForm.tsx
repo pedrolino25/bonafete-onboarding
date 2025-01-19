@@ -4,8 +4,8 @@ import { ImageInput } from '@/components/inputs/image-input/image-input'
 import { SelectInput } from '@/components/inputs/select-input/select-input'
 import { TextEditorInput } from '@/components/inputs/text-editor-input/text-editor-input'
 import { TextInput } from '@/components/inputs/text-input/text-input'
+import { EditSpaceFormsLayout } from '@/components/layouts/edit-space-forms'
 import { EditSpaceSectionLayout } from '@/components/layouts/edit-space-section'
-import { OnboardingFormLayout } from '@/components/layouts/onboarding-form'
 import Photo from '@/components/sections/onboarding/space-photos/space-photo/SpacePhoto'
 import { Button } from '@/components/ui/button'
 import {
@@ -327,7 +327,7 @@ export default function SpaceServiceForm({
                 (price_modality?.[0]?.value &&
                   price &&
                   (min_hours || min_persons))) && (
-                <OnboardingFormLayout.Info>
+                <EditSpaceFormsLayout.Info>
                   {t(
                     `sections.onboarding.services-form.explanation-messages.pricing-${price_modality?.[0]?.value}`
                   )
@@ -352,7 +352,7 @@ export default function SpaceServiceForm({
                         ? min_persons || ''
                         : min_hours || ''
                     )}
-                </OnboardingFormLayout.Info>
+                </EditSpaceFormsLayout.Info>
               )}
             </EditSpaceSectionLayout.Content>
           </EditSpaceSectionLayout.Container>

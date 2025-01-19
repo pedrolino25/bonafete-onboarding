@@ -1,7 +1,6 @@
 'use client'
 import SpaceServiceCard from '@/components/cards/space-service-card'
 import { EditSpaceSectionLayout } from '@/components/layouts/edit-space-section'
-import { OnboardingSectionLayout } from '@/components/layouts/onboarding-section'
 
 import { SpaceServiceFormType } from '@/components/forms/space-service-form/SpaceServiceForm'
 import { OnboardingSpaceInfo } from '@/services/api/onboardings'
@@ -30,9 +29,9 @@ export default function SpaceServicesSection({
     <div className="w-full max-sm:border-t max-sm:px-1 py-4">
       <div className="w-full border-b px-6 max-sm:px-4 pb-4 flex justify-between items-center max-sm:flex-col">
         <div className="w-full">
-          <OnboardingSectionLayout.Title>
+          <EditSpaceSectionLayout.HeaderTitle>
             {t('sections.onboarding.space-service-title2')}
-          </OnboardingSectionLayout.Title>
+          </EditSpaceSectionLayout.HeaderTitle>
         </div>
       </div>
       <div className="w-full">
