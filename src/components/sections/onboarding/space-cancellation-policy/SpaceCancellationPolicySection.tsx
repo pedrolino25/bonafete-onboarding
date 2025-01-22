@@ -61,7 +61,7 @@ export default function SpaceCancellationPolicySection({
   ): CancelationPolicy => {
     return {
       afterConfimation: parseInt(values.base_refund) / 100,
-      period: parseInt(values.late_cancellation_days),
+      period: parseInt(values.late_cancellation_days) * 24,
       afterPeriod: parseInt(values.late_cancellation_refund) / 100,
       space: { id: spaceInfo.space_id },
       createdAt: new Date(),
