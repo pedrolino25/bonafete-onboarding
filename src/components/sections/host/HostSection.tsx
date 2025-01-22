@@ -399,7 +399,7 @@ export default function HostSection({}: HostSectionProps) {
               </div>
             </SidebarLayout.Header>
             <SidebarLayout.Main>
-              <div className="w-full flex flex-col gap-6 pl-6 pb-16">
+              <div className="w-full flex flex-col gap-6 pl-6 pb-16 pt-6">
                 {data.spaces?.map((space) => {
                   return (
                     <SpaceCard
