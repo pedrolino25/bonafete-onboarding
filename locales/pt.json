@@ -330,8 +330,8 @@
       },
       "package-form": {
         "name": "Ex: Pacote 1",
-        "name-title": "Nome",
-        "name-subtitle": "Defina o nome do pacote",
+        "name-title": "Adicionar Pacote",
+        "name-subtitle": "Defina o pacote",
         "services-title": "Serviços",
         "services-subtitle": "Defina os serviços que compõem o pacote",
         "description-title": "Descrição",
