@@ -350,13 +350,13 @@ export default function SpacePackageForm({
           <EditSpaceSectionLayout.Container>
             <EditSpaceSectionLayout.Header>
               <EditSpaceSectionLayout.Title>
-                {t('sections.onboarding.package-form.name')}
+                {t('columns.name')}
               </EditSpaceSectionLayout.Title>
             </EditSpaceSectionLayout.Header>
             <EditSpaceSectionLayout.Content>
               <TextInput
                 labelSmall
-                label={t('sections.onboarding.package-form.name')}
+                label={t('columns.name')}
                 data-testid="name"
                 value={name}
                 onChange={handleChange('name')}

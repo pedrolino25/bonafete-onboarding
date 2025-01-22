@@ -213,6 +213,12 @@ export default function EditSpaceSection({
                         city: data?.city,
                         latitude: data?.latitude?.toString(),
                         longitude: data?.longitude?.toString(),
+                        schedule_form: data?.schedule,
+                        lotation_form: data?.lotation?.lotation
+                          ? data?.lotation
+                          : {
+                              lotation: undefined,
+                            },
                       } as SpaceInfoFormType
                     }
                     refetch={refetch}
