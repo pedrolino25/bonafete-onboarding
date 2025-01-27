@@ -18,7 +18,7 @@ import z from 'zod'
 export const cancelationPolicyFormSchema = z.object({
   base_refund: z.string().min(1),
   late_cancellation_days: z.string().min(1),
-  late_cancellation_refund: z.string().min(1),
+  late_cancellation_refund: z.string().optional(),
 })
 
 export type CancellationPolicyFormType = z.infer<
@@ -62,7 +62,7 @@ export default function SpaceCancellationPolicySection({
     return {
       afterConfimation: parseInt(values.base_refund) / 100,
       period: parseInt(values.late_cancellation_days) * 24,
-      afterPeriod: parseInt(values.late_cancellation_refund) / 100,
+      afterPeriod: 0, // parseInt(values.late_cancellation_refund || '0') / 100,
       space: { id: spaceInfo.space_id },
       createdAt: new Date(),
     } as CancelationPolicy
