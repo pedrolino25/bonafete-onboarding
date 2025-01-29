@@ -11,6 +11,12 @@ import { TextEditorInput } from '@/components/inputs/text-editor-input/text-edit
 import { TextInput } from '@/components/inputs/text-input/text-input'
 import { EditSpaceSectionLayout } from '@/components/layouts/edit-space-section'
 import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { Option } from '@/components/ui/select'
 import { toast } from '@/lib/hooks/use-toast'
 import { cn, splitCommaGetFirst } from '@/lib/utils'
@@ -32,6 +38,8 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import {
   CircleCheck,
   CircleX,
+  FileDown,
+  FileSearch,
   Info,
   LoaderCircle,
   Search,
@@ -81,6 +89,7 @@ interface SpaceInfoSectionProps {
   defaultValues?: SpaceInfoFormType
   completed?: boolean
   showUpdateOnboardingStatus?: boolean
+  documentation?: { offers: string[]; kyc: string[] }
   onUpdateOnboardingStatus?: () => void
   refetch: () => void
 }
@@ -95,11 +104,13 @@ export default function SpaceInfoSection({
   onboardingId,
   defaultValues,
   completed,
+  documentation,
   showUpdateOnboardingStatus,
   onUpdateOnboardingStatus,
   refetch,
 }: SpaceInfoSectionProps) {
   const t = useTranslations()
+  const [openDocuments, setOpenDocuments] = useState<boolean>(false)
 
   const [spaceTypesOptions] = useState<Option[]>(
     spaceTypesList?.map((option) => {
@@ -372,6 +383,15 @@ export default function SpaceInfoSection({
               onClick={() => onUpdateOnboardingStatus?.()}
             >
               {t('button-actions.update-needed')}
+            </Button>
+          )}
+          {documentation && (
+            <Button
+              color="secondary"
+              variant="outline"
+              onClick={() => setOpenDocuments(true)}
+            >
+              <FileSearch className="w-4 h-4" />
             </Button>
           )}
           <Button
@@ -687,6 +707,57 @@ export default function SpaceInfoSection({
           </EditSpaceSectionLayout.Content>
         </EditSpaceSectionLayout.Container>
       </div>
+      <Dialog open={openDocuments} onOpenChange={setOpenDocuments}>
+        <DialogContent className="max-w-[500px] max-sm:max-w-100svw">
+          <DialogHeader>
+            <DialogTitle>{t('sections.onboarding.documentation')}</DialogTitle>
+          </DialogHeader>
+          <div className="w-full flex flex-col gap-4">
+            <div className="w-full">
+              <p className="text-utility-gray-600 text-base font-normal pb-2">
+                Ofertas
+              </p>
+              {documentation?.offers?.map((item, index) => {
+                return (
+                  <a
+                    key={index}
+                    href={item}
+                    target="_blank"
+                    className="w-full cursor-pointer p-2 border rounded-xl flex justify-between items-center mb-2"
+                  >
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-light text-utility-gray-500">
+                        {item?.split('/')[item?.split('/')?.length - 1]}
+                      </p>
+                    </div>
+                    <FileDown className="w-4 h-4 text-utility-gray-500 cursor-pointer hover:text-utility-gray-900" />
+                  </a>
+                )
+              })}
+              <p className="text-utility-gray-600 text-base font-normal pb-2 pt-4">
+                KYC
+              </p>
+              {documentation?.kyc?.map((item, index) => {
+                return (
+                  <a
+                    key={index}
+                    href={item}
+                    target="_blank"
+                    className="w-full cursor-pointer p-2 border rounded-xl flex justify-between items-center mb-2"
+                  >
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-light text-utility-gray-500">
+                        {item?.split('/')[item?.split('/')?.length - 1]}
+                      </p>
+                    </div>
+                    <FileDown className="w-4 h-4 text-utility-gray-500 cursor-pointer hover:text-utility-gray-900" />
+                  </a>
+                )
+              })}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </form>
   )
 }
