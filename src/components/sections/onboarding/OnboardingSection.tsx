@@ -365,6 +365,10 @@ export default function OnboardingSection({
                     spaceTypesList={spaceTypesList}
                     spaceTargetsList={spaceTargetsList}
                     postalCodesList={postalCodesList}
+                    documentation={{
+                      offers: data?.application?.offers || [],
+                      kyc: data?.application?.kyc || [],
+                    }}
                     defaultValues={
                       {
                         type: data.space?.type
